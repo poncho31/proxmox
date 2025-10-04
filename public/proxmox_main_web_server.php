@@ -4,7 +4,12 @@ function getSystemInfo() {
     $info = [];
     
     // Informations serveur de base
-    $info['server_name'] = $_SERVER['SERVER_NAME'] ?? gethostname();
+    $server_name = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? gethostname();
+    // Si c'est encore "_", on utilise l'IP du serveur ou localhost
+    if ($server_name === '_' || empty($server_name)) {
+        $server_name = $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? 'localhost';
+    }
+    $info['server_name'] = $server_name;
     $info['client_ip'] = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
     $info['php_version'] = PHP_VERSION;
     $info['current_time'] = date('d/m/Y H:i:s');
