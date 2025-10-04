@@ -44,10 +44,48 @@ function checkPort($port) {
 echo "📋 STATUT DES SERVICES\n";
 echo "----------------------\n";
 checkService('nginx');
-checkService('php8.2-fpm');
-checkService('php8.1-fpm');
-checkService('php8.0-fpm');
-checkService('php7.4-fpm');
+
+// Vérifier tous les services PHP-FPM possibles
+$phpServices = ['php8.2-fpm', 'php8.1-fpm', 'php8.0-fpm', 'php7.4-fpm', 'php-fpm'];
+$activePhpService = null;
+foreach ($phpServices as $service) {
+    $result = execCommand("systemctl is-active $service");
+    if ($result['success']) {
+        $activePhpService = $service;
+        checkService($service);
+        break;
+    }
+}
+
+if (!$activePhpService) {
+    echo "  ❌ Aucun service PHP-FPM actif détecté\n";
+    foreach ($phpServices as $service) {
+        checkService($service);
+    }
+}
+
+echo "\n";
+
+// Vérification des sockets PHP-FPM
+echo "🔌 SOCKETS PHP-FPM\n";
+echo "------------------\n";
+$sockets = [
+    '/var/run/php/php8.2-fpm.sock',
+    '/var/run/php/php8.1-fpm.sock', 
+    '/var/run/php/php8.0-fpm.sock',
+    '/var/run/php/php7.4-fpm.sock',
+    '/run/php/php-fpm.sock'
+];
+
+foreach ($sockets as $socket) {
+    if (file_exists($socket)) {
+        echo "  $socket: ✅ Présent\n";
+        $perms = execCommand("ls -la $socket");
+        echo "    " . trim($perms['output']) . "\n";
+    } else {
+        echo "  $socket: ❌ Absent\n";
+    }
+}
 
 echo "\n";
 

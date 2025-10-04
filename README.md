@@ -5,23 +5,23 @@ Script de mise à jour automatique pour serveur Proxmox avec support SSL.
 ## 📁 Structure
 
 ```
-├── update.php              # Script principal de mise à jour
-├── debug.php               # Script de diagnostic des problèmes
+├── update.php              # Script principal avec diagnostic intégré
 ├── config/nginx.conf       # Configuration Nginx avec HTTPS
 └── public/                 # Fichiers web du serveur
 ```
 
 ## 🔧 Utilisation
 
-### Mise à jour complète
+### Mise à jour complète avec diagnostic
 ```bash
 sudo php update.php
 ```
 
-### Diagnostic des problèmes
-```bash
-sudo php debug.php
-```
+Le script effectue automatiquement :
+- ✅ Vérification préliminaire du système
+- 🔄 Mise à jour complète
+- 🔗 Test de connectivité final
+- 🔧 Conseils de dépannage si nécessaire
 
 ## 🔒 Fonctionnalités SSL
 

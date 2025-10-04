@@ -45,6 +45,23 @@ function getPhpService() {
     return null;
 }
 
+function getPhpSocket() {
+    $sockets = [
+        '/var/run/php/php8.2-fpm.sock',
+        '/var/run/php/php8.1-fpm.sock',
+        '/var/run/php/php8.0-fpm.sock',
+        '/var/run/php/php7.4-fpm.sock',
+        '/run/php/php-fpm.sock'
+    ];
+    
+    foreach ($sockets as $socket) {
+        if (file_exists($socket)) {
+            return $socket;
+        }
+    }
+    return '/var/run/php/php8.2-fpm.sock'; // Défaut
+}
+
 function checkSslCertificate() {
     // Vérifier si le certificat existe et est valide
     if (file_exists('/etc/ssl/certs/nginx-selfsigned.crt')) {
@@ -91,7 +108,10 @@ $operations = [
     ],
     'nginx_config' => [
         'description' => 'Mise à jour de la configuration Nginx',
-        'command' => 'cp /var/www/html/php/config/nginx.conf /etc/nginx/nginx.conf && nginx -t',
+        'command' => function() {
+            $socket = getPhpSocket();
+            return "cp /var/www/html/php/config/nginx.conf /etc/nginx/nginx.conf && sed -i 's|unix:/var/run/php/php8.2-fpm.sock|unix:$socket|g' /etc/nginx/nginx.conf && nginx -t";
+        },
         'icon' => '⚙️',
         'success_message' => 'Configuration Nginx mise à jour et validée',
         'error_message' => 'Échec de la mise à jour de la configuration Nginx',
@@ -146,11 +166,82 @@ $operations = [
 ];
 
 // ========================================
+// FONCTIONS DE DIAGNOSTIC
+// ========================================
+
+function checkSystemStatus() {
+    echo "🔍 Vérification préliminaire du système...\n";
+    echo "==========================================\n";
+    
+    $issues = [];
+    
+    // Vérifier nginx
+    $nginxResult = execCommand("systemctl is-active nginx");
+    if ($nginxResult['success']) {
+        printStatus("✅ Nginx est actif");
+    } else {
+        printStatus("❌ Nginx n'est pas actif", false);
+        $issues[] = "Nginx inactif - Exécutez: systemctl start nginx";
+    }
+    
+    // Vérifier PHP-FPM
+    $phpService = getPhpService();
+    if ($phpService) {
+        $phpResult = execCommand("systemctl is-active $phpService");
+        if ($phpResult['success']) {
+            printStatus("✅ PHP-FPM ($phpService) est actif");
+        } else {
+            printStatus("❌ PHP-FPM ($phpService) n'est pas actif", false);
+            $issues[] = "PHP-FPM inactif - Exécutez: systemctl start $phpService";
+        }
+    } else {
+        printStatus("❌ Aucun service PHP-FPM détecté", false);
+        $issues[] = "Aucun service PHP-FPM installé";
+    }
+    
+    // Vérifier les ports
+    $portCheck = execCommand("ss -tlnp | grep ':443'");
+    if ($portCheck['success'] && !empty($portCheck['output'])) {
+        printStatus("✅ Port HTTPS (443) ouvert");
+    } else {
+        printStatus("❌ Port HTTPS (443) fermé", false);
+        $issues[] = "Port 443 non disponible";
+    }
+    
+    // Vérifier le socket PHP
+    $socket = getPhpSocket();
+    if (file_exists($socket)) {
+        printStatus("✅ Socket PHP-FPM disponible: $socket");
+    } else {
+        printStatus("❌ Socket PHP-FPM introuvable: $socket", false);
+        $issues[] = "Socket PHP-FPM manquant: $socket";
+    }
+    
+    echo "\n";
+    
+    if (!empty($issues)) {
+        printStatus("⚠️ Problèmes détectés:", false);
+        foreach ($issues as $issue) {
+            echo "  • $issue\n";
+        }
+        echo "\n";
+        return false;
+    }
+    
+    printStatus("✅ Système prêt pour la mise à jour");
+    echo "\n";
+    return true;
+}
+
+// ========================================
 // EXÉCUTION PRINCIPALE
 // ========================================
 
 echo "\n🚀 Démarrage de la mise à jour du serveur Proxmox...\n";
 echo "====================================================\n\n";
+
+// Vérification préliminaire
+$systemReady = checkSystemStatus();
 
 $results = [];
 $successful = 0;
@@ -159,6 +250,7 @@ $skipped = 0;
 $criticalFailed = 0;
 $errors = [];
 $warnings = [];
+$httpsWorking = false;
 
 // Exécution des opérations
 foreach ($operations as $key => $operation) {
@@ -256,11 +348,26 @@ foreach ($results as $key => $result) {
 
 echo "\n📈 Statistiques: $successful réussies, $failed échouées, $skipped ignorées\n";
 
+// Test final de connectivité
+echo "\n🔗 Test de connectivité finale...\n";
+$connectivityTest = execCommand("curl -I -k https://localhost 2>/dev/null | head -1");
+if ($connectivityTest['success'] && !empty($connectivityTest['output'])) {
+    printStatus("✅ HTTPS local fonctionne: " . trim($connectivityTest['output']));
+    $httpsWorking = true;
+} else {
+    printStatus("❌ HTTPS local ne répond pas", false);
+    $httpsWorking = false;
+}
+
 // Message final
 if ($criticalFailed === 0) {
     printStatus("🎉 Mise à jour terminée avec succès !");
     echo "Tous les services critiques ont été mis à jour correctement.\n";
-    echo "🌐 Serveur accessible en HTTPS sur : https://192.168.0.50\n";
+    if ($httpsWorking) {
+        echo "🌐 Serveur accessible en HTTPS sur : https://192.168.0.50\n";
+    } else {
+        echo "⚠️ Le serveur web ne répond pas localement - Vérifiez la configuration\n";
+    }
 } elseif ($criticalFailed > 0 && $successful > 0) {
     printStatus("⚠️  Mise à jour partiellement réussie", false);
     echo "Certaines opérations critiques ont échoué.\n";
@@ -281,6 +388,23 @@ if (!empty($errors)) {
     foreach ($errors as $error) {
         echo "   • $error\n";
     }
+}
+
+// Section de dépannage rapide
+if ($criticalFailed > 0 || !$httpsWorking) {
+    echo "\n🔧 DÉPANNAGE RAPIDE\n";
+    echo "==================\n";
+    echo "Commandes utiles pour diagnostiquer:\n";
+    echo "  • Statut des services: systemctl status nginx php-fpm\n";
+    echo "  • Logs Nginx: journalctl -u nginx --no-pager -n 20\n";
+    echo "  • Test config Nginx: nginx -t\n";
+    echo "  • Ports ouverts: ss -tlnp | grep ':80\\|:443'\n";
+    echo "  • Processus web: ps aux | grep nginx\n";
+    echo "\nSi le serveur ne répond pas:\n";
+    echo "  1. Vérifiez que nginx est démarré: systemctl start nginx\n";
+    echo "  2. Vérifiez la configuration: nginx -t\n";
+    echo "  3. Vérifiez les permissions: ls -la /var/www/html/php/public/\n";
+    echo "  4. Testez localement: curl -I -k https://localhost\n";
 }
 
 echo "\n";
