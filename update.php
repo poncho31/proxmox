@@ -41,6 +41,14 @@ function printInfo($message) {
 
 // Configuration des opérations à effectuer
 $operations = [
+    'git_reset' => [
+        'description' => 'Réinitialisation des fichiers modifiés',
+        'command' => 'cd /var/www/html/php && git reset --hard',
+        'icon' => '🔄',
+        'success_message' => 'Fichiers locaux réinitialisés',
+        'error_message' => 'Échec de la réinitialisation Git',
+        'skip_output_patterns' => ['HEAD is now at']
+    ],
     'git' => [
         'description' => 'Mise à jour du code depuis Git',
         'command' => 'cd /var/www/html/php && git pull origin main',
