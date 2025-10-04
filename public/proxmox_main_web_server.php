@@ -241,14 +241,14 @@ $system = getSystemInfo();
                 </a>
 
                 <!-- Environnement PHP -->
-                <a href="http://<?php echo $system['server_name']; ?>:81" class="site-card php">
+                <a href="http://<?php echo $system['server_name']; ?>:81" target="_blank" class="site-card php">
                     <span class="site-icon">🐘</span>
                     <div class="site-title">PHP Dev</div>
                     <div class="site-port">Port 81</div>
                 </a>
 
                 <!-- Application Rust -->
-                <a href="http://<?php echo $system['server_name']; ?>:82" class="site-card rust">
+                <a href="http://<?php echo $system['server_name']; ?>:82" target="_blank" class="site-card rust">
                     <span class="site-icon">🦀</span>
                     <div class="site-title">Rust App</div>
                     <div class="site-port">Port 82</div>
