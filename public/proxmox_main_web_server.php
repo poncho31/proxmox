@@ -234,21 +234,21 @@ $system = getSystemInfo();
             <h2>🌐 Sites Disponibles</h2>
             <div class="sites-grid">
                 <!-- Hub principal -->
-                <a href="http://<?php echo $system['server_name']; ?>:80" class="site-card">
+                <a target="_blank" href="http://<?php echo $system['server_name']; ?>:80" class="site-card">
                     <span class="site-icon">🏠</span>
                     <div class="site-title">Hub Principal</div>
                     <div class="site-port">Port 80</div>
                 </a>
 
                 <!-- Environnement PHP -->
-                <a href="http://<?php echo $system['server_name']; ?>:81" class="site-card php">
+                <a target="_blank" href="http://<?php echo $system['server_name']; ?>:80" class="site-card">1" class="site-card php">
                     <span class="site-icon">🐘</span>
                     <div class="site-title">PHP Dev</div>
                     <div class="site-port">Port 81</div>
                 </a>
 
                 <!-- Application Rust -->
-                <a href="http://<?php echo $system['server_name']; ?>:82" class="site-card rust">
+                <a target="_blank" href="http://<?php echo $system['server_name']; ?>:80" class="site-card">2" class="site-card rust">
                     <span class="site-icon">🦀</span>
                     <div class="site-title">Rust App</div>
                     <div class="site-port">Port 82</div>
