@@ -139,12 +139,12 @@ $mysql = getMySQLInfo();
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr;
             gap: 20px;
-            height: calc(100vh - 40px);
+            min-height: calc(100vh - 40px);
         }
 
         .header {
@@ -232,9 +232,10 @@ $mysql = getMySQLInfo();
         }
 
         .info-section {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
         .info-card {
@@ -283,9 +284,14 @@ $mysql = getMySQLInfo();
             color: #f39c12;
         }
 
+        @media (max-width: 1200px) {
+            .info-section {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
-                grid-template-columns: 1fr;
                 gap: 15px;
             }
 
@@ -294,6 +300,10 @@ $mysql = getMySQLInfo();
             }
 
             .sites-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-section {
                 grid-template-columns: 1fr;
             }
         }
@@ -334,7 +344,7 @@ $mysql = getMySQLInfo();
             </div>
         </div>
 
-        <!-- Informations système -->
+        <!-- Informations système et services -->
         <div class="info-section">
             <div class="info-card">
                 <h3>📊 Système</h3>
