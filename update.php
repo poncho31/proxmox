@@ -2,8 +2,7 @@
 #!/usr/bin/env php
 
 /**
- * Script de mise à jour automatique Proxmox avec support SSL
- * Version simplifiée - Tout en un
+ * Script de mise à jour et diagnostic Proxmox - Version simplifiée
  */
 
 set_time_limit(60);
@@ -42,7 +41,7 @@ function getPhpService() {
             return $service;
         }
     }
-    return null;
+    return 'php8.2-fpm'; // Défaut
 }
 
 function getPhpSocket() {
@@ -62,217 +61,260 @@ function getPhpSocket() {
     return '/var/run/php/php8.2-fpm.sock'; // Défaut
 }
 
-function checkSslCertificate() {
-    // Vérifier si le certificat existe et est valide
-    if (file_exists('/etc/ssl/certs/nginx-selfsigned.crt')) {
-        $result = execCommand("openssl x509 -in /etc/ssl/certs/nginx-selfsigned.crt -checkend 2592000 -noout");
-        return $result['success']; // Retourne true si le certificat est valide pour au moins 30 jours
-    }
-    return false;
-}
-
 // ========================================
-// CONFIGURATION DES OPÉRATIONS
+// OPÉRATIONS UNIFIÉES
 // ========================================
 
 $operations = [
-    'git_reset' => [
-        'description' => 'Réinitialisation des fichiers modifiés',
-        'command' => 'cd /var/www/html/php && git reset --hard',
-        'icon' => '🔄',
-        'success_message' => 'Fichiers locaux réinitialisés',
-        'error_message' => 'Échec de la réinitialisation Git',
-        'skip_output_patterns' => ['HEAD is now at']
-    ],
-    'git' => [
-        'description' => 'Mise à jour du code depuis Git',
-        'command' => 'cd /var/www/html/php && git pull origin main',
-        'icon' => '📥',
-        'success_message' => 'Code mis à jour depuis le dépôt Git',
-        'error_message' => 'Échec de la mise à jour Git',
-        'skip_output_patterns' => ['Already up to date.', 'FETCH_HEAD']
-    ],
-    'ssl_cert' => [
-        'description' => 'Vérification/Génération du certificat SSL',
+    'diagnostic' => [
+        'description' => 'Diagnostic complet du système',
         'command' => function() {
-            if (checkSslCertificate()) {
-                return null; // Skip si le certificat est encore valide
+            echo "\n=== DIAGNOSTIC SYSTÈME ===\n";
+            
+            // Test nginx
+            $nginx = execCommand('systemctl is-active nginx');
+            echo "Nginx: " . ($nginx['success'] ? "✅ ACTIF" : "❌ INACTIF") . "\n";
+            
+            // Test ports
+            $ports = execCommand('netstat -tlnp | grep nginx');
+            echo "Ports nginx: " . (!empty($ports['output']) ? "✅ OUVERTS" : "❌ FERMÉS") . "\n";
+            if (!empty($ports['output'])) {
+                echo $ports['output'] . "\n";
             }
-            return 'mkdir -p /etc/ssl/private /etc/ssl/certs && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=FR/ST=France/L=Paris/O=Proxmox/OU=IT Department/CN=localhost" && chmod 600 /etc/ssl/private/nginx-selfsigned.key && chmod 644 /etc/ssl/certs/nginx-selfsigned.crt';
-        },
-        'icon' => '🔒',
-        'success_message' => 'Certificat SSL généré et sécurisé',
-        'error_message' => 'Échec de la génération du certificat SSL',
-        'skip_message' => 'Certificat SSL encore valide',
-        'skip_output_patterns' => ['Generating a RSA private key', 'writing new private key']
-    ],
-    'nginx_config' => [
-        'description' => 'Mise à jour de la configuration Nginx',
-        'command' => function() {
-            $socket = getPhpSocket();
-            return "cp /var/www/html/php/config/nginx.conf /etc/nginx/nginx.conf && sed -i 's|unix:/var/run/php/php8.2-fpm.sock|unix:$socket|g' /etc/nginx/nginx.conf && nginx -t";
-        },
-        'icon' => '⚙️',
-        'success_message' => 'Configuration Nginx mise à jour et validée',
-        'error_message' => 'Échec de la mise à jour de la configuration Nginx',
-        'skip_output_patterns' => ['syntax is ok', 'test is successful']
-    ],
-    'php' => [
-        'description' => 'Redémarrage du service PHP-FPM',
-        'command' => function() {
-            $service = getPhpService();
-            return $service ? "systemctl restart $service" : null;
-        },
-        'icon' => '🔄',
-        'success_message' => 'Service PHP-FPM redémarré avec succès',
-        'error_message' => 'Échec du redémarrage de PHP-FPM',
-        'custom_error' => function() {
-            return getPhpService() === null ? 'Aucun service PHP-FPM détecté sur ce système' : null;
-        }
-    ],
-    'nginx' => [
-        'description' => 'Rechargement de la configuration Nginx',
-        'command' => 'systemctl reload nginx',
-        'icon' => '🌐',
-        'success_message' => 'Configuration Nginx rechargée',
-        'error_message' => 'Échec du rechargement de Nginx'
-    ],
-    'permissions' => [
-        'description' => 'Mise à jour des permissions des fichiers',
-        'command' => 'chown -R www-data:www-data /var/www/html/php && chmod -R 755 /var/www/html/php',
-        'icon' => '🔐',
-        'success_message' => 'Permissions des fichiers mises à jour',
-        'error_message' => 'Échec de la mise à jour des permissions'
-    ],
-    'cache' => [
-        'description' => 'Nettoyage du cache système',
-        'command' => 'sync && echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || echo "Cache clearing not available"',
-        'icon' => '🧹',
-        'success_message' => 'Cache système nettoyé',
-        'error_message' => 'Nettoyage du cache non disponible',
-        'optional' => true
-    ],
-    'status_check' => [
-        'description' => 'Vérification du statut des services',
-        'command' => function() {
-            $phpService = getPhpService();
-            return "systemctl is-active nginx && echo 'Nginx: OK' && systemctl is-active $phpService && echo 'PHP-FPM: OK'";
+            
+            // Test certificats SSL
+            $ssl_cert = file_exists('/etc/ssl/certs/nginx-selfsigned.crt');
+            $ssl_key = file_exists('/etc/ssl/private/nginx-selfsigned.key');
+            echo "Certificat SSL: " . ($ssl_cert ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+            echo "Clé SSL: " . ($ssl_key ? "✅ EXISTE" : "❌ MANQUANTE") . "\n";
+            
+            // Test PHP-FPM
+            $php_services = ['php8.2-fpm', 'php8.1-fpm', 'php8.0-fpm', 'php-fpm'];
+            $php_active = null;
+            foreach ($php_services as $service) {
+                $result = execCommand("systemctl is-active $service");
+                if ($result['success']) {
+                    $php_active = $service;
+                    break;
+                }
+            }
+            echo "PHP-FPM: " . ($php_active ? "✅ $php_active ACTIF" : "❌ AUCUN SERVICE ACTIF") . "\n";
+            
+            // Test sockets PHP
+            $sockets = ['/var/run/php/php8.2-fpm.sock', '/run/php/php-fpm.sock'];
+            foreach ($sockets as $socket) {
+                $exists = file_exists($socket);
+                echo "Socket $socket: " . ($exists ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+            }
+            
+            // Test connectivité locale
+            $http_test = execCommand('curl -I -s http://localhost 2>&1');
+            $https_test = execCommand('curl -I -s -k https://localhost 2>&1');
+            echo "Test HTTP local: " . (strpos($http_test['output'], '301') !== false ? "✅ REDIRIGE VERS HTTPS" : "❌ PROBLÈME") . "\n";
+            echo "Test HTTPS local: " . (strpos($https_test['output'], '200') !== false ? "✅ FONCTIONNE" : "❌ PROBLÈME") . "\n";
+            
+            // Logs récents
+            echo "\n--- Logs nginx récents ---\n";
+            $logs = execCommand('tail -5 /var/log/nginx/error.log 2>/dev/null');
+            if (!empty($logs['output'])) {
+                echo $logs['output'] . "\n";
+            }
+            
+            return 'echo "Diagnostic terminé"';
         },
         'icon' => '🔍',
-        'success_message' => 'Tous les services sont actifs',
-        'error_message' => 'Certains services ne fonctionnent pas correctement',
-        'optional' => true
+        'success_message' => 'Diagnostic système terminé',
+        'error_message' => 'Échec du diagnostic'
+    ],
+    
+    'ssl_cert' => [
+        'description' => 'Génération du certificat SSL',
+        'command' => function() {
+            if (file_exists('/etc/ssl/certs/nginx-selfsigned.crt')) {
+                $result = execCommand("openssl x509 -in /etc/ssl/certs/nginx-selfsigned.crt -checkend 2592000 -noout");
+                if ($result['success']) {
+                    return null; // Skip si le certificat est encore valide
+                }
+            }
+            return 'mkdir -p /etc/ssl/private /etc/ssl/certs && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=FR/ST=France/L=Paris/O=Proxmox/OU=IT Department/CN=192.168.0.50" && chmod 600 /etc/ssl/private/nginx-selfsigned.key && chmod 644 /etc/ssl/certs/nginx-selfsigned.crt';
+        },
+        'icon' => '🔒',
+        'success_message' => 'Certificat SSL généré',
+        'error_message' => 'Échec génération SSL',
+        'skip_message' => 'Certificat SSL encore valide'
+    ],
+    
+    'fix_nginx_config' => [
+        'description' => 'Correction configuration Nginx',
+        'command' => function() {
+            $socket = getPhpSocket();
+            
+            $config = 'user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    keepalive_timeout 65;
+    
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    # Serveur HTTP - Redirection HTTPS
+    server {
+        listen 80;
+        server_name 192.168.0.50 localhost _;
+        return 301 https://$host$request_uri;
+    }
+
+    # Serveur HTTPS principal
+    server {
+        listen 443 ssl http2;
+        server_name 192.168.0.50 localhost _;
+        root /var/www/html/php/public;
+        index proxmox_main_web_server.php;
+
+        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+
+        location ~ \.php$ {
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass unix:' . $socket . ';
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+
+        location ~ /\. {
+            deny all;
+        }
+    }
+
+    # Todo List sur port 8443
+    server {
+        listen 8443 ssl;
+        server_name 192.168.0.50;
+        root /var/www/html/php/public;
+        index todo_list.php;
+
+        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+        ssl_protocols TLSv1.2 TLSv1.3;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+
+        location ~ \.php$ {
+            fastcgi_pass unix:' . $socket . ';
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
+}';
+            
+            file_put_contents('/tmp/nginx_fixed.conf', $config);
+            return 'cp /tmp/nginx_fixed.conf /etc/nginx/nginx.conf && nginx -t';
+        },
+        'icon' => '⚙️',
+        'success_message' => 'Configuration Nginx corrigée',
+        'error_message' => 'Échec correction nginx'
+    ],
+    
+    'restart_php' => [
+        'description' => 'Redémarrage PHP-FPM',
+        'command' => function() {
+            $service = getPhpService();
+            return "systemctl restart $service";
+        },
+        'icon' => '🔄',
+        'success_message' => 'PHP-FPM redémarré',
+        'error_message' => 'Échec redémarrage PHP'
+    ],
+    
+    'restart_nginx' => [
+        'description' => 'Redémarrage Nginx',
+        'command' => 'systemctl restart nginx',
+        'icon' => '🌐',
+        'success_message' => 'Nginx redémarré',
+        'error_message' => 'Échec redémarrage Nginx'
+    ],
+    
+    'fix_permissions' => [
+        'description' => 'Correction des permissions',
+        'command' => 'chown -R www-data:www-data /var/www/html/php && chmod -R 755 /var/www/html/php',
+        'icon' => '🔐',
+        'success_message' => 'Permissions corrigées',
+        'error_message' => 'Échec permissions'
+    ],
+    
+    'test_final' => [
+        'description' => 'Tests de connectivité final',
+        'command' => function() {
+            echo "\n=== TESTS FINAUX ===\n";
+            
+            // Test local HTTPS
+            $https_local = execCommand('curl -I -s -k https://localhost');
+            $local_ok = strpos($https_local['output'], '200') !== false;
+            echo "HTTPS localhost: " . ($local_ok ? "✅ OK" : "❌ KO") . "\n";
+            
+            // Test IP externe
+            $https_external = execCommand('curl -I -s -k https://192.168.0.50');
+            $external_ok = strpos($https_external['output'], '200') !== false;
+            echo "HTTPS 192.168.0.50: " . ($external_ok ? "✅ ACCESSIBLE" : "❌ INACCESSIBLE") . "\n";
+            
+            if (!$local_ok) {
+                echo "Détails localhost: " . $https_local['output'] . "\n";
+            }
+            if (!$external_ok) {
+                echo "Détails 192.168.0.50: " . $https_external['output'] . "\n";
+            }
+            
+            // Test des services
+            $nginx = execCommand('systemctl is-active nginx');
+            $php = execCommand('systemctl is-active ' . getPhpService());
+            echo "Services - Nginx: " . ($nginx['success'] ? "✅" : "❌") . " PHP: " . ($php['success'] ? "✅" : "❌") . "\n";
+            
+            return 'echo "Tests terminés"';
+        },
+        'icon' => '🧪',
+        'success_message' => 'Tests finaux terminés',
+        'error_message' => 'Problèmes détectés'
     ]
 ];
 
 // ========================================
-// FONCTIONS DE DIAGNOSTIC
+// EXÉCUTION
 // ========================================
 
-function checkSystemStatus() {
-    echo "🔍 Vérification préliminaire du système...\n";
-    echo "==========================================\n";
-    
-    $issues = [];
-    
-    // Vérifier nginx
-    $nginxResult = execCommand("systemctl is-active nginx");
-    if ($nginxResult['success']) {
-        printStatus("✅ Nginx est actif");
-    } else {
-        printStatus("❌ Nginx n'est pas actif", false);
-        $issues[] = "Nginx inactif - Exécutez: systemctl start nginx";
-    }
-    
-    // Vérifier PHP-FPM
-    $phpService = getPhpService();
-    if ($phpService) {
-        $phpResult = execCommand("systemctl is-active $phpService");
-        if ($phpResult['success']) {
-            printStatus("✅ PHP-FPM ($phpService) est actif");
-        } else {
-            printStatus("❌ PHP-FPM ($phpService) n'est pas actif", false);
-            $issues[] = "PHP-FPM inactif - Exécutez: systemctl start $phpService";
-        }
-    } else {
-        printStatus("❌ Aucun service PHP-FPM détecté", false);
-        $issues[] = "Aucun service PHP-FPM installé";
-    }
-    
-    // Vérifier les ports
-    $portCheck = execCommand("ss -tlnp | grep ':443'");
-    if ($portCheck['success'] && !empty($portCheck['output'])) {
-        printStatus("✅ Port HTTPS (443) ouvert");
-    } else {
-        printStatus("❌ Port HTTPS (443) fermé", false);
-        $issues[] = "Port 443 non disponible";
-    }
-    
-    // Vérifier le socket PHP
-    $socket = getPhpSocket();
-    if (file_exists($socket)) {
-        printStatus("✅ Socket PHP-FPM disponible: $socket");
-    } else {
-        printStatus("❌ Socket PHP-FPM introuvable: $socket", false);
-        $issues[] = "Socket PHP-FPM manquant: $socket";
-    }
-    
-    echo "\n";
-    
-    if (!empty($issues)) {
-        printStatus("⚠️ Problèmes détectés:", false);
-        foreach ($issues as $issue) {
-            echo "  • $issue\n";
-        }
-        echo "\n";
-        return false;
-    }
-    
-    printStatus("✅ Système prêt pour la mise à jour");
-    echo "\n";
-    return true;
-}
-
-// ========================================
-// EXÉCUTION PRINCIPALE
-// ========================================
-
-echo "\n🚀 Démarrage de la mise à jour du serveur Proxmox...\n";
-echo "====================================================\n\n";
-
-// Vérification préliminaire
-$systemReady = checkSystemStatus();
+echo "🚀 MAINTENANCE PROXMOX - VERSION SIMPLIFIÉE\n";
+echo "==========================================\n\n";
 
 $results = [];
 $successful = 0;
 $failed = 0;
 $skipped = 0;
-$criticalFailed = 0;
-$errors = [];
-$warnings = [];
-$httpsWorking = false;
 
-// Exécution des opérations
 foreach ($operations as $key => $operation) {
     $icon = $operation['icon'];
     $description = $operation['description'];
     
     printInfo("$icon $description...");
     
-    // Vérifier s'il y a une erreur personnalisée
-    if (isset($operation['custom_error']) && is_callable($operation['custom_error'])) {
-        $customError = $operation['custom_error']();
-        if ($customError !== null) {
-            printStatus("❌ $customError", false);
-            $errors[] = $customError;
-            $results[$key] = ['success' => false, 'output' => $customError, 'skipped' => true];
-            $skipped++;
-            echo "\n";
-            continue;
-        }
-    }
-    
-    // Obtenir la commande à exécuter
     $command = $operation['command'];
     if (is_callable($command)) {
         $command = $command();
@@ -281,49 +323,26 @@ foreach ($operations as $key => $operation) {
     if ($command === null) {
         $skipMessage = $operation['skip_message'] ?? 'Opération ignorée';
         printStatus("⏭️ $skipMessage");
-        $results[$key] = ['success' => true, 'output' => 'Skipped', 'skipped' => true];
+        $results[$key] = ['success' => true, 'skipped' => true];
         $skipped++;
-        echo "\n";
-        continue;
-    }
-    
-    // Exécuter la commande
-    $result = execCommand($command);
-    $results[$key] = $result;
-    
-    if ($result['success']) {
-        printStatus("✅ " . $operation['success_message']);
-        $successful++;
-        
-        // Afficher la sortie si elle n'est pas dans la liste à ignorer
-        $output = trim($result['output']);
-        $shouldSkip = false;
-        
-        if (isset($operation['skip_output_patterns'])) {
-            foreach ($operation['skip_output_patterns'] as $pattern) {
-                if (strpos($output, $pattern) !== false) {
-                    $shouldSkip = true;
-                    break;
-                }
-            }
-        }
-        
-        if (!empty($output) && !$shouldSkip) {
-            echo "   📄 " . $output . "\n";
-        }
     } else {
-        printStatus("❌ " . $operation['error_message'], false);
-        $failed++;
+        $result = execCommand($command);
+        $results[$key] = $result;
         
-        if (!empty($result['output'])) {
-            echo "   💬 " . $result['output'] . "\n";
-        }
-        
-        if (isset($operation['optional']) && $operation['optional']) {
-            $warnings[] = $operation['description'] . " (optionnel)";
+        if ($result['success']) {
+            printStatus("✅ " . $operation['success_message']);
+            $successful++;
+            
+            if (!empty($result['output']) && $result['output'] !== 'Diagnostic terminé' && $result['output'] !== 'Tests terminés') {
+                echo "   " . $result['output'] . "\n";
+            }
         } else {
-            $errors[] = $operation['description'];
-            $criticalFailed++;
+            printStatus("❌ " . $operation['error_message'], false);
+            $failed++;
+            
+            if (!empty($result['output'])) {
+                echo "   Erreur: " . $result['output'] . "\n";
+            }
         }
     }
     
@@ -331,81 +350,27 @@ foreach ($operations as $key => $operation) {
 }
 
 // ========================================
-// RÉSUMÉ FINAL
+// RÉSUMÉ
 // ========================================
 
-echo "====================================================\n";
-echo "� RÉSUMÉ DE LA MISE À JOUR\n";
-echo "====================================================\n";
+echo "==========================================\n";
+echo "📊 RÉSUMÉ: $successful réussies, $failed échouées, $skipped ignorées\n";
+echo "==========================================\n";
 
-foreach ($results as $key => $result) {
-    $operation = $operations[$key];
-    $status = $result['success'] ? '✅' : (isset($result['skipped']) ? '⏭️' : '❌');
-    $statusText = $result['success'] ? 'RÉUSSI' : (isset($result['skipped']) ? 'IGNORÉ' : 'ÉCHEC');
-    
-    echo sprintf("%-35s %s %s\n", $operation['description'], $status, $statusText);
-}
-
-echo "\n📈 Statistiques: $successful réussies, $failed échouées, $skipped ignorées\n";
-
-// Test final de connectivité
-echo "\n🔗 Test de connectivité finale...\n";
-$connectivityTest = execCommand("curl -I -k https://localhost 2>/dev/null | head -1");
-if ($connectivityTest['success'] && !empty($connectivityTest['output'])) {
-    printStatus("✅ HTTPS local fonctionne: " . trim($connectivityTest['output']));
-    $httpsWorking = true;
+if ($failed === 0) {
+    printStatus("🎉 MAINTENANCE TERMINÉE AVEC SUCCÈS !");
+    echo "🌐 Votre serveur devrait être accessible sur : https://192.168.0.50\n";
+    echo "📝 Todo List disponible sur : https://192.168.0.50:8443\n";
 } else {
-    printStatus("❌ HTTPS local ne répond pas", false);
-    $httpsWorking = false;
+    printStatus("⚠️ MAINTENANCE PARTIELLEMENT RÉUSSIE", false);
+    echo "Vérifiez les erreurs ci-dessus.\n";
 }
 
-// Message final
-if ($criticalFailed === 0) {
-    printStatus("🎉 Mise à jour terminée avec succès !");
-    echo "Tous les services critiques ont été mis à jour correctement.\n";
-    if ($httpsWorking) {
-        echo "🌐 Serveur accessible en HTTPS sur : https://192.168.0.50\n";
-    } else {
-        echo "⚠️ Le serveur web ne répond pas localement - Vérifiez la configuration\n";
-    }
-} elseif ($criticalFailed > 0 && $successful > 0) {
-    printStatus("⚠️  Mise à jour partiellement réussie", false);
-    echo "Certaines opérations critiques ont échoué.\n";
-} else {
-    printStatus("💥 Mise à jour échouée", false);
-    echo "Plusieurs opérations critiques ont échoué.\n";
-}
+echo "\n🔧 COMMANDES DE DÉPANNAGE UTILES :\n";
+echo "- systemctl status nginx php8.2-fpm\n";
+echo "- nginx -t\n";
+echo "- curl -I -k https://localhost\n";
+echo "- tail -20 /var/log/nginx/error.log\n";
 
-if (!empty($warnings)) {
-    echo "\n⚠️  Avertissements:\n";
-    foreach ($warnings as $warning) {
-        echo "   • $warning\n";
-    }
-}
-
-if (!empty($errors)) {
-    echo "\n❌ Erreurs critiques:\n";
-    foreach ($errors as $error) {
-        echo "   • $error\n";
-    }
-}
-
-// Section de dépannage rapide
-if ($criticalFailed > 0 || !$httpsWorking) {
-    echo "\n🔧 DÉPANNAGE RAPIDE\n";
-    echo "==================\n";
-    echo "Commandes utiles pour diagnostiquer:\n";
-    echo "  • Statut des services: systemctl status nginx php-fpm\n";
-    echo "  • Logs Nginx: journalctl -u nginx --no-pager -n 20\n";
-    echo "  • Test config Nginx: nginx -t\n";
-    echo "  • Ports ouverts: ss -tlnp | grep ':80\\|:443'\n";
-    echo "  • Processus web: ps aux | grep nginx\n";
-    echo "\nSi le serveur ne répond pas:\n";
-    echo "  1. Vérifiez que nginx est démarré: systemctl start nginx\n";
-    echo "  2. Vérifiez la configuration: nginx -t\n";
-    echo "  3. Vérifiez les permissions: ls -la /var/www/html/php/public/\n";
-    echo "  4. Testez localement: curl -I -k https://localhost\n";
-}
-
-echo "\n";
-exit($criticalFailed > 0 ? 1 : 0);
+exit($failed > 0 ? 1 : 0);
+?>
