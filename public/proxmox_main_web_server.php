@@ -1,9 +1,45 @@
+<?php
+// Récupération des informations système
+function getSystemInfo() {
+    $info = [];
+    
+    // Informations serveur de base
+    $info['server_name'] = $_SERVER['SERVER_NAME'] ?? gethostname();
+    $info['client_ip'] = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
+    $info['php_version'] = PHP_VERSION;
+    $info['current_time'] = date('d/m/Y H:i:s');
+    
+    // Load average (si disponible sur Linux)
+    if (file_exists('/proc/loadavg')) {
+        $load = file_get_contents('/proc/loadavg');
+        $info['load_avg'] = explode(' ', $load)[0] ?? 'N/A';
+    } else {
+        $info['load_avg'] = 'N/A';
+    }
+    
+    // Mémoire (si disponible)
+    if (file_exists('/proc/meminfo')) {
+        $meminfo = file_get_contents('/proc/meminfo');
+        preg_match('/MemTotal:\s+(\d+)/', $meminfo, $matches);
+        $total_mem = isset($matches[1]) ? round($matches[1] / 1024 / 1024, 1) : 'N/A';
+        preg_match('/MemAvailable:\s+(\d+)/', $meminfo, $matches);
+        $avail_mem = isset($matches[1]) ? round($matches[1] / 1024 / 1024, 1) : 'N/A';
+        $info['memory'] = $avail_mem . ' / ' . $total_mem . ' GB';
+    } else {
+        $info['memory'] = 'N/A';
+    }
+    
+    return $info;
+}
+
+$system = getSystemInfo();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hub Proxmox - Serveur Principal</title>
+    <title>Hub Proxmox - Services</title>
     <style>
         * {
             margin: 0;
@@ -12,143 +48,132 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
             min-height: 100vh;
-            overflow: hidden;
             color: #333;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
         }
 
         .header {
+            grid-column: 1 / -1;
             text-align: center;
-            padding: 20px;
             color: white;
+            padding: 20px 0;
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .header .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 20px;
-            padding: 0 20px 20px;
-            max-height: calc(100vh - 140px);
-        }
-
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .info-card, .site-card {
+        .sites-section {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .info-card:hover, .site-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .central-hub {
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            gap: 20px;
+        .sites-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
         }
 
         .sites-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
 
-        .site-link {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        .site-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 12px;
             text-decoration: none;
-            display: block;
             transition: all 0.3s ease;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .site-link:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
-        .site-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
+        .site-card.php {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
         }
 
-        .site-link:hover::before {
-            left: 100%;
+        .site-card.rust {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+        }
+
+        .site-card.proxmox {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
         }
 
         .site-icon {
             font-size: 3rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: block;
         }
 
         .site-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 8px;
         }
 
-        .site-desc {
+        .site-port {
             font-size: 0.9rem;
             opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .site-port {
-            font-size: 0.8rem;
             background: rgba(255, 255, 255, 0.2);
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
             display: inline-block;
+            margin-top: 10px;
         }
 
-        .system-info h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
         }
 
         .info-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #eee;
         }
 
@@ -162,369 +187,154 @@
         }
 
         .info-value {
-            color: #764ba2;
+            color: #2c3e50;
             font-weight: bold;
+            font-family: 'Courier New', monospace;
         }
 
-        .proxmox-info h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
+        .status-online {
+            color: #27ae60;
         }
 
-        .feature-list {
-            list-style: none;
-        }
-
-        .feature-list li {
-            padding: 8px 0;
-            font-size: 0.95rem;
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .feature-list li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .status-bar {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4CAF50;
-            animation: pulse 2s infinite;
-        }
-
-        .admin-tools {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tool-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .tool-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        @media (max-width: 1200px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .sites-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            }
+        .status-warning {
+            color: #f39c12;
         }
 
         @media (max-width: 768px) {
-            .header {
-                padding: 15px;
+            .container {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
-            
+
             .header h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
-            
-            .main-content {
-                padding: 0 15px 15px;
-            }
-            
+
             .sites-grid {
                 grid-template-columns: 1fr;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
     </style>
 </head>
 <body>
-    <!-- En-tête -->
-    <div class="header">
-        <h1 class="pulse">�️ Hub Proxmox</h1>
-        <p class="subtitle">Centre de contrôle des services - <?php echo date('d/m/Y H:i:s'); ?></p>
-    </div>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <h1>🖥️ Hub Proxmox</h1>
+            <p>Centre de contrôle des services - <?php echo $system['current_time']; ?></p>
+        </div>
 
-    <!-- Contenu principal -->
-    <div class="main-content">
-        <!-- Sidebar gauche - Informations système -->
-        <div class="sidebar">
-            <div class="info-card system-info fade-in">
-                <h3>� Système</h3>
+        <!-- Section des sites -->
+        <div class="sites-section">
+            <h2>🌐 Sites Disponibles</h2>
+            <div class="sites-grid">
+                <!-- Hub principal -->
+                <a href="/" class="site-card">
+                    <span class="site-icon">🏠</span>
+                    <div class="site-title">Hub Principal</div>
+                    <div class="site-port">Port 80</div>
+                </a>
+
+                <!-- Environnement PHP -->
+                <a href="http://<?php echo $system['server_name']; ?>:81" class="site-card php">
+                    <span class="site-icon">🐘</span>
+                    <div class="site-title">PHP Dev</div>
+                    <div class="site-port">Port 81</div>
+                </a>
+
+                <!-- Application Rust -->
+                <a href="http://<?php echo $system['server_name']; ?>:82" class="site-card rust">
+                    <span class="site-icon">🦀</span>
+                    <div class="site-title">Rust App</div>
+                    <div class="site-port">Port 82</div>
+                </a>
+
+                <!-- Interface Proxmox -->
+                <a href="https://<?php echo $system['server_name']; ?>:8006" target="_blank" class="site-card proxmox">
+                    <span class="site-icon">⚙️</span>
+                    <div class="site-title">Proxmox VE</div>
+                    <div class="site-port">Port 8006</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Informations système -->
+        <div class="info-section">
+            <div class="info-card">
+                <h3>📊 Système</h3>
                 <div class="info-item">
                     <span class="info-label">🖥️ Serveur</span>
-                    <span class="info-value"><?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?></span>
+                    <span class="info-value"><?php echo $system['server_name']; ?></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">🌐 IP Client</span>
-                    <span class="info-value"><?php echo $_SERVER['REMOTE_ADDR'] ?? 'Unknown'; ?></span>
+                    <span class="info-value"><?php echo $system['client_ip']; ?></span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">🔧 PHP</span>
-                    <span class="info-value"><?php echo PHP_VERSION; ?></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">⏰ Uptime</span>
-                    <span class="info-value"><?php echo date('H:i'); ?></span>
-                </div>
-            </div>
-
-            <div class="info-card proxmox-info fade-in">
-                <h3>⚡ Proxmox VE</h3>
-                <ul class="feature-list">
-                    <li>Virtualisation KVM</li>
-                    <li>Conteneurs LXC</li>
-                    <li>Interface Web</li>
-                    <li>Haute disponibilité</li>
-                    <li>Sauvegarde intégrée</li>
-                    <li>Clustering</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Zone centrale - Sites disponibles -->
-        <div class="central-hub">
-            <div class="site-card fade-in">
-                <h2 style="color: #764ba2; margin-bottom: 20px; text-align: center;">🌐 Sites Disponibles</h2>
-                <div class="sites-grid">
-                    <!-- Site principal - Port 80 -->
-                    <a href="/" class="site-link" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <span class="site-icon">🏠</span>
-                        <div class="site-title">Hub Principal</div>
-                        <div class="site-desc">Centre de contrôle</div>
-                        <div class="site-port">Port 80</div>
-                    </a>
-
-                    <!-- Site PHP - Port 81 -->
-                    <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:81" class="site-link" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
-                        <span class="site-icon">🐘</span>
-                        <div class="site-title">PHP Dev</div>
-                        <div class="site-desc">Environnement PHP</div>
-                        <div class="site-port">Port 81</div>
-                    </a>
-
-                    <!-- Site Rust - Port 82 -->
-                    <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:82" class="site-link" style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
-                        <span class="site-icon">🦀</span>
-                        <div class="site-title">Rust App</div>
-                        <div class="site-desc">Application Rust</div>
-                        <div class="site-port">Port 82</div>
-                    </a>
-
-                    <!-- Proxmox Interface -->
-                    <a href="https://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:8006" target="_blank" class="site-link" style="background: linear-gradient(135deg, #FFA726 0%, #FF7043 100%);">
-                        <span class="site-icon">🔧</span>
-                        <div class="site-title">Proxmox VE</div>
-                        <div class="site-desc">Interface d'administration</div>
-                        <div class="site-port">Port 8006</div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Barre de statut -->
-            <div class="status-bar fade-in">
-                <div class="status-item">
-                    <div class="status-dot"></div>
-                    <span>Services opérationnels</span>
-                </div>
-                <div class="admin-tools">
-                    <a href="index2.php" class="tool-btn">� Page Test</a>
-                    <a href="update.php" class="tool-btn">⬆️ Mise à jour</a>
-                    <button class="tool-btn" onclick="location.reload()">🔄 Actualiser</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sidebar droite - Outils rapides -->
-        <div class="sidebar">
-            <div class="info-card fade-in">
-                <h3>🛠️ Outils</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="https://www.proxmox.com/en/proxmox-ve" target="_blank" class="tool-btn">� Documentation</a>
-                    <a href="https://pve.proxmox.com/wiki/Main_Page" target="_blank" class="tool-btn">🔗 Wiki Proxmox</a>
-                    <button class="tool-btn" onclick="window.open('/phpinfo.php', '_blank')">ℹ️ PHP Info</button>
-                </div>
-            </div>
-
-            <div class="info-card fade-in">
-                <h3>📈 Statistiques</h3>
-                <div class="info-item">
-                    <span class="info-label">🌐 Nginx</span>
-                    <span class="info-value" style="color: #4CAF50;">●</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">🐘 PHP-FPM</span>
-                    <span class="info-value" style="color: #4CAF50;">●</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">📦 Services</span>
-                    <span class="info-value">4/4</span>
+                    <span class="info-label">🐘 PHP</span>
+                    <span class="info-value"><?php echo $system['php_version']; ?></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">⚡ Load</span>
-                    <span class="info-value">Faible</span>
+                    <span class="info-value"><?php echo $system['load_avg']; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">💾 Mémoire</span>
+                    <span class="info-value"><?php echo $system['memory']; ?></span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>🔧 Services</h3>
+                <div class="info-item">
+                    <span class="info-label">Nginx</span>
+                    <span class="info-value status-online">● En ligne</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">PHP-FPM</span>
+                    <span class="info-value status-online">● En ligne</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Hub</span>
+                    <span class="info-value status-online">● Port 80</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">PHP Dev</span>
+                    <span class="info-value status-online">● Port 81</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Rust App</span>
+                    <span class="info-value status-online">● Port 82</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>🛠️ Outils</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="index2.php" style="color: #3498db; text-decoration: none; padding: 8px; border: 1px solid #3498db; border-radius: 5px; text-align: center;">📄 Page Test</a>
+                    <a href="update.php" style="color: #27ae60; text-decoration: none; padding: 8px; border: 1px solid #27ae60; border-radius: 5px; text-align: center;">🔄 Mise à jour</a>
+                    <button onclick="location.reload()" style="color: #e74c3c; background: none; border: 1px solid #e74c3c; padding: 8px; border-radius: 5px; cursor: pointer;">🔄 Actualiser</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Animation au chargement
+        // Animation simple au chargement
         document.addEventListener('DOMContentLoaded', function() {
-            // Animation séquentielle des éléments fade-in
-            const fadeElements = document.querySelectorAll('.fade-in');
-            fadeElements.forEach((element, index) => {
+            const cards = document.querySelectorAll('.site-card, .info-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
                 setTimeout(() => {
-                    element.style.animationDelay = (index * 200) + 'ms';
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
 
-            // Animation des liens de sites
-            const siteLinks = document.querySelectorAll('.site-link');
-            siteLinks.forEach((link, index) => {
-                setTimeout(() => {
-                    link.style.opacity = '0';
-                    link.style.transform = 'translateY(30px) rotateX(45deg)';
-                    link.style.transition = 'all 0.8s ease';
-                    
-                    setTimeout(() => {
-                        link.style.opacity = '1';
-                        link.style.transform = 'translateY(0) rotateX(0deg)';
-                    }, 100);
-                }, (index + 1) * 300);
-            });
-
-            // Effet de survol avancé pour les cartes de site
-            siteLinks.forEach(link => {
-                link.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
-                    this.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
-                });
-                
-                link.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                    this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-                });
-            });
-
-            // Animation des points de statut
-            const statusDots = document.querySelectorAll('.status-dot');
-            statusDots.forEach(dot => {
-                setInterval(() => {
-                    dot.style.transform = 'scale(1.2)';
-                    dot.style.opacity = '0.7';
-                    setTimeout(() => {
-                        dot.style.transform = 'scale(1)';
-                        dot.style.opacity = '1';
-                    }, 200);
-                }, 3000);
-            });
-        });
-
-        // Messages de console pour le hub
-        setTimeout(() => {
-            console.log('🖥️ Hub Proxmox initialisé avec succès !');
-            console.log('🌐 Services disponibles:');
-            console.log('  • Port 80: Hub principal');
-            console.log('  • Port 81: Environnement PHP');
-            console.log('  • Port 82: Application Rust');
-            console.log('  • Port 8006: Interface Proxmox VE');
-            console.log('✅ Tous les services sont opérationnels');
-        }, 1500);
-
-        // Fonction pour vérifier le statut des services
-        function checkServiceStatus() {
-            const indicators = document.querySelectorAll('.status-dot');
-            indicators.forEach(dot => {
-                // Simulation de vérification de statut
-                const isOnline = Math.random() > 0.1; // 90% de chance d'être en ligne
-                dot.style.backgroundColor = isOnline ? '#4CAF50' : '#f44336';
-            });
-        }
-
-        // Vérification du statut toutes les 30 secondes
-        setInterval(checkServiceStatus, 30000);
-
-        // Animation périodique du titre
-        setInterval(() => {
-            const title = document.querySelector('.header h1');
-            title.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                title.style.transform = 'scale(1)';
-            }, 300);
-        }, 8000);
-
-        // Gestion du redimensionnement de la fenêtre
-        window.addEventListener('resize', function() {
-            // Réajustement automatique des animations si nécessaire
-            if (window.innerWidth < 768) {
-                document.body.style.overflow = 'auto';
-            } else {
-                document.body.style.overflow = 'hidden';
-            }
+            console.log('🖥️ Hub Proxmox chargé');
+            console.log('🌐 Sites: Port 80 (Hub), 81 (PHP), 82 (Rust), 8006 (Proxmox)');
         });
     </script>
 </body>
