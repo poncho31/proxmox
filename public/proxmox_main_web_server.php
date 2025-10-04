@@ -135,56 +135,61 @@ $mysql = getMySQLInfo();
             background: linear-gradient(135deg, #2c3e50, #3498db);
             min-height: 100vh;
             color: #333;
-            padding: 20px;
+            padding: 10px;
+            margin: 0;
         }
 
         .container {
-            max-width: 1600px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
-            min-height: calc(100vh - 40px);
+            gap: 15px;
+            min-height: calc(100vh - 20px);
         }
 
         .header {
             grid-column: 1 / -1;
             text-align: center;
             color: white;
-            padding: 20px 0;
+            padding: 15px 0;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .sites-section {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin: 0 10px;
         }
 
         .sites-section h2 {
             color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            font-weight: 600;
         }
 
         .sites-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
         }
 
         .site-card {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 10px;
             text-decoration: none;
             transition: all 0.3s ease;
             text-align: center;
@@ -193,8 +198,8 @@ $mysql = getMySQLInfo();
         }
 
         .site-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
         }
 
         .site-card.php {
@@ -210,55 +215,57 @@ $mysql = getMySQLInfo();
         }
 
         .site-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
             display: block;
         }
 
         .site-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
         .site-port {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.9;
             background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 15px;
+            padding: 4px 8px;
+            border-radius: 12px;
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .info-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 0 10px;
         }
 
         .info-card {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .info-card h3 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            font-weight: 600;
         }
 
         .info-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
         }
 
         .info-item:last-child {
@@ -272,8 +279,9 @@ $mysql = getMySQLInfo();
 
         .info-value {
             color: #2c3e50;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85rem;
         }
 
         .status-online {
@@ -286,25 +294,38 @@ $mysql = getMySQLInfo();
 
         @media (max-width: 1200px) {
             .info-section {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
             .container {
-                gap: 15px;
+                gap: 10px;
             }
 
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .sites-section, .info-section {
+                margin: 0 5px;
             }
 
             .sites-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 10px;
             }
 
             .info-section {
                 grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 15px;
             }
         }
     </style>
