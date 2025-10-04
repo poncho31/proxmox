@@ -47,7 +47,7 @@ $operations = [
         'icon' => '📥',
         'success_message' => 'Code mis à jour depuis le dépôt Git',
         'error_message' => 'Échec de la mise à jour Git',
-        'skip_output' => ['Already up to date.']
+        'skip_output_patterns' => ['Already up to date.', 'FETCH_HEAD']
     ],
     'php' => [
         'description' => 'Redémarrage du service PHP-FPM',
@@ -78,10 +78,10 @@ $operations = [
     ],
     'cache' => [
         'description' => 'Nettoyage du cache système',
-        'command' => 'sync && echo 3 > /proc/sys/vm/drop_caches',
+        'command' => 'sync && echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || echo "Cache clearing not available"',
         'icon' => '🧹',
         'success_message' => 'Cache système nettoyé',
-        'error_message' => 'Échec du nettoyage du cache',
+        'error_message' => 'Nettoyage du cache non disponible (système en lecture seule)',
         'optional' => true
     ]
 ];
@@ -135,9 +135,24 @@ foreach ($operations as $key => $operation) {
         
         // Afficher la sortie si elle n'est pas dans la liste à ignorer
         $output = trim($result['output']);
-        $skipOutput = isset($operation['skip_output']) ? $operation['skip_output'] : [];
+        $shouldSkip = false;
         
-        if (!empty($output) && !in_array($output, $skipOutput)) {
+        // Vérifier les patterns à ignorer
+        if (isset($operation['skip_output_patterns'])) {
+            foreach ($operation['skip_output_patterns'] as $pattern) {
+                if (strpos($output, $pattern) !== false) {
+                    $shouldSkip = true;
+                    break;
+                }
+            }
+        }
+        
+        // Vérifier les sorties exactes à ignorer (ancien système)
+        if (isset($operation['skip_output']) && in_array($output, $operation['skip_output'])) {
+            $shouldSkip = true;
+        }
+        
+        if (!empty($output) && !$shouldSkip) {
             echo "   📄 " . $output . "\n";
         }
     } else {
@@ -180,13 +195,27 @@ foreach ($results as $key => $result) {
 echo "\n";
 echo "📈 Statistiques: $successful réussies, $failed échouées, $skipped ignorées\n";
 
-// Message final
-if ($failed === 0) {
+// Compter les échecs critiques (non optionnels)
+$criticalFailed = 0;
+foreach ($results as $key => $result) {
+    if (!$result['success'] && !isset($result['skipped'])) {
+        $operation = $operations[$key];
+        if (!isset($operation['optional']) || !$operation['optional']) {
+            $criticalFailed++;
+        }
+    }
+}
+
+// Message final basé sur les échecs critiques
+if ($criticalFailed === 0) {
     printStatus("🎉 Mise à jour terminée avec succès !");
     echo "Tous les services critiques ont été mis à jour correctement.\n";
-} elseif ($failed > 0 && $successful > 0) {
+    if ($failed > 0) {
+        echo "Note: Certaines opérations optionnelles ont échoué mais n'affectent pas le fonctionnement.\n";
+    }
+} elseif ($criticalFailed > 0 && $successful > 0) {
     printStatus("⚠️  Mise à jour partiellement réussie", false);
-    echo "Certaines opérations ont échoué mais les services principaux fonctionnent.\n";
+    echo "Certaines opérations critiques ont échoué mais les services principaux fonctionnent.\n";
 } else {
     printStatus("💥 Mise à jour échouée", false);
     echo "Plusieurs opérations critiques ont échoué.\n";
