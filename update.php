@@ -39,83 +39,164 @@ function printInfo($message) {
     echo "\033[34m" . $message . "\033[0m\n"; // Bleu
 }
 
-echo "\n🔄 Démarrage de la mise à jour du serveur...\n";
+// Configuration des opérations à effectuer
+$operations = [
+    'git' => [
+        'description' => 'Mise à jour du code depuis Git',
+        'command' => 'cd /var/www/html/php && git pull origin main',
+        'icon' => '📥',
+        'success_message' => 'Code mis à jour depuis le dépôt Git',
+        'error_message' => 'Échec de la mise à jour Git',
+        'skip_output' => ['Already up to date.']
+    ],
+    'php' => [
+        'description' => 'Redémarrage du service PHP-FPM',
+        'command' => function() {
+            $service = getPhpService();
+            return $service ? "systemctl restart $service" : null;
+        },
+        'icon' => '🔄',
+        'success_message' => 'Service PHP-FPM redémarré avec succès',
+        'error_message' => 'Échec du redémarrage de PHP-FPM',
+        'custom_error' => function() {
+            return getPhpService() === null ? 'Aucun service PHP-FPM détecté sur ce système' : null;
+        }
+    ],
+    'nginx' => [
+        'description' => 'Rechargement de la configuration Nginx',
+        'command' => 'systemctl reload nginx',
+        'icon' => '🌐',
+        'success_message' => 'Configuration Nginx rechargée',
+        'error_message' => 'Échec du rechargement de Nginx'
+    ],
+    'permissions' => [
+        'description' => 'Mise à jour des permissions des fichiers',
+        'command' => 'chown -R www-data:www-data /var/www/html/php && chmod -R 755 /var/www/html/php',
+        'icon' => '🔐',
+        'success_message' => 'Permissions des fichiers mises à jour',
+        'error_message' => 'Échec de la mise à jour des permissions'
+    ],
+    'cache' => [
+        'description' => 'Nettoyage du cache système',
+        'command' => 'sync && echo 3 > /proc/sys/vm/drop_caches',
+        'icon' => '🧹',
+        'success_message' => 'Cache système nettoyé',
+        'error_message' => 'Échec du nettoyage du cache',
+        'optional' => true
+    ]
+];
+
+echo "\n🔄 Démarrage de la mise à jour du serveur Proxmox...\n";
 echo "================================================\n\n";
 
+$results = [];
 $errors = [];
+$warnings = [];
 
-// 1. Mise à jour du code depuis Git
-printInfo("🔄 Mise à jour du code depuis Git...");
-$gitResult = execCommand("git pull origin main");
-
-if ($gitResult['success']) {
-    printStatus("✅ Git pull réussi");
-    if (trim($gitResult['output']) !== "Already up to date.") {
-        echo "   " . $gitResult['output'] . "\n";
-    }
-} else {
-    printStatus("❌ Erreur Git pull", false);
-    echo "   " . $gitResult['output'] . "\n";
-    $errors[] = "Git pull failed";
-}
-
-echo "\n";
-
-// 2. Redémarrage du service PHP
-$phpService = getPhpService();
-if ($phpService) {
-    printInfo("🔄 Redémarrage de $phpService...");
-    $phpResult = execCommand("systemctl restart $phpService");
+// Exécution des opérations
+foreach ($operations as $key => $operation) {
+    $icon = $operation['icon'];
+    $description = $operation['description'];
     
-    if ($phpResult['success']) {
-        printStatus("✅ Service PHP redémarré avec succès");
+    printInfo("$icon $description...");
+    
+    // Vérifier s'il y a une erreur personnalisée
+    if (isset($operation['custom_error']) && is_callable($operation['custom_error'])) {
+        $customError = $operation['custom_error']();
+        if ($customError !== null) {
+            printStatus("❌ $customError", false);
+            $errors[] = $customError;
+            $results[$key] = ['success' => false, 'output' => $customError, 'skipped' => true];
+            echo "\n";
+            continue;
+        }
+    }
+    
+    // Obtenir la commande à exécuter
+    $command = $operation['command'];
+    if (is_callable($command)) {
+        $command = $command();
+    }
+    
+    if ($command === null) {
+        printStatus("⚠️  Opération ignorée", false);
+        $warnings[] = $operation['description'] . " - Commande non disponible";
+        $results[$key] = ['success' => false, 'output' => 'Command not available', 'skipped' => true];
+        echo "\n";
+        continue;
+    }
+    
+    // Exécuter la commande
+    $result = execCommand($command);
+    $results[$key] = $result;
+    
+    if ($result['success']) {
+        printStatus("✅ " . $operation['success_message']);
+        
+        // Afficher la sortie si elle n'est pas dans la liste à ignorer
+        $output = trim($result['output']);
+        $skipOutput = isset($operation['skip_output']) ? $operation['skip_output'] : [];
+        
+        if (!empty($output) && !in_array($output, $skipOutput)) {
+            echo "   📄 " . $output . "\n";
+        }
     } else {
-        printStatus("❌ Erreur lors du redémarrage de PHP", false);
-        echo "   " . $phpResult['output'] . "\n";
-        $errors[] = "PHP service restart failed";
+        printStatus("❌ " . $operation['error_message'], false);
+        if (!empty($result['output'])) {
+            echo "   💬 " . $result['output'] . "\n";
+        }
+        
+        if (isset($operation['optional']) && $operation['optional']) {
+            $warnings[] = $operation['description'] . " (optionnel)";
+        } else {
+            $errors[] = $operation['description'];
+        }
     }
-} else {
-    printStatus("❌ Aucun service PHP-FPM détecté", false);
-    $errors[] = "No PHP-FPM service found";
+    
+    echo "\n";
+}
+
+// Affichage du résumé final
+echo "================================================\n";
+echo "📊 RÉSUMÉ DE LA MISE À JOUR\n";
+echo "================================================\n";
+
+$successful = 0;
+$failed = 0;
+$skipped = 0;
+
+foreach ($results as $key => $result) {
+    $operation = $operations[$key];
+    $status = $result['success'] ? '✅' : (isset($result['skipped']) ? '⏭️' : '❌');
+    $statusText = $result['success'] ? 'RÉUSSI' : (isset($result['skipped']) ? 'IGNORÉ' : 'ÉCHEC');
+    
+    echo sprintf("%-20s %s %s\n", $operation['description'], $status, $statusText);
+    
+    if ($result['success']) $successful++;
+    elseif (isset($result['skipped'])) $skipped++;
+    else $failed++;
 }
 
 echo "\n";
+echo "📈 Statistiques: $successful réussies, $failed échouées, $skipped ignorées\n";
 
-// 3. Rechargement de Nginx
-printInfo("🔄 Rechargement de Nginx...");
-$nginxResult = execCommand("systemctl reload nginx");
-
-if ($nginxResult['success']) {
-    printStatus("✅ Nginx rechargé avec succès");
-} else {
-    printStatus("❌ Erreur lors du rechargement de Nginx", false);
-    echo "   " . $nginxResult['output'] . "\n";
-    $errors[] = "Nginx reload failed";
-}
-
-echo "\n";
-
-// 4. Vérification des permissions
-printInfo("🔄 Mise à jour des permissions...");
-$permResult = execCommand("chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html");
-
-if ($permResult['success']) {
-    printStatus("✅ Permissions mises à jour");
-} else {
-    printStatus("❌ Erreur lors de la mise à jour des permissions", false);
-    echo "   " . $permResult['output'] . "\n";
-    $errors[] = "Permissions update failed";
-}
-
-// Résumé final
-echo "\n================================================\n";
-if (empty($errors)) {
+// Message final
+if ($failed === 0) {
     printStatus("🎉 Mise à jour terminée avec succès !");
-    echo "Tous les services ont été mis à jour correctement.\n";
+    echo "Tous les services critiques ont été mis à jour correctement.\n";
+} elseif ($failed > 0 && $successful > 0) {
+    printStatus("⚠️  Mise à jour partiellement réussie", false);
+    echo "Certaines opérations ont échoué mais les services principaux fonctionnent.\n";
 } else {
-    printStatus("⚠️  Mise à jour terminée avec des erreurs :", false);
-    foreach ($errors as $error) {
-        echo "   • $error\n";
+    printStatus("💥 Mise à jour échouée", false);
+    echo "Plusieurs opérations critiques ont échoué.\n";
+}
+
+if (!empty($warnings)) {
+    echo "\n⚠️  Avertissements:\n";
+    foreach ($warnings as $warning) {
+        echo "   • $warning\n";
     }
 }
+
 echo "\n";
