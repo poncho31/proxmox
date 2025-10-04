@@ -229,7 +229,7 @@ $system = getSystemInfo();
             <h2>🌐 Sites Disponibles</h2>
             <div class="sites-grid">
                 <!-- Hub principal -->
-                <a href="/" class="site-card">
+                <a href="http://<?php echo $system['server_name']; ?>:80" class="site-card">
                     <span class="site-icon">🏠</span>
                     <div class="site-title">Hub Principal</div>
                     <div class="site-port">Port 80</div>
