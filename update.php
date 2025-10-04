@@ -67,9 +67,9 @@ function getPhpSocket() {
 
 $operations = [
     'diagnostic' => [
-        'description' => 'Diagnostic complet du système',
+        'description' => 'Diagnostic réseau et connectivité',
         'command' => function() {
-            echo "\n=== DIAGNOSTIC SYSTÈME ===\n";
+            echo "\n=== DIAGNOSTIC RÉSEAU 192.168.0.50 ===\n";
             
             // Test nginx
             $nginx = execCommand('systemctl is-active nginx');
@@ -78,9 +78,48 @@ $operations = [
             // Test configuration nginx
             $nginx_test = execCommand('nginx -t');
             echo "Config nginx: " . ($nginx_test['success'] ? "✅ VALIDE" : "❌ ERREURS") . "\n";
-            if (!$nginx_test['success']) {
-                echo "Erreurs config: " . $nginx_test['output'] . "\n";
+            
+            // DIAGNOSTIC SPÉCIFIQUE 192.168.0.50
+            echo "\n--- ADRESSES IP DU CONTENEUR ---\n";
+            $all_ips = execCommand('ip addr show | grep "inet "');
+            echo $all_ips['output'] . "\n";
+            
+            // Vérifier si 192.168.0.50 est configurée
+            $has_ip = execCommand('ip addr show | grep "192.168.0.50"');
+            echo "IP 192.168.0.50 sur ce conteneur: " . (!empty($has_ip['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+            
+            // Test depuis le conteneur lui-même
+            echo "\n--- TESTS DEPUIS LE CONTENEUR ---\n";
+            $test_localhost = execCommand('curl -I -s -k https://localhost');
+            echo "HTTPS localhost: " . (strpos($test_localhost['output'], '200') !== false ? "✅ FONCTIONNE" : "❌ PROBLÈME") . "\n";
+            
+            $test_ip_local = execCommand('curl -I -s -k https://192.168.0.50 --connect-timeout 5');
+            echo "HTTPS 192.168.0.50: " . (strpos($test_ip_local['output'], '200') !== false ? "✅ FONCTIONNE" : "❌ PROBLÈME") . "\n";
+            
+            if (strpos($test_ip_local['output'], '200') === false) {
+                echo "Détail erreur 192.168.0.50: " . trim($test_ip_local['output']) . "\n";
             }
+            
+            // Test routage et interface
+            echo "\n--- ROUTAGE ET INTERFACES ---\n";
+            $route = execCommand('ip route show');
+            echo "Routes réseau:\n" . $route['output'] . "\n";
+            
+            // Test ports ouverts
+            echo "\n--- PORTS NGINX ---\n";
+            $ports = execCommand('ss -tlnp | grep nginx');
+            echo $ports['output'] . "\n";
+            
+            // Vérifier le pare-feu
+            echo "\n--- PARE-FEU ---\n";
+            $iptables = execCommand('iptables -L INPUT -n 2>/dev/null | head -10');
+            if (!empty($iptables['output'])) {
+                echo "Règles iptables:\n" . $iptables['output'] . "\n";
+            } else {
+                echo "Pas d'accès iptables ou pas de règles\n";
+            }
+            
+            return 'echo "Diagnostic réseau terminé"';
             
             // Test ports spécifiques
             $port80 = execCommand('ss -tlnp | grep ":80 "');
@@ -153,6 +192,44 @@ $operations = [
         'icon' => '🔍',
         'success_message' => 'Diagnostic système terminé',
         'error_message' => 'Échec du diagnostic'
+    ],
+    
+    'check_proxmox_ip' => [
+        'description' => 'Vérification IP 192.168.0.50 sur Proxmox',
+        'command' => function() {
+            echo "\n=== VÉRIFICATION IP PROXMOX ===\n";
+            
+            // Vérifier si on est dans un conteneur
+            $container_check = execCommand('cat /proc/1/cgroup | grep lxc 2>/dev/null');
+            echo "Dans un conteneur: " . (!empty($container_check['output']) ? "✅ OUI" : "❌ NON") . "\n";
+            
+            // Instructions spécifiques pour Proxmox
+            echo "\n--- INSTRUCTIONS PROXMOX ---\n";
+            echo "Pour que 192.168.0.50 soit accessible :\n";
+            echo "1. Dans Proxmox Web UI > Conteneur > Network\n";
+            echo "2. Vérifiez que l'IP 192.168.0.50 est bien assignée\n";
+            echo "3. Ou ajoutez une IP alias dans le conteneur :\n";
+            echo "   ip addr add 192.168.0.50/24 dev eth0\n";
+            echo "4. Vérifiez le bridge réseau Proxmox\n";
+            
+            // Tentative d'ajout automatique de l'IP
+            echo "\n--- TENTATIVE AJOUT IP ---\n";
+            $add_ip = execCommand('ip addr add 192.168.0.50/24 dev eth0 2>&1');
+            if (strpos($add_ip['output'], 'File exists') !== false) {
+                echo "IP 192.168.0.50 déjà configurée\n";
+            } else {
+                echo "Résultat ajout IP: " . $add_ip['output'] . "\n";
+            }
+            
+            // Vérifier après tentative d'ajout
+            $check_ip = execCommand('ip addr show | grep 192.168.0.50');
+            echo "IP 192.168.0.50 maintenant: " . (!empty($check_ip['output']) ? "✅ PRÉSENTE" : "❌ ABSENTE") . "\n";
+            
+            return 'echo "Vérification IP terminée"';
+        },
+        'icon' => '🌐',
+        'success_message' => 'Vérification IP Proxmox terminée',
+        'error_message' => 'Problème vérification IP'
     ],
     
     'ssl_cert' => [
