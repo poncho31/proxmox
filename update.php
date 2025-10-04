@@ -46,7 +46,7 @@ $errors = [];
 
 // 1. Mise à jour du code depuis Git
 printInfo("🔄 Mise à jour du code depuis Git...");
-$gitResult = execCommand("cd /var/www/html && git pull origin main");
+$gitResult = execCommand("git pull origin main");
 
 if ($gitResult['success']) {
     printStatus("✅ Git pull réussi");
