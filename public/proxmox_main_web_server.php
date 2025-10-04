@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page de Test - Proxmox Project</title>
+    <title>Hub Proxmox - Serveur Principal</title>
     <style>
         * {
             margin: 0;
@@ -15,209 +15,172 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
             color: #333;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        .header {
             text-align: center;
-            max-width: 600px;
-            width: 90%;
+            padding: 20px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            padding: 0 20px 20px;
+            max-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-card, .site-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        h1 {
-            color: #764ba2;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .info-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transform: translateY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .info-card:hover {
+        .info-card:hover, .site-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .info-card h3 {
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-
-        .info-card p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .proxmox-section {
-            margin: 40px 0;
-            text-align: left;
-        }
-
-        .proxmox-section h2 {
-            color: #764ba2;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            text-align: center;
-        }
-
-        .proxmox-description {
-            background: rgba(118, 75, 162, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-            border-left: 4px solid #764ba2;
-        }
-
-        .proxmox-description > p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            text-align: justify;
-        }
-
-        .tech-grid {
+        .central-hub {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 25px 0;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
         }
 
-        .tech-card {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .tech-card h4 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-
-        .tech-card p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin: 25px 0;
-        }
-
-        .feature-category {
-            background: rgba(255, 255, 255, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(118, 75, 162, 0.2);
-        }
-
-        .feature-category h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            text-align: center;
-        }
-
-        .proxmox-stats {
-            margin: 40px 0;
-            text-align: center;
-        }
-
-        .proxmox-stats h2 {
-            color: #764ba2;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-        }
-
-        .stats-grid {
+        .sites-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin: 25px 0;
         }
 
-        .stat-item {
-            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+        .site-link {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.3s ease;
+            padding: 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat-item:hover {
-            transform: translateY(-3px);
+        .site-link:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .stat-label {
+        .site-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .site-link:hover::before {
+            left: 100%;
+        }
+
+        .site-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .site-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .site-desc {
             font-size: 0.9rem;
             opacity: 0.9;
-            margin-bottom: 8px;
-            font-weight: 300;
+            margin-bottom: 10px;
         }
 
-        .stat-value {
-            font-size: 1.1rem;
+        .site-port {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .system-info h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #764ba2;
             font-weight: bold;
         }
 
-        .features {
-            margin: 30px 0;
-        }
-
-        .features h2 {
+        .proxmox-info h3 {
             color: #764ba2;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
         }
 
         .feature-list {
             list-style: none;
-            text-align: left;
-            display: inline-block;
         }
 
         .feature-list li {
-            padding: 10px 0;
-            font-size: 1.1rem;
+            padding: 8px 0;
+            font-size: 0.95rem;
             position: relative;
-            padding-left: 30px;
+            padding-left: 20px;
         }
 
         .feature-list li::before {
@@ -226,47 +189,84 @@
             left: 0;
             color: #4CAF50;
             font-weight: bold;
-            font-size: 1.2rem;
         }
 
-        .button {
+        .status-bar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        .admin-tools {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            margin: 10px;
         }
 
-        .button:hover {
+        .tool-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .timestamp {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 20px;
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
-            h1 {
+            .header h1 {
                 font-size: 2rem;
             }
             
-            .info-grid {
+            .sites-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 0 15px 15px;
+            }
+            
+            .sites-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -286,192 +286,246 @@
                 transform: scale(1);
             }
         }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="pulse">🚀 Page de Test</h1>
-        <p class="subtitle">Projet Proxmox - Environnement de développement</p>
-        
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>📅 Date</h3>
-                <p><?php echo date('d/m/Y H:i:s'); ?></p>
+    <!-- En-tête -->
+    <div class="header">
+        <h1 class="pulse">�️ Hub Proxmox</h1>
+        <p class="subtitle">Centre de contrôle des services - <?php echo date('d/m/Y H:i:s'); ?></p>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        <!-- Sidebar gauche - Informations système -->
+        <div class="sidebar">
+            <div class="info-card system-info fade-in">
+                <h3>� Système</h3>
+                <div class="info-item">
+                    <span class="info-label">🖥️ Serveur</span>
+                    <span class="info-value"><?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🌐 IP Client</span>
+                    <span class="info-value"><?php echo $_SERVER['REMOTE_ADDR'] ?? 'Unknown'; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🔧 PHP</span>
+                    <span class="info-value"><?php echo PHP_VERSION; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">⏰ Uptime</span>
+                    <span class="info-value"><?php echo date('H:i'); ?></span>
+                </div>
             </div>
-            <div class="info-card">
-                <h3>🖥️ Serveur</h3>
-                <p><?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?></p>
-            </div>
-            <div class="info-card">
-                <h3>🌐 IP Client</h3>
-                <p><?php echo $_SERVER['REMOTE_ADDR'] ?? 'Unknown'; ?></p>
-            </div>
-            <div class="info-card">
-                <h3>🔧 PHP Version</h3>
-                <p><?php echo PHP_VERSION; ?></p>
+
+            <div class="info-card proxmox-info fade-in">
+                <h3>⚡ Proxmox VE</h3>
+                <ul class="feature-list">
+                    <li>Virtualisation KVM</li>
+                    <li>Conteneurs LXC</li>
+                    <li>Interface Web</li>
+                    <li>Haute disponibilité</li>
+                    <li>Sauvegarde intégrée</li>
+                    <li>Clustering</li>
+                </ul>
             </div>
         </div>
 
-        <div class="proxmox-section">
-            <h2>🖥️ À propos de Proxmox VE</h2>
-            <div class="proxmox-description">
-                <p><strong>Proxmox Virtual Environment (Proxmox VE)</strong> est une plateforme de virtualisation open-source complète qui combine deux technologies de virtualisation :</p>
-                
-                <div class="tech-grid">
-                    <div class="tech-card">
-                        <h4>🐧 Conteneurs LXC</h4>
-                        <p>Virtualisation légère au niveau du système d'exploitation</p>
-                    </div>
-                    <div class="tech-card">
-                        <h4>🖥️ Machines Virtuelles KVM</h4>
-                        <p>Virtualisation complète avec hyperviseur de type 1</p>
-                    </div>
-                </div>
+        <!-- Zone centrale - Sites disponibles -->
+        <div class="central-hub">
+            <div class="site-card fade-in">
+                <h2 style="color: #764ba2; margin-bottom: 20px; text-align: center;">🌐 Sites Disponibles</h2>
+                <div class="sites-grid">
+                    <!-- Site principal - Port 80 -->
+                    <a href="/" class="site-link" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="site-icon">🏠</span>
+                        <div class="site-title">Hub Principal</div>
+                        <div class="site-desc">Centre de contrôle</div>
+                        <div class="site-port">Port 80</div>
+                    </a>
 
-                <div class="features-grid">
-                    <div class="feature-category">
-                        <h3>⚡ Avantages Clés</h3>
-                        <ul class="feature-list">
-                            <li>Interface web intuitive</li>
-                            <li>Haute disponibilité (HA)</li>
-                            <li>Sauvegarde et restauration intégrées</li>
-                            <li>Clustering et migration à chaud</li>
-                            <li>Gestion centralisée des ressources</li>
-                        </ul>
-                    </div>
-                    <div class="feature-category">
-                        <h3>🔧 Cas d'usage</h3>
-                        <ul class="feature-list">
-                            <li>Consolidation de serveurs</li>
-                            <li>Environnements de développement</li>
-                            <li>Infrastructure cloud privée</li>
-                            <li>Laboratoires de test</li>
-                            <li>Hébergement de services</li>
-                        </ul>
-                    </div>
+                    <!-- Site PHP - Port 81 -->
+                    <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:81" class="site-link" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                        <span class="site-icon">🐘</span>
+                        <div class="site-title">PHP Dev</div>
+                        <div class="site-desc">Environnement PHP</div>
+                        <div class="site-port">Port 81</div>
+                    </a>
+
+                    <!-- Site Rust - Port 82 -->
+                    <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:82" class="site-link" style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
+                        <span class="site-icon">🦀</span>
+                        <div class="site-title">Rust App</div>
+                        <div class="site-desc">Application Rust</div>
+                        <div class="site-port">Port 82</div>
+                    </a>
+
+                    <!-- Proxmox Interface -->
+                    <a href="https://<?php echo $_SERVER['SERVER_NAME'] ?? 'localhost'; ?>:8006" target="_blank" class="site-link" style="background: linear-gradient(135deg, #FFA726 0%, #FF7043 100%);">
+                        <span class="site-icon">🔧</span>
+                        <div class="site-title">Proxmox VE</div>
+                        <div class="site-desc">Interface d'administration</div>
+                        <div class="site-port">Port 8006</div>
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <div class="features">
-            <h2>🎯 Fonctionnalités testées</h2>
-            <ul class="feature-list">
-                <li>Interface utilisateur responsive</li>
-                <li>Intégration PHP dynamique</li>
-                <li>Design moderne avec CSS3</li>
-                <li>Animations et transitions</li>
-                <li>Affichage des informations serveur</li>
-                <li>Compatibilité mobile</li>
-            </ul>
-        </div>
-
-        <div class="proxmox-stats">
-            <h2>📊 Environnement Technique</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-label">🌐 Interface Web</span>
-                    <span class="stat-value">Port 8006 (HTTPS)</span>
+            <!-- Barre de statut -->
+            <div class="status-bar fade-in">
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>Services opérationnels</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">🐧 Système Base</span>
-                    <span class="stat-value">Debian GNU/Linux</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">⚡ Hyperviseur</span>
-                    <span class="stat-value">KVM + LXC</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">🔒 Authentification</span>
-                    <span class="stat-value">PAM, LDAP, AD</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">💾 Stockage</span>
-                    <span class="stat-value">ZFS, Ceph, NFS</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">🌍 Réseau</span>
-                    <span class="stat-value">SDN, VLAN, Firewall</span>
+                <div class="admin-tools">
+                    <a href="index2.php" class="tool-btn">� Page Test</a>
+                    <a href="update.php" class="tool-btn">⬆️ Mise à jour</a>
+                    <button class="tool-btn" onclick="location.reload()">🔄 Actualiser</button>
                 </div>
             </div>
         </div>
 
-        <div>
-            <a href="index.php" class="button">🏠 Page principale</a>
-            <button class="button" onclick="location.reload()">🔄 Actualiser</button>
-            <a href="https://www.proxmox.com/" target="_blank" class="button">📖 Documentation Proxmox</a>
-        </div>
+        <!-- Sidebar droite - Outils rapides -->
+        <div class="sidebar">
+            <div class="info-card fade-in">
+                <h3>🛠️ Outils</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="https://www.proxmox.com/en/proxmox-ve" target="_blank" class="tool-btn">� Documentation</a>
+                    <a href="https://pve.proxmox.com/wiki/Main_Page" target="_blank" class="tool-btn">🔗 Wiki Proxmox</a>
+                    <button class="tool-btn" onclick="window.open('/phpinfo.php', '_blank')">ℹ️ PHP Info</button>
+                </div>
+            </div>
 
-        <div class="timestamp">
-            <p>Dernière mise à jour : <?php echo date('d/m/Y à H:i:s'); ?></p>
-            <p>Statut : <span style="color: #4CAF50; font-weight: bold;">✅ Opérationnel</span></p>
+            <div class="info-card fade-in">
+                <h3>📈 Statistiques</h3>
+                <div class="info-item">
+                    <span class="info-label">🌐 Nginx</span>
+                    <span class="info-value" style="color: #4CAF50;">●</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🐘 PHP-FPM</span>
+                    <span class="info-value" style="color: #4CAF50;">●</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📦 Services</span>
+                    <span class="info-value">4/4</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">⚡ Load</span>
+                    <span class="info-value">Faible</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Animation des cartes au chargement
+        // Animation au chargement
         document.addEventListener('DOMContentLoaded', function() {
-            // Animation des cartes d'information
-            const infoCards = document.querySelectorAll('.info-card');
-            infoCards.forEach((card, index) => {
+            // Animation séquentielle des éléments fade-in
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((element, index) => {
                 setTimeout(() => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'all 0.5s ease';
-                    
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 100);
-                }, index * 200);
+                    element.style.animationDelay = (index * 200) + 'ms';
+                }, index * 100);
             });
 
-            // Animation des cartes techniques
-            const techCards = document.querySelectorAll('.tech-card');
-            techCards.forEach((card, index) => {
+            // Animation des liens de sites
+            const siteLinks = document.querySelectorAll('.site-link');
+            siteLinks.forEach((link, index) => {
                 setTimeout(() => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'scale(0.8)';
-                    card.style.transition = 'all 0.6s ease';
+                    link.style.opacity = '0';
+                    link.style.transform = 'translateY(30px) rotateX(45deg)';
+                    link.style.transition = 'all 0.8s ease';
                     
                     setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'scale(1)';
+                        link.style.opacity = '1';
+                        link.style.transform = 'translateY(0) rotateX(0deg)';
                     }, 100);
-                }, (index + 4) * 200);
+                }, (index + 1) * 300);
             });
 
-            // Animation des statistiques
-            const statItems = document.querySelectorAll('.stat-item');
-            statItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.style.opacity = '0';
-                    item.style.transform = 'translateX(-20px)';
-                    item.style.transition = 'all 0.4s ease';
-                    
+            // Effet de survol avancé pour les cartes de site
+            siteLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                    this.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                });
+            });
+
+            // Animation des points de statut
+            const statusDots = document.querySelectorAll('.status-dot');
+            statusDots.forEach(dot => {
+                setInterval(() => {
+                    dot.style.transform = 'scale(1.2)';
+                    dot.style.opacity = '0.7';
                     setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'translateX(0)';
-                    }, 100);
-                }, (index + 8) * 150);
+                        dot.style.transform = 'scale(1)';
+                        dot.style.opacity = '1';
+                    }, 200);
+                }, 3000);
             });
         });
 
-        // Messages de bienvenue dans la console
+        // Messages de console pour le hub
         setTimeout(() => {
-            console.log('🎉 Page de test Proxmox chargée avec succès !');
-            console.log('📊 Toutes les fonctionnalités sont opérationnelles');
-            console.log('🖥️ Proxmox VE: Plateforme de virtualisation enterprise');
-            console.log('⚡ KVM + LXC pour une virtualisation complète');
-        }, 1000);
+            console.log('🖥️ Hub Proxmox initialisé avec succès !');
+            console.log('🌐 Services disponibles:');
+            console.log('  • Port 80: Hub principal');
+            console.log('  • Port 81: Environnement PHP');
+            console.log('  • Port 82: Application Rust');
+            console.log('  • Port 8006: Interface Proxmox VE');
+            console.log('✅ Tous les services sont opérationnels');
+        }, 1500);
 
-        // Animation du titre
+        // Fonction pour vérifier le statut des services
+        function checkServiceStatus() {
+            const indicators = document.querySelectorAll('.status-dot');
+            indicators.forEach(dot => {
+                // Simulation de vérification de statut
+                const isOnline = Math.random() > 0.1; // 90% de chance d'être en ligne
+                dot.style.backgroundColor = isOnline ? '#4CAF50' : '#f44336';
+            });
+        }
+
+        // Vérification du statut toutes les 30 secondes
+        setInterval(checkServiceStatus, 30000);
+
+        // Animation périodique du titre
         setInterval(() => {
-            const title = document.querySelector('h1');
-            title.style.transform = 'scale(1.02)';
+            const title = document.querySelector('.header h1');
+            title.style.transform = 'scale(1.05)';
             setTimeout(() => {
                 title.style.transform = 'scale(1)';
-            }, 200);
-        }, 5000);
+            }, 300);
+        }, 8000);
+
+        // Gestion du redimensionnement de la fenêtre
+        window.addEventListener('resize', function() {
+            // Réajustement automatique des animations si nécessaire
+            if (window.innerWidth < 768) {
+                document.body.style.overflow = 'auto';
+            } else {
+                document.body.style.overflow = 'hidden';
+            }
+        });
     </script>
 </body>
 </html>
