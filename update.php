@@ -75,18 +75,34 @@ $operations = [
             $nginx = execCommand('systemctl is-active nginx');
             echo "Nginx: " . ($nginx['success'] ? "✅ ACTIF" : "❌ INACTIF") . "\n";
             
-            // Test ports
-            $ports = execCommand('netstat -tlnp | grep nginx');
-            echo "Ports nginx: " . (!empty($ports['output']) ? "✅ OUVERTS" : "❌ FERMÉS") . "\n";
-            if (!empty($ports['output'])) {
-                echo $ports['output'] . "\n";
+            // Test configuration nginx
+            $nginx_test = execCommand('nginx -t');
+            echo "Config nginx: " . ($nginx_test['success'] ? "✅ VALIDE" : "❌ ERREURS") . "\n";
+            if (!$nginx_test['success']) {
+                echo "Erreurs config: " . $nginx_test['output'] . "\n";
             }
+            
+            // Test ports spécifiques
+            $port80 = execCommand('ss -tlnp | grep ":80 "');
+            $port443 = execCommand('ss -tlnp | grep ":443 "');
+            echo "Port 80: " . (!empty($port80['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
+            echo "Port 443: " . (!empty($port443['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
+            
+            // Afficher tous les ports nginx
+            $all_ports = execCommand('ss -tlnp | grep nginx');
+            echo "Tous ports nginx:\n" . $all_ports['output'] . "\n";
             
             // Test certificats SSL
             $ssl_cert = file_exists('/etc/ssl/certs/nginx-selfsigned.crt');
             $ssl_key = file_exists('/etc/ssl/private/nginx-selfsigned.key');
             echo "Certificat SSL: " . ($ssl_cert ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
             echo "Clé SSL: " . ($ssl_key ? "✅ EXISTE" : "❌ MANQUANTE") . "\n";
+            
+            // Test validité certificat
+            if ($ssl_cert) {
+                $cert_info = execCommand('openssl x509 -in /etc/ssl/certs/nginx-selfsigned.crt -text -noout | grep "Subject:"');
+                echo "Info certificat: " . $cert_info['output'] . "\n";
+            }
             
             // Test PHP-FPM
             $php_services = ['php8.2-fpm', 'php8.1-fpm', 'php8.0-fpm', 'php-fpm'];
@@ -107,17 +123,29 @@ $operations = [
                 echo "Socket $socket: " . ($exists ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
             }
             
-            // Test connectivité locale
-            $http_test = execCommand('curl -I -s http://localhost 2>&1');
-            $https_test = execCommand('curl -I -s -k https://localhost 2>&1');
-            echo "Test HTTP local: " . (strpos($http_test['output'], '301') !== false ? "✅ REDIRIGE VERS HTTPS" : "❌ PROBLÈME") . "\n";
-            echo "Test HTTPS local: " . (strpos($https_test['output'], '200') !== false ? "✅ FONCTIONNE" : "❌ PROBLÈME") . "\n";
+            // Test connectivité détaillée
+            echo "\n--- Tests connectivité ---\n";
+            $http_local = execCommand('curl -I -s http://localhost');
+            echo "HTTP localhost: " . trim($http_local['output']) . "\n";
+            
+            $https_local = execCommand('curl -I -s -k https://localhost');
+            echo "HTTPS localhost: " . trim($https_local['output']) . "\n";
+            
+            $https_ip = execCommand('curl -I -s -k https://192.168.0.50');
+            echo "HTTPS 192.168.0.50: " . trim($https_ip['output']) . "\n";
+            
+            // Test interface réseau
+            echo "\n--- Interfaces réseau ---\n";
+            $ip_info = execCommand('ip addr show | grep "inet " | grep -v 127.0.0.1');
+            echo $ip_info['output'] . "\n";
             
             // Logs récents
             echo "\n--- Logs nginx récents ---\n";
-            $logs = execCommand('tail -5 /var/log/nginx/error.log 2>/dev/null');
+            $logs = execCommand('tail -10 /var/log/nginx/error.log 2>/dev/null');
             if (!empty($logs['output'])) {
                 echo $logs['output'] . "\n";
+            } else {
+                echo "Aucun log d'erreur récent\n";
             }
             
             return 'echo "Diagnostic terminé"';
@@ -144,8 +172,19 @@ $operations = [
         'skip_message' => 'Certificat SSL encore valide'
     ],
     
+    'copy_nginx_config' => [
+        'description' => 'Copie configuration Nginx corrigée',
+        'command' => function() {
+            // Copie directe du fichier de config du projet
+            return 'cp /var/www/html/php/config/nginx.conf /etc/nginx/nginx.conf && nginx -t';
+        },
+        'icon' => '📋',
+        'success_message' => 'Configuration nginx copiée',
+        'error_message' => 'Échec copie config nginx'
+    ],
+    
     'fix_nginx_config' => [
-        'description' => 'Correction configuration Nginx',
+        'description' => 'Génération configuration Nginx optimisée',
         'command' => function() {
             $socket = getPhpSocket();
             
