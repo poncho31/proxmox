@@ -11,10 +11,12 @@ use App\Models\Operation;
 class OperationFactory
 {
     private PhpServiceDetector $phpServiceDetector;
+    private SslCertificateService $sslCertificateService;
 
-    public function __construct(PhpServiceDetector $phpServiceDetector)
+    public function __construct(PhpServiceDetector $phpServiceDetector, SslCertificateService $sslCertificateService)
     {
         $this->phpServiceDetector = $phpServiceDetector;
+        $this->sslCertificateService = $sslCertificateService;
     }
 
     /**
@@ -47,6 +49,15 @@ class OperationFactory
             $command = $this->phpServiceDetector->getRestartCommand();
             if (!$command) {
                 return null; // Pas de service PHP détecté
+            }
+        }
+
+        // Gestion spéciale pour SSL - optimiser si le certificat existe déjà et est valide
+        if ($key === 'ssl_cert') {
+            if ($this->sslCertificateService->certificateExists() && $this->sslCertificateService->isCertificateValid()) {
+                // Certificat valide, juste mettre à jour les permissions
+                $command = 'chmod 600 /etc/ssl/private/nginx-selfsigned.key && chmod 644 /etc/ssl/certs/nginx-selfsigned.crt';
+                $config['success_message'] = 'Certificat SSL existant et permissions mises à jour';
             }
         }
 

@@ -31,6 +31,22 @@ class UpdateConfig
             'success_message' => 'Service PHP-FPM redémarré avec succès',
             'error_message' => 'Échec du redémarrage de PHP-FPM'
         ],
+        'ssl_cert' => [
+            'description' => 'Génération du certificat SSL auto-signé',
+            'command' => 'mkdir -p /etc/ssl/private /etc/ssl/certs && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=FR/ST=France/L=Paris/O=Proxmox/OU=IT Department/CN=localhost"',
+            'icon' => '🔒',
+            'success_message' => 'Certificat SSL auto-signé généré avec succès',
+            'error_message' => 'Échec de la génération du certificat SSL',
+            'skip_output_patterns' => ['Generating a RSA private key', 'writing new private key']
+        ],
+        'nginx_config' => [
+            'description' => 'Mise à jour de la configuration Nginx',
+            'command' => 'cp /var/www/html/php/config/nginx.conf /etc/nginx/nginx.conf && nginx -t',
+            'icon' => '⚙️',
+            'success_message' => 'Configuration Nginx mise à jour et validée',
+            'error_message' => 'Échec de la mise à jour de la configuration Nginx',
+            'skip_output_patterns' => ['syntax is ok', 'test is successful']
+        ],
         'nginx' => [
             'description' => 'Rechargement de la configuration Nginx',
             'command' => 'systemctl reload nginx',

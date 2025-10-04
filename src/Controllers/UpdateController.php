@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Services\CommandExecutor;
 use App\Services\PhpServiceDetector;
+use App\Services\SslCertificateService;
 use App\Services\OperationFactory;
 use App\Views\OperationView;
 use App\Views\SummaryView;
@@ -18,6 +19,7 @@ class UpdateController
 {
     private CommandExecutor $commandExecutor;
     private PhpServiceDetector $phpServiceDetector;
+    private SslCertificateService $sslCertificateService;
     private OperationFactory $operationFactory;
     private OperationView $operationView;
     private SummaryView $summaryView;
@@ -27,7 +29,8 @@ class UpdateController
     {
         $this->commandExecutor = new CommandExecutor();
         $this->phpServiceDetector = new PhpServiceDetector($this->commandExecutor);
-        $this->operationFactory = new OperationFactory($this->phpServiceDetector);
+        $this->sslCertificateService = new SslCertificateService($this->commandExecutor);
+        $this->operationFactory = new OperationFactory($this->phpServiceDetector, $this->sslCertificateService);
         $this->operationView = new OperationView();
         $this->summaryView = new SummaryView();
         $this->statistics = new UpdateStatistics();
