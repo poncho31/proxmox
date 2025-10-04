@@ -3,7 +3,7 @@
 
 /**
  * Script de mise à jour Proxmox LXC - Serveur Web PHP
- * Accès: https://192.168.0.50/
+ * Accès: https://192.168.0.51/
  */
 
 set_time_limit(60);
@@ -32,14 +32,14 @@ $operations = [
         'error_message' => 'Erreur lors de l\'installation des dépendances'
     ],
     'configure_ip' => [
-        'description' => 'Configuration de l\'IP 192.168.0.50',
+        'description' => 'Configuration de l\'IP 192.168.0.51',
         'command' => 'configureProxmoxIP',
-        'success_message' => 'IP 192.168.0.50 configurée',
+        'success_message' => 'IP 192.168.0.51 configurée',
         'error_message' => 'Erreur configuration IP'
     ],
 
     'configure_nginx' => [
-        'description' => 'Configuration Nginx HTTP pour 192.168.0.50',
+        'description' => 'Configuration Nginx HTTP pour 192.168.0.51',
         'command' => 'configureNginx',
         'success_message' => 'Configuration Nginx HTTP appliquée',
         'error_message' => 'Erreur configuration Nginx'
@@ -102,7 +102,7 @@ function printInfo($message) {
 
 echo "🚀 MISE À JOUR SERVEUR PROXMOX LXC\n";
 echo "===================================\n";
-echo "🌐 Configuration pour: http://192.168.0.50/\n\n";
+echo "🌐 Configuration pour: http://192.168.0.51/\n\n";
 
 $successful = 0;
 $failed = 0;
@@ -156,11 +156,11 @@ echo "===================================\n";
 
 if ($failed === 0) {
     printStatus("🎉 MISE À JOUR TERMINÉE AVEC SUCCÈS !");
-    echo "\n🌐 Serveur accessible sur: http://192.168.0.50/\n";
-    echo "📝 Todo List sur: http://192.168.0.50:8080/\n";
+    echo "\n🌐 Serveur accessible sur: http://192.168.0.51/\n";
+    echo "📝 Todo List sur: http://192.168.0.51:8080/\n";
     echo "\n💡 Commandes utiles:\n";
     echo "   - systemctl status nginx php8.2-fpm\n";
-    echo "   - curl http://192.168.0.50/\n";
+    echo "   - curl http://192.168.0.51/\n";
     echo "   - nginx -t (test config)\n";
 } else {
     printStatus("⚠️ MISE À JOUR PARTIELLEMENT RÉUSSIE", false);
@@ -198,9 +198,9 @@ function initialSystemCheck() {
     $interfaces = execCommand('ip addr show | grep "inet " | grep -v "127.0.0.1"');
     echo "Interfaces réseau:\n" . trim($interfaces['output']) . "\n";
     
-    // Vérifier si 192.168.0.50 est déjà configurée
-    $checkIP = execCommand('ip addr show | grep "192.168.0.50"');
-    echo "IP 192.168.0.50: " . (!empty($checkIP['output']) ? "✅ DÉJÀ CONFIGURÉE" : "❌ À CONFIGURER") . "\n";
+    // Vérifier si 192.168.0.51 est déjà configurée
+    $checkIP = execCommand('ip addr show | grep "192.168.0.51"');
+    echo "IP 192.168.0.51: " . (!empty($checkIP['output']) ? "✅ DÉJÀ CONFIGURÉE" : "❌ À CONFIGURER") . "\n";
     
     // Vérifier les ports en écoute
     $ports = execCommand('ss -tlnp | grep ":80\|:8080"');
@@ -214,17 +214,17 @@ function initialSystemCheck() {
 }
 
 function configureProxmoxIP() {
-    echo "=== CONFIGURATION IP 192.168.0.50 ===\n";
+    echo "=== CONFIGURATION IP 192.168.0.51 ===\n";
     
     // Afficher les interfaces actuelles
     $interfaces = execCommand('ip addr show | grep "inet " | grep -v "127.0.0.1"');
     echo "Interfaces actuelles:\n" . $interfaces['output'] . "\n";
     
     // Vérifier si l'IP existe déjà
-    $checkIP = execCommand('ip addr show | grep "192.168.0.50"');
+    $checkIP = execCommand('ip addr show | grep "192.168.0.51"');
     if (!empty($checkIP['output'])) {
-        echo "IP 192.168.0.50 déjà configurée\n";
-        return ['success' => true, 'output' => 'IP 192.168.0.50 déjà configurée'];
+        echo "IP 192.168.0.51 déjà configurée\n";
+        return ['success' => true, 'output' => 'IP 192.168.0.51 déjà configurée'];
     }
     
     // Détecter l'interface réseau principale
@@ -244,9 +244,9 @@ function configureProxmoxIP() {
     
     // Tentatives d'ajout de l'IP avec différentes méthodes
     $methods = [
-        "ip addr add 192.168.0.50/24 dev $iface",
-        "ip addr add 192.168.0.50/32 dev $iface",
-        "ifconfig $iface:1 192.168.0.50 netmask 255.255.255.0"
+        "ip addr add 192.168.0.51/24 dev $iface",
+        "ip addr add 192.168.0.51/32 dev $iface",
+        "ifconfig $iface:1 192.168.0.51 netmask 255.255.255.0"
     ];
     
     foreach ($methods as $method) {
@@ -254,10 +254,10 @@ function configureProxmoxIP() {
         $result = execCommand($method);
         
         // Vérifier si l'ajout a réussi
-        $verify = execCommand('ip addr show | grep "192.168.0.50"');
+        $verify = execCommand('ip addr show | grep "192.168.0.51"');
         if (!empty($verify['output'])) {
-            echo "✅ IP 192.168.0.50 ajoutée avec succès\n";
-            return ['success' => true, 'output' => "IP 192.168.0.50 ajoutée sur $iface"];
+            echo "✅ IP 192.168.0.51 ajoutée avec succès\n";
+            return ['success' => true, 'output' => "IP 192.168.0.51 ajoutée sur $iface"];
         }
         
         if (!$result['success'] && !strpos($result['output'], 'File exists')) {
@@ -266,13 +266,13 @@ function configureProxmoxIP() {
     }
     
     // Si toutes les méthodes échouent, donner des instructions
-    echo "⚠️ Impossible d'ajouter automatiquement l'IP 192.168.0.50\n";
+    echo "⚠️ Impossible d'ajouter automatiquement l'IP 192.168.0.51\n";
     echo "📝 Instructions manuelles:\n";
     echo "1. Dans Proxmox Web UI > Container > Network\n";
-    echo "2. Ajouter une IP statique: 192.168.0.50/24\n";
-    echo "3. Ou dans le conteneur: ip addr add 192.168.0.50/24 dev $iface\n";
+    echo "2. Ajouter une IP statique: 192.168.0.51/24\n";
+    echo "3. Ou dans le conteneur: ip addr add 192.168.0.51/24 dev $iface\n";
     
-    return ['success' => false, 'output' => 'Configuration manuelle requise pour IP 192.168.0.50'];
+    return ['success' => false, 'output' => 'Configuration manuelle requise pour IP 192.168.0.51'];
 }
 
 
@@ -371,9 +371,9 @@ function testConnectivity() {
     echo "  - Port 80: " . (!empty($ports80['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
     echo "  - Port 8080: " . (!empty($ports8080['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
     
-    // Vérifier IP 192.168.0.50
-    $checkIP = execCommand('ip addr show | grep "192.168.0.50"');
-    echo "  - IP 192.168.0.50: " . (!empty($checkIP['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+    // Vérifier IP 192.168.0.51
+    $checkIP = execCommand('ip addr show | grep "192.168.0.51"');
+    echo "  - IP 192.168.0.51: " . (!empty($checkIP['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
     
     // Tests de connectivité
     echo "Tests HTTP:\n";
@@ -387,18 +387,18 @@ function testConnectivity() {
         echo "    Réponse: " . trim(explode("\n", $httpLocal['output'])[0]) . "\n";
     }
     
-    // Test 192.168.0.50 seulement si l'IP est configurée
+    // Test 192.168.0.51 seulement si l'IP est configurée
     if (!empty($checkIP['output'])) {
-        $httpIP = execCommand('curl -I -s http://192.168.0.50 --connect-timeout 3');
+        $httpIP = execCommand('curl -I -s http://192.168.0.51 --connect-timeout 3');
         $ipOK = strpos($httpIP['output'], '200 OK') !== false || strpos($httpIP['output'], '301') !== false;
-        echo "  - http://192.168.0.50: " . ($ipOK ? "✅ OK" : "❌ KO") . "\n";
+        echo "  - http://192.168.0.51: " . ($ipOK ? "✅ OK" : "❌ KO") . "\n";
         
         if (!$ipOK && !empty($httpIP['output'])) {
             echo "    Réponse: " . trim(explode("\n", $httpIP['output'])[0]) . "\n";
         }
     } else {
         $ipOK = false;
-        echo "  - http://192.168.0.50: ❌ IP NON CONFIGURÉE\n";
+        echo "  - http://192.168.0.51: ❌ IP NON CONFIGURÉE\n";
         echo "    💡 Configurer l\'IP dans Proxmox Web UI\n";
     }
     
@@ -412,8 +412,8 @@ function testConnectivity() {
         echo "\n🎉 Serveur accessible sur:\n";
         echo "   - http://localhost/ (local)\n";
         if (!empty($checkIP['output'])) {
-            echo "   - http://192.168.0.50/ (réseau)\n";
-            echo "   - http://192.168.0.50:8080/ (todo list)\n";
+            echo "   - http://192.168.0.51/ (réseau)\n";
+            echo "   - http://192.168.0.51:8080/ (todo list)\n";
         }
     }
     
