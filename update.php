@@ -314,4 +314,15 @@ if (!empty($warnings)) {
     }
 }
 
+// Affichage de l'IP du serveur
+$server_ip = $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? 'Non disponible';
+$server_name = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? gethostname();
+if ($server_name === '_' || empty($server_name)) {
+    $server_name = $server_ip;
+}
+
+echo "\n🌐 Informations serveur:\n";
+echo "   • IP du serveur: $server_ip\n";
+echo "   • Nom du serveur: $server_name\n";
+
 echo "\n";
