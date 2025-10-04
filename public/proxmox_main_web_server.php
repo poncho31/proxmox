@@ -233,17 +233,10 @@ $system = getSystemInfo();
         <div class="sites-section">
             <h2>🌐 Sites Disponibles</h2>
             <div class="sites-grid">
-                <!-- Hub principal -->
-                <a href="http://<?php echo $system['server_name']; ?>:80" class="site-card">
-                    <span class="site-icon">🏠</span>
-                    <div class="site-title">Hub Principal</div>
-                    <div class="site-port">Port 80</div>
-                </a>
-
                 <!-- Environnement PHP -->
                 <a href="http://<?php echo $system['server_name']; ?>:81" target="_blank" class="site-card php">
                     <span class="site-icon">🐘</span>
-                    <div class="site-title">PHP Dev</div>
+                    <div class="site-title">TODO List</div>
                     <div class="site-port">Port 81</div>
                 </a>
 
