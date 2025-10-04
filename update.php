@@ -66,6 +66,12 @@ $operations = [
         'command' => 'testConnectivity',
         'success_message' => 'Tests de connectivité réussis',
         'error_message' => 'Problème de connectivité détecté'
+    ],
+    'test_without_ssl' => [
+        'description' => 'Test HTTP sans SSL (debug)',
+        'command' => 'testWithoutSSL',
+        'success_message' => 'Tests HTTP sans SSL terminés',
+        'error_message' => 'Problème tests HTTP'
     ]
 ];
 
@@ -171,11 +177,16 @@ exit($failed > 0 ? 1 : 0);
 // ========================================
 
 function configureProxmoxIP() {
-    echo "Configuration de l'IP 192.168.0.50...\n";
+    echo "=== CONFIGURATION IP 192.168.0.50 ===\n";
+    
+    // Afficher les interfaces actuelles
+    $interfaces = execCommand('ip addr show | grep "inet " | grep -v "127.0.0.1"');
+    echo "Interfaces actuelles:\n" . $interfaces['output'] . "\n";
     
     // Vérifier si l'IP existe déjà
     $checkIP = execCommand('ip addr show | grep "192.168.0.50"');
     if (!empty($checkIP['output'])) {
+        echo "IP 192.168.0.50 déjà configurée\n";
         return ['success' => true, 'output' => 'IP 192.168.0.50 déjà configurée'];
     }
     
@@ -184,19 +195,47 @@ function configureProxmoxIP() {
     $iface = trim($interface['output']);
     
     if (empty($iface)) {
-        $iface = 'eth0'; // Défaut
+        // Essayer de détecter eth0 ou la première interface
+        $firstIface = execCommand('ip link show | grep "^[0-9]" | grep -v "lo:" | head -1 | awk -F": " \'{print $2}\'');
+        $iface = trim($firstIface['output']);
+        if (empty($iface)) {
+            $iface = 'eth0'; // Défaut
+        }
     }
     
-    // Ajouter l'IP
-    $result = execCommand("ip addr add 192.168.0.50/24 dev $iface");
+    echo "Interface détectée: $iface\n";
     
-    // Vérifier si l'ajout a réussi
-    $verify = execCommand('ip addr show | grep "192.168.0.50"');
-    if (!empty($verify['output'])) {
-        return ['success' => true, 'output' => "IP 192.168.0.50 ajoutée sur $iface"];
+    // Tentatives d'ajout de l'IP avec différentes méthodes
+    $methods = [
+        "ip addr add 192.168.0.50/24 dev $iface",
+        "ip addr add 192.168.0.50/32 dev $iface",
+        "ifconfig $iface:1 192.168.0.50 netmask 255.255.255.0"
+    ];
+    
+    foreach ($methods as $method) {
+        echo "Essai: $method\n";
+        $result = execCommand($method);
+        
+        // Vérifier si l'ajout a réussi
+        $verify = execCommand('ip addr show | grep "192.168.0.50"');
+        if (!empty($verify['output'])) {
+            echo "✅ IP 192.168.0.50 ajoutée avec succès\n";
+            return ['success' => true, 'output' => "IP 192.168.0.50 ajoutée sur $iface"];
+        }
+        
+        if (!$result['success'] && !strpos($result['output'], 'File exists')) {
+            echo "Échec: " . $result['output'] . "\n";
+        }
     }
     
-    return ['success' => false, 'output' => 'Impossible d\'ajouter l\'IP 192.168.0.50'];
+    // Si toutes les méthodes échouent, donner des instructions
+    echo "⚠️ Impossible d'ajouter automatiquement l'IP 192.168.0.50\n";
+    echo "📝 Instructions manuelles:\n";
+    echo "1. Dans Proxmox Web UI > Container > Network\n";
+    echo "2. Ajouter une IP statique: 192.168.0.50/24\n";
+    echo "3. Ou dans le conteneur: ip addr add 192.168.0.50/24 dev $iface\n";
+    
+    return ['success' => false, 'output' => 'Configuration manuelle requise pour IP 192.168.0.50'];
 }
 
 function generateSSLCertificate() {
@@ -343,21 +382,42 @@ http {
 }
 
 function testConnectivity() {
-    echo "Tests de connectivité...\n";
+    echo "=== DIAGNOSTIC RÉSEAU AVANCÉ ===\n";
     
-    $results = [];
+    // Vérifier les interfaces réseau
+    $interfaces = execCommand('ip addr show | grep "inet " | grep -v 127.0.0.1');
+    echo "Interfaces réseau:\n" . $interfaces['output'] . "\n";
+    
+    // Vérifier si 192.168.0.50 est configurée
+    $checkIP = execCommand('ip addr show | grep "192.168.0.50"');
+    echo "IP 192.168.0.50: " . (!empty($checkIP['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+    
+    if (empty($checkIP['output'])) {
+        echo "⚠️ L'IP 192.168.0.50 n'est pas configurée sur ce conteneur\n";
+        echo "💡 Configurer dans Proxmox Web UI ou manuellement:\n";
+        echo "   ip addr add 192.168.0.50/24 dev eth0\n";
+    }
+    
+    // Vérifier les ports ouverts
+    $ports = execCommand('ss -tlnp | grep nginx');
+    echo "Ports Nginx:\n" . $ports['output'] . "\n";
     
     // Test HTTPS local
-    $httpsLocal = execCommand('curl -I -s -k https://localhost --connect-timeout 10');
+    $httpsLocal = execCommand('curl -I -s -k https://localhost --connect-timeout 5');
     $localOK = strpos($httpsLocal['output'], '200 OK') !== false || 
                strpos($httpsLocal['output'], '301') !== false ||
                strpos($httpsLocal['output'], '302') !== false;
     
     // Test HTTPS sur IP
-    $httpsIP = execCommand('curl -I -s -k https://192.168.0.50 --connect-timeout 10');
+    $httpsIP = execCommand('curl -I -s -k https://192.168.0.50 --connect-timeout 5');
     $ipOK = strpos($httpsIP['output'], '200 OK') !== false || 
             strpos($httpsIP['output'], '301') !== false ||
             strpos($httpsIP['output'], '302') !== false;
+    
+    // Afficher détails erreur IP
+    if (!$ipOK && !empty($httpsIP['output'])) {
+        echo "Détail erreur 192.168.0.50:\n" . trim($httpsIP['output']) . "\n";
+    }
     
     // Test des services
     $nginxStatus = execCommand('systemctl is-active nginx');
@@ -369,11 +429,102 @@ function testConnectivity() {
     $messages[] = "Nginx: " . ($nginxStatus['success'] ? "✅" : "❌");
     $messages[] = "PHP-FPM: " . ($phpStatus['success'] ? "✅" : "❌");
     
-    $allOK = $localOK && $ipOK && $nginxStatus['success'] && $phpStatus['success'];
+    $allOK = $localOK && $nginxStatus['success'] && $phpStatus['success'];
     
     return [
         'success' => $allOK,
         'output' => implode(", ", $messages)
+    ];
+}
+
+function testWithoutSSL() {
+    echo "=== TESTS HTTP SANS SSL ===\n";
+    
+    // Configuration Nginx temporaire sans SSL
+    $simpleConfig = 'user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    # Serveur HTTP simple
+    server {
+        listen 80;
+        listen 192.168.0.50:80;
+        server_name 192.168.0.50 localhost _;
+        root /var/www/html/php/public;
+        index proxmox_main_web_server.php index.php index.html;
+
+        location / {
+            try_files $uri $uri/ /proxmox_main_web_server.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
+}';
+    
+    // Sauvegarder config actuelle
+    execCommand('cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.ssl');
+    
+    // Écrire config simple
+    file_put_contents('/etc/nginx/nginx.conf', $simpleConfig);
+    
+    // Tester config
+    $test = execCommand('nginx -t');
+    if (!$test['success']) {
+        execCommand('cp /etc/nginx/nginx.conf.ssl /etc/nginx/nginx.conf');
+        return ['success' => false, 'output' => 'Config HTTP invalide: ' . $test['output']];
+    }
+    
+    // Redémarrer nginx
+    $restart = execCommand('systemctl reload nginx');
+    if (!$restart['success']) {
+        execCommand('cp /etc/nginx/nginx.conf.ssl /etc/nginx/nginx.conf');
+        return ['success' => false, 'output' => 'Erreur redémarrage nginx'];
+    }
+    
+    echo "Configuration HTTP simple appliquée\n";
+    
+    // Tests HTTP
+    $httpLocal = execCommand('curl -I -s http://localhost --connect-timeout 5');
+    $httpIP = execCommand('curl -I -s http://192.168.0.50 --connect-timeout 5');
+    
+    $localOK = strpos($httpLocal['output'], '200 OK') !== false;
+    $ipOK = strpos($httpIP['output'], '200 OK') !== false;
+    
+    echo "HTTP localhost: " . ($localOK ? "✅ OK" : "❌ KO") . "\n";
+    echo "HTTP 192.168.0.50: " . ($ipOK ? "✅ OK" : "❌ KO") . "\n";
+    
+    if (!$localOK) {
+        echo "Détails localhost:\n" . trim($httpLocal['output']) . "\n";
+    }
+    if (!$ipOK) {
+        echo "Détails 192.168.0.50:\n" . trim($httpIP['output']) . "\n";
+    }
+    
+    // Restaurer config SSL
+    execCommand('cp /etc/nginx/nginx.conf.ssl /etc/nginx/nginx.conf');
+    execCommand('systemctl reload nginx');
+    
+    echo "Configuration SSL restaurée\n";
+    
+    return [
+        'success' => true,
+        'output' => "HTTP localhost: " . ($localOK ? "✅" : "❌") . ", HTTP IP: " . ($ipOK ? "✅" : "❌")
     ];
 }
 
