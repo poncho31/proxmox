@@ -28,6 +28,56 @@ function getPhpService() {
     return null;
 }
 
+// Détecter le socket PHP-FPM correct
+function getPhpSocket() {
+    $sockets = [
+        '/run/php/php8.2-fpm.sock',
+        '/run/php/php8.1-fpm.sock', 
+        '/run/php/php8.0-fpm.sock',
+        '/run/php/php7.4-fpm.sock',
+        '/run/php/php-fpm.sock',
+        '/var/run/php/php8.2-fpm.sock',
+        '/var/run/php/php8.1-fpm.sock',
+        '/var/run/php/php8.0-fpm.sock',
+        '/var/run/php/php7.4-fpm.sock',
+        '/var/run/php/php-fpm.sock'
+    ];
+    
+    foreach ($sockets as $socket) {
+        if (file_exists($socket)) {
+            return $socket;
+        }
+    }
+    
+    // Si aucun socket trouvé, essayer de détecter via la config PHP-FPM
+    $service = getPhpService();
+    if ($service) {
+        $version = str_replace(['php', '-fpm'], '', $service);
+        return "/run/php/php{$version}-fpm.sock";
+    }
+    
+    return '/run/php/php-fpm.sock'; // Défaut
+}
+
+// Adapter la configuration nginx pour le serveur actuel
+function adaptNginxConfig($configPath) {
+    if (!file_exists($configPath)) {
+        return false;
+    }
+    
+    $content = file_get_contents($configPath);
+    
+    // Remplacer le placeholder du socket PHP par le socket détecté
+    $phpSocket = getPhpSocket();
+    $content = str_replace('{{PHP_SOCKET}}', $phpSocket, $content);
+    
+    // Créer la version adaptée
+    $adaptedPath = '/tmp/nginx.conf.adapted';
+    file_put_contents($adaptedPath, $content);
+    
+    return $adaptedPath;
+}
+
 // Messages console avec couleurs
 function printStatus($message, $success = true) {
     $color = $success ? "\033[32m" : "\033[31m"; // Vert ou Rouge
@@ -69,6 +119,34 @@ $operations = [
         'custom_error' => function() {
             return getPhpService() === null ? 'Aucun service PHP-FPM détecté sur ce système' : null;
         }
+    ],
+    'nginx_config' => [
+        'description' => 'Adaptation de la configuration Nginx',
+        'command' => function() {
+            $configPath = '/var/www/html/php/config/nginx.conf';
+            $systemConfigPath = '/etc/nginx/nginx.conf';
+            
+            // Vérifier si le fichier de config existe
+            if (!file_exists($configPath)) {
+                return "echo 'Config nginx.conf introuvable dans $configPath'";
+            }
+            
+            // Adapter la configuration
+            $adaptedConfig = adaptNginxConfig($configPath);
+            if (!$adaptedConfig) {
+                return "echo 'Échec de l\'adaptation de la config nginx'";
+            }
+            
+            // Sauvegarder l'ancienne config et appliquer la nouvelle
+            $backupCmd = "cp $systemConfigPath $systemConfigPath.backup 2>/dev/null || true";
+            $copyCmd = "cp $adaptedConfig $systemConfigPath";
+            $testCmd = "nginx -t";
+            
+            return "$backupCmd && $copyCmd && $testCmd";
+        },
+        'icon' => '⚙️',
+        'success_message' => 'Configuration Nginx adaptée et validée',
+        'error_message' => 'Échec de l\'adaptation de la configuration Nginx'
     ],
     'nginx' => [
         'description' => 'Rechargement de la configuration Nginx',
