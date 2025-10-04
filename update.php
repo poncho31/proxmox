@@ -315,10 +315,40 @@ if (!empty($warnings)) {
 }
 
 // Affichage de l'IP du serveur
-$server_ip = $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? 'Non disponible';
+function getServerIP() {
+    // Essayer d'abord les variables serveur web
+    $ip = $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? null;
+    
+    if (!$ip || $ip === 'Non disponible') {
+        // Si on est en CLI, essayer de détecter l'IP via des commandes système
+        $commands = [
+            "hostname -I | awk '{print $1}'",  // Linux
+            "ip route get 8.8.8.8 | grep -oP 'src \K\S+'", // IP de sortie vers internet
+            "ip addr show | grep 'inet ' | grep -v '127.0.0.1' | head -1 | awk '{print $2}' | cut -d'/' -f1" // Première IP non-localhost
+        ];
+        
+        foreach ($commands as $command) {
+            $result = execCommand($command);
+            if ($result['success'] && !empty(trim($result['output']))) {
+                $detected_ip = trim($result['output']);
+                // Vérifier que c'est une IP valide
+                if (filter_var($detected_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) || 
+                    filter_var($detected_ip, FILTER_VALIDATE_IP)) {
+                    return $detected_ip;
+                }
+            }
+        }
+        
+        return 'Non détectée';
+    }
+    
+    return $ip;
+}
+
+$server_ip = getServerIP();
 $server_name = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? gethostname();
 if ($server_name === '_' || empty($server_name)) {
-    $server_name = $server_ip;
+    $server_name = gethostname();
 }
 
 echo "\n🌐 Informations serveur:\n";
