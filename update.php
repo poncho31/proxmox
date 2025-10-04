@@ -180,6 +180,20 @@ function initialSystemCheck() {
     $os = execCommand('cat /etc/os-release | grep PRETTY_NAME');
     echo "Système: " . trim(str_replace('PRETTY_NAME=', '', str_replace('"', '', $os['output']))) . "\n";
     
+    // Afficher TOUTES les IPs du serveur
+    $allIPs = execCommand('hostname -I');
+    echo "IPs du serveur: " . trim($allIPs['output']) . "\n";
+    
+    // Détecter l'IP principale dans le réseau 192.168.0.x
+    $mainIP = execCommand('hostname -I | tr " " "\n" | grep "^192.168.0\." | head -1');
+    $detectedIP = trim($mainIP['output']);
+    if (!empty($detectedIP)) {
+        echo "IP principale détectée: $detectedIP\n";
+        if ($detectedIP !== '192.168.0.51') {
+            echo "⚠️ ATTENTION: IP détectée ($detectedIP) ≠ IP configurée (192.168.0.51)\n";
+        }
+    }
+    
     // Vérifier les services
     $nginx = execCommand('systemctl is-active nginx');
     $php = execCommand('systemctl is-active php8.2-fpm');
@@ -194,6 +208,12 @@ function initialSystemCheck() {
         echo "Erreurs Nginx actuelles:\n" . $nginxTest['output'] . "\n";
     }
     
+    // Vérifier les logs d'erreur Nginx récents
+    $nginxErrors = execCommand('tail -5 /var/log/nginx/error.log 2>/dev/null');
+    if (!empty($nginxErrors['output'])) {
+        echo "Erreurs Nginx récentes:\n" . $nginxErrors['output'] . "\n";
+    }
+    
     // Vérifier les interfaces réseau
     $interfaces = execCommand('ip addr show | grep "inet " | grep -v "127.0.0.1"');
     echo "Interfaces réseau:\n" . trim($interfaces['output']) . "\n";
@@ -206,9 +226,22 @@ function initialSystemCheck() {
     $ports = execCommand('ss -tlnp | grep ":80\|:8080"');
     echo "Ports 80/8080 en écoute:\n" . ($ports['output'] ?: "Aucun port en écoute") . "\n";
     
+    // Vérifier les fichiers web critiques
+    $webDir = '/var/www/html/php/public';
+    $files = ['proxmox_main_web_server.php', 'index.php', 'todo_list.php'];
+    echo "Fichiers web dans $webDir:\n";
+    foreach ($files as $file) {
+        $exists = file_exists("$webDir/$file");
+        echo "  - $file: " . ($exists ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+    }
+    
     // Vérifier si le fichier de config existe
     $configFile = '/var/www/html/php/config/nginx.conf';
     echo "Fichier config nginx.conf: " . (file_exists($configFile) ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+    
+    // Vérifier les permissions du répertoire web
+    $webPerms = execCommand("ls -la $webDir");
+    echo "Permissions $webDir: " . ($webPerms['success'] ? "✅ ACCESSIBLE" : "❌ PROBLÈME") . "\n";
     
     return ['success' => true, 'output' => 'Diagnostic système effectué'];
 }
@@ -280,16 +313,44 @@ function configureProxmoxIP() {
 function configureNginx() {
     echo "=== CONFIGURATION NGINX HTTP ===\n";
     
+    // Détecter l'IP réelle du serveur
+    $serverIP = trim(execCommand('hostname -I | tr " " "\n" | grep "^192.168.0\." | head -1')['output']);
+    if (!empty($serverIP)) {
+        echo "IP serveur détectée: $serverIP\n";
+    }
+    
     // Localiser le fichier de config du projet
     $projectConfigPath = '/var/www/html/php/config/nginx.conf';
     $systemConfigPath = '/etc/nginx/nginx.conf';
     
     // Vérifier si le fichier de config du projet existe
     if (!file_exists($projectConfigPath)) {
-        return ['success' => false, 'output' => "Fichier config introuvable: $projectConfigPath"];
+        // Si pas trouvé, chercher dans le répertoire actuel
+        $currentDir = getcwd();
+        $alternativeConfig = "$currentDir/config/nginx.conf";
+        if (file_exists($alternativeConfig)) {
+            $projectConfigPath = $alternativeConfig;
+            echo "Config trouvée dans: $alternativeConfig\n";
+        } else {
+            return ['success' => false, 'output' => "Fichier config introuvable: $projectConfigPath"];
+        }
     }
     
     echo "Fichier config trouvé: ✅\n";
+    
+    // Vérifier le contenu de la config pour l'IP
+    $configContent = file_get_contents($projectConfigPath);
+    if (!empty($serverIP) && $serverIP !== '192.168.0.51' && strpos($configContent, '192.168.0.51') !== false) {
+        echo "⚠️ ATTENTION: Config utilise 192.168.0.51 mais serveur utilise $serverIP\n";
+        echo "💡 Adaptation automatique de la configuration...\n";
+        
+        // Créer une version adaptée temporairement
+        $adaptedConfig = str_replace('192.168.0.51', $serverIP, $configContent);
+        $tempConfigPath = '/tmp/nginx.conf.adapted';
+        file_put_contents($tempConfigPath, $adaptedConfig);
+        $projectConfigPath = $tempConfigPath;
+        echo "Config adaptée pour IP $serverIP: ✅\n";
+    }
     
     // Sauvegarder la config système actuelle
     $backup = execCommand("cp $systemConfigPath $systemConfigPath.backup");
@@ -321,37 +382,87 @@ function configureNginx() {
     if (!$checkDir['success']) {
         echo "Création répertoire web...\n";
         execCommand("mkdir -p $webDir");
-        
-        // Créer un fichier index simple pour test
-        $indexContent = '<?php
+    }
+    
+    // Créer/vérifier les fichiers web essentiels
+    $filesToCreate = [
+        'index.php' => '<?php
+$serverIP = $_SERVER["SERVER_ADDR"] ?? "N/A";
+$hostHeader = $_SERVER["HTTP_HOST"] ?? "N/A";
+$allIPs = shell_exec("hostname -I") ?: "N/A";
+
 echo "<h1>🚀 Serveur Proxmox HTTP</h1>";
-echo "<p>✅ Serveur fonctionnel sur: " . $_SERVER["HTTP_HOST"] . "</p>";
+echo "<p>✅ Serveur fonctionnel</p>";
+echo "<p>🌐 Host: " . htmlspecialchars($hostHeader) . "</p>";
+echo "<p>📍 IP Serveur: " . htmlspecialchars($serverIP) . "</p>";
+echo "<p>📋 Toutes les IPs: " . htmlspecialchars(trim($allIPs)) . "</p>";
 echo "<p>🕐 Heure: " . date("Y-m-d H:i:s") . "</p>";
 echo "<hr>";
-echo "<h3>📋 Informations PHP</h3>";
-phpinfo();
-?>';
-        file_put_contents("$webDir/index.php", $indexContent);
-        echo "Fichier index.php créé: ✅\n";
-        
-        // Créer un fichier pour proxmox_main_web_server.php s'il n'existe pas
-        if (!file_exists("$webDir/proxmox_main_web_server.php")) {
-            $mainContent = '<?php
+echo "<h3>� Fichiers disponibles</h3>";
+echo "<ul>";
+if (file_exists("proxmox_main_web_server.php")) echo "<li><a href=\"proxmox_main_web_server.php\">Serveur Principal</a></li>";
+if (file_exists("todo_list.php")) echo "<li><a href=\":8080/todo_list.php\">Todo List (port 8080)</a></li>";
+echo "<li><a href=\"?phpinfo=1\">PHPInfo</a></li>";
+echo "</ul>";
+if (isset($_GET["phpinfo"])) { echo "<hr>"; phpinfo(); }
+?>',
+        'proxmox_main_web_server.php' => '<?php
+$serverIP = $_SERVER["SERVER_ADDR"] ?? "N/A";
+$allIPs = shell_exec("hostname -I") ?: "N/A";
+
 echo "<h1>🌐 Proxmox Main Web Server</h1>";
-echo "<p>Serveur principal fonctionnel</p>";
-echo "<p>IP: " . $_SERVER["SERVER_ADDR"] . "</p>";
-echo "<p>Host: " . $_SERVER["HTTP_HOST"] . "</p>";
-?>';
-            file_put_contents("$webDir/proxmox_main_web_server.php", $mainContent);
-            echo "Fichier proxmox_main_web_server.php créé: ✅\n";
+echo "<p>✅ Serveur principal fonctionnel</p>";
+echo "<p>📍 IP: " . htmlspecialchars($serverIP) . "</p>";
+echo "<p>📋 Toutes les IPs: " . htmlspecialchars(trim($allIPs)) . "</p>";
+echo "<p>🌍 Host: " . htmlspecialchars($_SERVER["HTTP_HOST"] ?? "N/A") . "</p>";
+echo "<p>🕐 Heure: " . date("Y-m-d H:i:s") . "</p>";
+echo "<hr>";
+echo "<p><a href=\"index.php\">← Retour à l\'accueil</a></p>";
+?>',
+        'todo_list.php' => '<?php
+echo "<h1>📋 Todo List Proxmox</h1>";
+echo "<p>✅ Todo List fonctionnelle sur port 8080</p>";
+echo "<p>📍 IP: " . ($_SERVER["SERVER_ADDR"] ?? "N/A") . "</p>";
+echo "<p>🕐 Heure: " . date("Y-m-d H:i:s") . "</p>";
+echo "<hr>";
+echo "<h3>📝 Tâches exemple</h3>";
+echo "<ul>";
+echo "<li>✅ Configuration serveur web</li>";
+echo "<li>✅ Installation PHP/Nginx</li>";
+echo "<li>⏳ Tests de connectivité</li>";
+echo "</ul>";
+echo "<hr>";
+echo "<p><a href=\":80/\">← Retour au serveur principal</a></p>";
+?>'
+    ];
+    
+    foreach ($filesToCreate as $filename => $content) {
+        $filePath = "$webDir/$filename";
+        if (!file_exists($filePath)) {
+            file_put_contents($filePath, $content);
+            echo "Fichier $filename créé: ✅\n";
+        } else {
+            echo "Fichier $filename existe: ✅\n";
         }
     }
     
-    return ['success' => true, 'output' => 'Configuration Nginx HTTP appliquée depuis config/nginx.conf'];
+    // Vérifier les permissions
+    execCommand("chown -R www-data:www-data $webDir");
+    execCommand("chmod -R 755 $webDir");
+    
+    return ['success' => true, 'output' => "Configuration Nginx HTTP appliquée (IP: $serverIP)"];
 }
 
 function testConnectivity() {
     echo "=== TESTS DE CONNECTIVITÉ FINAUX ===\n";
+    
+    // Détecter l'IP réelle du serveur
+    $allServerIPs = trim(execCommand('hostname -I')['output']);
+    $mainServerIP = trim(execCommand('hostname -I | tr " " "\n" | grep "^192.168.0\." | head -1')['output']);
+    echo "🌐 Toutes les IPs serveur: $allServerIPs\n";
+    if (!empty($mainServerIP)) {
+        echo "📍 IP principale détectée: $mainServerIP\n";
+    }
     
     // Vérifier l'état des services
     $nginxStatus = execCommand('systemctl is-active nginx');
@@ -364,6 +475,10 @@ function testConnectivity() {
     $nginxTest = execCommand('nginx -t');
     echo "  - Config Nginx: " . ($nginxTest['success'] ? "✅ VALIDE" : "❌ ERREURS") . "\n";
     
+    if (!$nginxTest['success']) {
+        echo "    Erreurs: " . trim($nginxTest['output']) . "\n";
+    }
+    
     // Vérifier les ports en écoute
     $ports80 = execCommand('ss -tlnp | grep ":80 "');
     $ports8080 = execCommand('ss -tlnp | grep ":8080 "');
@@ -371,9 +486,24 @@ function testConnectivity() {
     echo "  - Port 80: " . (!empty($ports80['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
     echo "  - Port 8080: " . (!empty($ports8080['output']) ? "✅ OUVERT" : "❌ FERMÉ") . "\n";
     
-    // Vérifier IP 192.168.0.51
-    $checkIP = execCommand('ip addr show | grep "192.168.0.51"');
-    echo "  - IP 192.168.0.51: " . (!empty($checkIP['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+    // Afficher quels processus écoutent
+    if (!empty($ports80['output'])) {
+        echo "    Port 80: " . trim(explode("\n", $ports80['output'])[0]) . "\n";
+    }
+    if (!empty($ports8080['output'])) {
+        echo "    Port 8080: " . trim(explode("\n", $ports8080['output'])[0]) . "\n";
+    }
+    
+    // Vérifier si l'IP est configurée (soit 192.168.0.51 soit l'IP détectée)
+    $checkIP51 = execCommand('ip addr show | grep "192.168.0.51"');
+    $checkMainIP = !empty($mainServerIP) ? execCommand("ip addr show | grep \"$mainServerIP\"") : ['output' => ''];
+    
+    echo "Configuration IP:\n";
+    echo "  - IP 192.168.0.51: " . (!empty($checkIP51['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+    
+    if (!empty($mainServerIP) && $mainServerIP !== '192.168.0.51') {
+        echo "  - IP $mainServerIP: " . (!empty($checkMainIP['output']) ? "✅ CONFIGURÉE" : "❌ NON CONFIGURÉE") . "\n";
+    }
     
     // Tests de connectivité
     echo "Tests HTTP:\n";
@@ -384,44 +514,79 @@ function testConnectivity() {
     echo "  - http://localhost: " . ($localOK ? "✅ OK" : "❌ KO") . "\n";
     
     if (!$localOK && !empty($httpLocal['output'])) {
-        echo "    Réponse: " . trim(explode("\n", $httpLocal['output'])[0]) . "\n";
+        $firstLine = trim(explode("\n", $httpLocal['output'])[0]);
+        echo "    Réponse: $firstLine\n";
     }
     
-    // Test 192.168.0.51 seulement si l'IP est configurée
-    if (!empty($checkIP['output'])) {
-        $httpIP = execCommand('curl -I -s http://192.168.0.51 --connect-timeout 3');
+    // Test de l'IP détectée si différente de 192.168.0.51
+    $ipOK = false;
+    if (!empty($mainServerIP)) {
+        $httpIP = execCommand("curl -I -s http://$mainServerIP --connect-timeout 3");
         $ipOK = strpos($httpIP['output'], '200 OK') !== false || strpos($httpIP['output'], '301') !== false;
-        echo "  - http://192.168.0.51: " . ($ipOK ? "✅ OK" : "❌ KO") . "\n";
+        echo "  - http://$mainServerIP: " . ($ipOK ? "✅ OK" : "❌ KO") . "\n";
         
         if (!$ipOK && !empty($httpIP['output'])) {
-            echo "    Réponse: " . trim(explode("\n", $httpIP['output'])[0]) . "\n";
+            $firstLine = trim(explode("\n", $httpIP['output'])[0]);
+            echo "    Réponse: $firstLine\n";
         }
-    } else {
-        $ipOK = false;
-        echo "  - http://192.168.0.51: ❌ IP NON CONFIGURÉE\n";
-        echo "    💡 Configurer l\'IP dans Proxmox Web UI\n";
     }
     
-    // Test du fichier index
-    $indexTest = file_exists('/var/www/html/php/public/index.php');
-    echo "  - Fichier index.php: " . ($indexTest ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+    // Test 192.168.0.51 seulement si différente de l'IP détectée
+    if (!empty($checkIP51['output']) && $mainServerIP !== '192.168.0.51') {
+        $http51 = execCommand('curl -I -s http://192.168.0.51 --connect-timeout 3');
+        $ok51 = strpos($http51['output'], '200 OK') !== false || strpos($http51['output'], '301') !== false;
+        echo "  - http://192.168.0.51: " . ($ok51 ? "✅ OK" : "❌ KO") . "\n";
+        
+        if (!$ok51 && !empty($http51['output'])) {
+            $firstLine = trim(explode("\n", $http51['output'])[0]);
+            echo "    Réponse: $firstLine\n";
+        }
+        $ipOK = $ipOK || $ok51;
+    }
     
-    $allOK = $nginxStatus['success'] && $phpStatus['success'] && $localOK;
+    // Vérifier les fichiers web essentiels
+    $webDir = '/var/www/html/php/public';
+    $files = ['index.php', 'proxmox_main_web_server.php', 'todo_list.php'];
+    echo "Fichiers web:\n";
+    foreach ($files as $file) {
+        $exists = file_exists("$webDir/$file");
+        echo "  - $file: " . ($exists ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
+    }
     
-    if ($allOK && !empty($checkIP['output'])) {
+    // Vérifier les logs d'erreur récents
+    $recentErrors = execCommand('tail -3 /var/log/nginx/error.log 2>/dev/null | grep -v "notice"');
+    if (!empty($recentErrors['output'])) {
+        echo "⚠️ Erreurs Nginx récentes:\n";
+        $lines = explode("\n", trim($recentErrors['output']));
+        foreach ($lines as $line) {
+            if (!empty(trim($line))) {
+                echo "    " . trim($line) . "\n";
+            }
+        }
+    }
+    
+    $allOK = $nginxStatus['success'] && $phpStatus['success'] && ($localOK || $ipOK);
+    
+    if ($allOK) {
         echo "\n🎉 Serveur accessible sur:\n";
         echo "   - http://localhost/ (local)\n";
-        if (!empty($checkIP['output'])) {
-            echo "   - http://192.168.0.51/ (réseau)\n";
+        if (!empty($mainServerIP)) {
+            echo "   - http://$mainServerIP/ (réseau)\n";
+            echo "   - http://$mainServerIP:8080/ (todo list)\n";
+        }
+        if (!empty($checkIP51['output']) && $mainServerIP !== '192.168.0.51') {
+            echo "   - http://192.168.0.51/ (IP configurée)\n";
             echo "   - http://192.168.0.51:8080/ (todo list)\n";
         }
+    } else {
+        echo "\n⚠️ Problèmes détectés - vérifiez la configuration\n";
     }
     
     return [
         'success' => $allOK,
         'output' => "Services: " . ($nginxStatus['success'] && $phpStatus['success'] ? "✅" : "❌") . 
-                   ", HTTP local: " . ($localOK ? "✅" : "❌") . 
-                   ", HTTP IP: " . ($ipOK ? "✅" : "❌")
+                   ", HTTP: " . (($localOK || $ipOK) ? "✅" : "❌") . 
+                   ", IP: " . (!empty($mainServerIP) ? $mainServerIP : "aucune")
     ];
 }
 
