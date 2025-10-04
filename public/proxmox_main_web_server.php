@@ -1,4 +1,81 @@
 <?php
+// Fonction pour tester MySQL et récupérer des informations
+function getMySQLInfo() {
+    $info = [
+        'status' => 'Déconnecté',
+        'version' => 'N/A',
+        'uptime' => 'N/A',
+        'connections' => 'N/A',
+        'databases' => 'N/A',
+        'tables' => 'N/A',
+        'error' => null
+    ];
+    
+    try {
+        // Inclure la classe Env pour récupérer la config DB
+        if (file_exists(__DIR__ . '/../src/env.php')) {
+            require_once __DIR__ . '/../src/env.php';
+            
+            // Charger les variables d'environnement
+            Env::load();
+            $config = Env::getDatabaseConfig();
+            
+            $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
+            $pdo = new PDO($dsn, $config['username'], $config['password'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT => 5
+            ]);
+            
+            $info['status'] = 'Connecté';
+            
+            // Version MySQL
+            $stmt = $pdo->query("SELECT VERSION() as version");
+            $result = $stmt->fetch();
+            $info['version'] = $result['version'] ?? 'N/A';
+            
+            // Uptime du serveur
+            $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Uptime'");
+            $result = $stmt->fetch();
+            if ($result) {
+                $uptime = intval($result['Value']);
+                $days = floor($uptime / 86400);
+                $hours = floor(($uptime % 86400) / 3600);
+                $minutes = floor(($uptime % 3600) / 60);
+                $info['uptime'] = "{$days}j {$hours}h {$minutes}m";
+            }
+            
+            // Nombre de connexions
+            $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Threads_connected'");
+            $result = $stmt->fetch();
+            $info['connections'] = $result['Value'] ?? 'N/A';
+            
+            // Nombre de bases de données
+            $stmt = $pdo->query("SHOW DATABASES");
+            $databases = $stmt->fetchAll();
+            $info['databases'] = count($databases);
+            
+            // Nombre de tables dans la base actuelle (si elle existe)
+            try {
+                $pdo->exec("USE " . $config['dbname']);
+                $stmt = $pdo->query("SHOW TABLES");
+                $tables = $stmt->fetchAll();
+                $info['tables'] = count($tables);
+            } catch (Exception $e) {
+                $info['tables'] = 'DB non trouvée';
+            }
+            
+        } else {
+            $info['error'] = 'Fichier env.php non trouvé';
+        }
+        
+    } catch (Exception $e) {
+        $info['status'] = 'Erreur';
+        $info['error'] = $e->getMessage();
+    }
+    
+    return $info;
+}
+
 // Récupération des informations système
 function getSystemInfo() {
     $info = [];
@@ -38,6 +115,7 @@ function getSystemInfo() {
 }
 
 $system = getSystemInfo();
+$mysql = getMySQLInfo();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -307,7 +385,43 @@ $system = getSystemInfo();
             </div>
 
             <div class="info-card">
-                <h3>🛠️ Outils</h3>
+                <h3>�️ MySQL</h3>
+                <div class="info-item">
+                    <span class="info-label">📡 Statut</span>
+                    <span class="info-value <?php echo $mysql['status'] === 'Connecté' ? 'status-online' : ($mysql['status'] === 'Erreur' ? 'status-warning' : ''); ?>">
+                        <?php echo $mysql['status']; ?>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🏷️ Version</span>
+                    <span class="info-value"><?php echo $mysql['version']; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">⏱️ Uptime</span>
+                    <span class="info-value"><?php echo $mysql['uptime']; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🔗 Connexions</span>
+                    <span class="info-value"><?php echo $mysql['connections']; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🗃️ Bases</span>
+                    <span class="info-value"><?php echo $mysql['databases']; ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📋 Tables</span>
+                    <span class="info-value"><?php echo $mysql['tables']; ?></span>
+                </div>
+                <?php if ($mysql['error']): ?>
+                <div class="info-item">
+                    <span class="info-label">⚠️ Erreur</span>
+                    <span class="info-value status-warning" style="font-size: 0.8rem;"><?php echo substr($mysql['error'], 0, 50) . '...'; ?></span>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="info-card">
+                <h3>�🛠️ Outils</h3>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <a href="index2.php" style="color: #3498db; text-decoration: none; padding: 8px; border: 1px solid #3498db; border-radius: 5px; text-align: center;">📄 Page Test</a>
                     <a href="update.php" style="color: #27ae60; text-decoration: none; padding: 8px; border: 1px solid #27ae60; border-radius: 5px; text-align: center;">🔄 Mise à jour</a>
