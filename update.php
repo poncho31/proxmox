@@ -28,7 +28,7 @@ $operations = [
     'install_dependencies' => [
         'description' => 'Installation des dépendances requises',
         'command' => 'apt install -y nginx php8.2-fpm php8.2-common php8.2-mysql php8.2-xml php8.2-xmlrpc php8.2-curl php8.2-gd php8.2-imagick php8.2-cli php8.2-dev php8.2-imap php8.2-mbstring php8.2-opcache php8.2-soap php8.2-zip openssl curl',
-        'success_message' => 'Dépendances installées avec succès',
+        'success_message' => 'Dépendances Nginx/PHP installées avec succès',
         'error_message' => 'Erreur lors de l\'installation des dépendances'
     ],
     'configure_ip' => [
@@ -161,6 +161,7 @@ if ($failed === 0) {
     echo "\n💡 Commandes utiles:\n";
     echo "   - systemctl status nginx php8.2-fpm\n";
     echo "   - curl http://192.168.0.50/\n";
+    echo "   - nginx -t (test config)\n";
 } else {
     printStatus("⚠️ MISE À JOUR PARTIELLEMENT RÉUSSIE", false);
     echo "\n🔧 Vérifiez les erreurs et relancez si nécessaire\n";
@@ -204,6 +205,10 @@ function initialSystemCheck() {
     // Vérifier les ports en écoute
     $ports = execCommand('ss -tlnp | grep ":80\|:8080"');
     echo "Ports 80/8080 en écoute:\n" . ($ports['output'] ?: "Aucun port en écoute") . "\n";
+    
+    // Vérifier si le fichier de config existe
+    $configFile = '/var/www/html/php/config/nginx.conf';
+    echo "Fichier config nginx.conf: " . (file_exists($configFile) ? "✅ EXISTE" : "❌ MANQUANT") . "\n";
     
     return ['success' => true, 'output' => 'Diagnostic système effectué'];
 }
