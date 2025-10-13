@@ -1,0 +1,20 @@
+:80 {
+        root * /var/www/html/php/public
+        php_fastcgi unix//run/php/php8.2-fpm.sock
+        file_server
+        try_files {path} proxmox_main_web_server.php index.php index.html
+}
+
+:81 {
+        root * /var/www/html/php/public
+        php_fastcgi unix//run/php/php8.2-fpm.sock
+        file_server
+        try_files {path} todo_list.php index.php index.html
+}
+
+:82 {
+        root * /var/www/html/rust
+        file_server
+        try_files {path} /index.html
+}
+
