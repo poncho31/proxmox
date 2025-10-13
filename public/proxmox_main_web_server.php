@@ -436,7 +436,7 @@ $mysql = getMySQLInfo();
             </div>
 
             <div class="info-card">
-                <h3>�️ MySQL</h3>
+                <h3>MySQL</h3>
                 <div class="info-item">
                     <span class="info-label">📡 Statut</span>
                     <span class="info-value <?php echo $mysql['status'] === 'Connecté' ? 'status-online' : ($mysql['status'] === 'Erreur' ? 'status-warning' : ''); ?>">
@@ -466,7 +466,7 @@ $mysql = getMySQLInfo();
                 <?php if ($mysql['error']): ?>
                 <div class="info-item">
                     <span class="info-label">⚠️ Erreur</span>
-                    <span class="info-value status-warning" style="font-size: 0.8rem;"><?php echo substr($mysql['error'], 0, 50) . '...'; ?></span>
+                    <span class="info-value status-warning" style="font-size: 0.8rem; word-break: break-all;"><?php echo htmlspecialchars($mysql['error']); ?></span>
                 </div>
                 <?php endif; ?>
             </div>
