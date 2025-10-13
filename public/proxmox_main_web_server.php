@@ -12,9 +12,25 @@ function getMySQLInfo() {
     ];
     
     try {
+        // Essayer plusieurs chemins possibles pour env.php
+        $possiblePaths = [
+            __DIR__ . '/../src/env.php',
+            __DIR__ . '/src/env.php',
+            dirname(__DIR__) . '/src/env.php',
+            realpath(__DIR__ . '/../src/env.php')
+        ];
+        
+        $envPath = null;
+        foreach ($possiblePaths as $path) {
+            if ($path && file_exists($path)) {
+                $envPath = $path;
+                break;
+            }
+        }
+        
         // Inclure la classe Env pour récupérer la config DB
-        if (file_exists(__DIR__ . '/../src/env.php')) {
-            require_once __DIR__ . '/../src/env.php';
+        if ($envPath) {
+            require_once $envPath;
             
             // Charger les variables d'environnement
             Env::load();
@@ -65,7 +81,11 @@ function getMySQLInfo() {
             }
             
         } else {
-            $info['error'] = 'Fichier env.php non trouvé';
+            $debugPaths = [];
+            foreach ($possiblePaths as $i => $path) {
+                $debugPaths[] = "Path $i: " . ($path ?: 'null') . ' (exists: ' . ($path && file_exists($path) ? 'yes' : 'no') . ')';
+            }
+            $info['error'] = 'Fichier env.php non trouvé dans aucun des chemins testés: ' . implode(', ', $debugPaths);
         }
         
     } catch (Exception $e) {

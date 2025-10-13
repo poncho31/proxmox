@@ -15,7 +15,23 @@ class Env
         }
 
         if ($envPath === null) {
-            $envPath = __DIR__ . '/../.env';
+            // Essayer plusieurs chemins possibles pour le fichier .env
+            $possibleEnvPaths = [
+                __DIR__ . '/../.env',
+                dirname(__DIR__) . '/.env',
+                realpath(__DIR__ . '/../.env')
+            ];
+            
+            foreach ($possibleEnvPaths as $path) {
+                if ($path && file_exists($path)) {
+                    $envPath = $path;
+                    break;
+                }
+            }
+            
+            if (!$envPath) {
+                $envPath = __DIR__ . '/../.env'; // Fallback au chemin par défaut
+            }
         }
 
         if (!file_exists($envPath)) {
