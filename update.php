@@ -59,8 +59,8 @@ function getPhpSocket() {
     return '/run/php/php-fpm.sock'; // Défaut
 }
 
-// Adapter la configuration nginx pour le serveur actuel
-function adaptNginxConfig($configPath) {
+// Adapter la configuration Caddy pour le serveur actuel
+function adaptCaddyConfig($configPath) {
     if (!file_exists($configPath)) {
         return false;
     }
@@ -72,7 +72,7 @@ function adaptNginxConfig($configPath) {
     $content = str_replace('{{PHP_SOCKET}}', $phpSocket, $content);
     
     // Créer la version adaptée
-    $adaptedPath = '/tmp/nginx.conf.adapted';
+    $adaptedPath = '/tmp/Caddyfile.adapted';
     file_put_contents($adaptedPath, $content);
     
     return $adaptedPath;
@@ -93,7 +93,7 @@ function printInfo($message) {
 $operations = [
     'git_reset' => [
         'description' => 'Réinitialisation des fichiers modifiés',
-        'command' => 'cd /var/www/html/php && git reset --hard',
+        'command' => 'cd /var/www/proxmox/git_app && git reset --hard',
         'icon' => '🔄',
         'success_message' => 'Fichiers locaux réinitialisés',
         'error_message' => 'Échec de la réinitialisation Git',
@@ -101,7 +101,7 @@ $operations = [
     ],
     'git' => [
         'description' => 'Mise à jour du code depuis Git',
-        'command' => 'cd /var/www/html/php && git pull origin main',
+        'command' => 'cd /var/www/proxmox/git_app && git pull origin main',
         'icon' => '📥',
         'success_message' => 'Code mis à jour depuis le dépôt Git',
         'error_message' => 'Échec de la mise à jour Git',
@@ -120,44 +120,44 @@ $operations = [
             return getPhpService() === null ? 'Aucun service PHP-FPM détecté sur ce système' : null;
         }
     ],
-    'nginx_config' => [
-        'description' => 'Adaptation de la configuration Nginx',
+    'caddy_config' => [
+        'description' => 'Adaptation de la configuration Caddy',
         'command' => function() {
-            $configPath = '/var/www/html/php/config/nginx.conf';
-            $systemConfigPath = '/etc/nginx/nginx.conf';
+            $configPath = '/var/www/proxmox/git_app/config/Caddyfile';
+            $systemConfigPath = '/etc/caddy/Caddyfile';
             
             // Vérifier si le fichier de config existe
             if (!file_exists($configPath)) {
-                return "echo 'Config nginx.conf introuvable dans $configPath'";
+                return "echo 'Config Caddyfile introuvable dans $configPath'";
             }
             
             // Adapter la configuration
-            $adaptedConfig = adaptNginxConfig($configPath);
+            $adaptedConfig = adaptCaddyConfig($configPath);
             if (!$adaptedConfig) {
-                return "echo 'Échec de l\'adaptation de la config nginx'";
+                return "echo 'Échec de l\'adaptation de la config Caddy'";
             }
             
             // Sauvegarder l'ancienne config et appliquer la nouvelle
             $backupCmd = "cp $systemConfigPath $systemConfigPath.backup 2>/dev/null || true";
             $copyCmd = "cp $adaptedConfig $systemConfigPath";
-            $testCmd = "nginx -t";
+            $testCmd = "caddy validate --config $systemConfigPath";
             
             return "$backupCmd && $copyCmd && $testCmd";
         },
         'icon' => '⚙️',
-        'success_message' => 'Configuration Nginx adaptée et validée',
-        'error_message' => 'Échec de l\'adaptation de la configuration Nginx'
+        'success_message' => 'Configuration Caddy adaptée et validée',
+        'error_message' => 'Échec de l\'adaptation de la configuration Caddy'
     ],
-    'nginx' => [
-        'description' => 'Rechargement de la configuration Nginx',
-        'command' => 'systemctl reload nginx',
+    'caddy' => [
+        'description' => 'Rechargement de la configuration Caddy',
+        'command' => 'systemctl reload caddy',
         'icon' => '🌐',
-        'success_message' => 'Configuration Nginx rechargée',
-        'error_message' => 'Échec du rechargement de Nginx'
+        'success_message' => 'Configuration Caddy rechargée',
+        'error_message' => 'Échec du rechargement de Caddy'
     ],
     'permissions' => [
         'description' => 'Mise à jour des permissions des fichiers',
-        'command' => 'chown -R www-data:www-data /var/www/html/php && chmod -R 755 /var/www/html/php',
+        'command' => 'chown -R www-data:www-data /var/www/proxmox/git_app && chmod -R 755 /var/www/proxmox/git_app',
         'icon' => '🔐',
         'success_message' => 'Permissions des fichiers mises à jour',
         'error_message' => 'Échec de la mise à jour des permissions'
