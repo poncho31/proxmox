@@ -17,9 +17,10 @@ class Env
         if ($envPath === null) {
             // Essayer plusieurs chemins possibles pour le fichier .env
             $possibleEnvPaths = [
-                __DIR__ . '/../.env',
-                dirname(__DIR__) . '/.env',
-                realpath(__DIR__ . '/../.env')
+                __DIR__ . '/../.env',              // Chemin relatif standard
+                '/var/www/html/php/.env',          // Chemin absolu pour Caddy
+                dirname(__DIR__) . '/.env',        // Alternative avec dirname
+                realpath(__DIR__ . '/../.env')     // Chemin résolu
             ];
             
             foreach ($possibleEnvPaths as $path) {

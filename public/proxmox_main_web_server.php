@@ -14,10 +14,11 @@ function getMySQLInfo() {
     try {
         // Essayer plusieurs chemins possibles pour env.php
         $possiblePaths = [
-            __DIR__ . '/../src/env.php',
-            __DIR__ . '/src/env.php',
-            dirname(__DIR__) . '/src/env.php',
-            realpath(__DIR__ . '/../src/env.php')
+            __DIR__ . '/../src/env.php',           // Chemin relatif standard
+            '/var/www/html/php/src/env.php',       // Chemin absolu pour Caddy
+            dirname(__DIR__) . '/src/env.php',     // Alternative avec dirname
+            realpath(__DIR__ . '/../src/env.php'), // Chemin résolu
+            __DIR__ . '/src/env.php'               // Au cas où src serait dans public
         ];
         
         $envPath = null;
@@ -30,7 +31,17 @@ function getMySQLInfo() {
         
         // Inclure la classe Env pour récupérer la config DB
         if ($envPath) {
+            // Vérifier si le fichier est lisible
+            if (!is_readable($envPath)) {
+                throw new Exception("Fichier env.php trouvé mais non lisible: $envPath");
+            }
+            
             require_once $envPath;
+            
+            // Vérifier si la classe existe après l'inclusion
+            if (!class_exists('Env')) {
+                throw new Exception("Classe Env non trouvée après inclusion de: $envPath");
+            }
             
             // Charger les variables d'environnement
             Env::load();
