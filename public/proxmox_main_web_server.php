@@ -12,40 +12,45 @@ function getMySQLInfo() {
     ];
     
     try {
-        // Essayer plusieurs chemins possibles pour env.php
-        $possiblePaths = [
-            __DIR__ . '/../src/env.php',           // Chemin relatif standard
-            '/var/www/html/php/src/env.php',       // Chemin absolu pour Caddy
-            dirname(__DIR__) . '/src/env.php',     // Alternative avec dirname
-            realpath(__DIR__ . '/../src/env.php'), // Chemin résolu
-            __DIR__ . '/src/env.php'               // Au cas où src serait dans public
+        // Lire directement le fichier .env
+        $envPaths = [
+            __DIR__ . '/../.env',
+            '/var/www/proxmox/git_app/.env',
+            dirname(__DIR__) . '/.env'
         ];
         
-        $envPath = null;
-        foreach ($possiblePaths as $path) {
-            if ($path && file_exists($path)) {
-                $envPath = $path;
+        $envContent = null;
+        foreach ($envPaths as $envPath) {
+            if (file_exists($envPath) && is_readable($envPath)) {
+                $envContent = file_get_contents($envPath);
                 break;
             }
         }
         
-        // Inclure la classe Env pour récupérer la config DB
-        if ($envPath) {
-            // Vérifier si le fichier est lisible
-            if (!is_readable($envPath)) {
-                throw new Exception("Fichier env.php trouvé mais non lisible: $envPath");
+        if (!$envContent) {
+            throw new Exception("Fichier .env non trouvé dans les chemins: " . implode(', ', $envPaths));
+        }
+        
+        // Parser DATABASE_URL depuis le contenu .env
+        if (preg_match('/DATABASE_URL=(.+)/', $envContent, $matches)) {
+            $databaseUrl = trim($matches[1]);
+            
+            // Parser l'URL de base de données
+            $parsed = parse_url($databaseUrl);
+            if (!$parsed) {
+                throw new Exception("Format DATABASE_URL invalide: $databaseUrl");
             }
             
-            require_once $envPath;
-            
-            // Vérifier si la classe existe après l'inclusion
-            if (!class_exists('Env')) {
-                throw new Exception("Classe Env non trouvée après inclusion de: $envPath");
-            }
-            
-            // Charger les variables d'environnement
-            Env::load();
-            $config = Env::getDatabaseConfig();
+            $config = [
+                'host' => $parsed['host'] ?? 'localhost',
+                'port' => $parsed['port'] ?? 3306,
+                'dbname' => ltrim($parsed['path'] ?? '', '/'),
+                'username' => $parsed['user'] ?? '',
+                'password' => $parsed['pass'] ?? ''
+            ];
+        } else {
+            throw new Exception("DATABASE_URL non trouvée dans le fichier .env");
+        }
             
             $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
             $pdo = new PDO($dsn, $config['username'], $config['password'], [
@@ -90,14 +95,6 @@ function getMySQLInfo() {
             } catch (Exception $e) {
                 $info['tables'] = 'DB non trouvée';
             }
-            
-        } else {
-            $debugPaths = [];
-            foreach ($possiblePaths as $i => $path) {
-                $debugPaths[] = "Path $i: " . ($path ?: 'null') . ' (exists: ' . ($path && file_exists($path) ? 'yes' : 'no') . ')';
-            }
-            $info['error'] = 'Fichier env.php non trouvé dans aucun des chemins testés: ' . implode(', ', $debugPaths);
-        }
         
     } catch (Exception $e) {
         $info['status'] = 'Erreur';
