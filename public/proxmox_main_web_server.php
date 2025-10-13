@@ -51,12 +51,34 @@ function getMySQLInfo() {
         } else {
             throw new Exception("DATABASE_URL non trouvée dans le fichier .env");
         }
+        
+        // Tests de connectivité avant la connexion PDO
+        $host = $config['host'];
+        $port = $config['port'];
+        
+        // Test 1: Ping du serveur MySQL
+        $pingResult = exec("ping -c 1 -W 1 $host 2>/dev/null", $pingOutput, $pingCode);
+        $pingSuccess = $pingCode === 0;
+        
+        // Test 2: Test de port avec telnet/nc
+        $portResult = exec("timeout 3 bash -c \"echo > /dev/tcp/$host/$port\" 2>/dev/null", $portOutput, $portCode);
+        $portOpen = $portCode === 0;
+        
+        // Si les tests de base échouent, donner plus d'infos
+        if (!$pingSuccess || !$portOpen) {
+            $diagnostics = [
+                "Host: $host:$port",
+                "Ping: " . ($pingSuccess ? "✓" : "✗ (Host unreachable)"),
+                "Port: " . ($portOpen ? "✓" : "✗ (Port closed/filtered)")
+            ];
+            throw new Exception("Connectivité MySQL échouée - " . implode(", ", $diagnostics));
+        }
             
-            $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
-            $pdo = new PDO($dsn, $config['username'], $config['password'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_TIMEOUT => 5
-            ]);
+        $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
+        $pdo = new PDO($dsn, $config['username'], $config['password'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_TIMEOUT => 5
+        ]);
             
             $info['status'] = 'Connecté';
             
