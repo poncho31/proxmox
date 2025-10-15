@@ -508,6 +508,7 @@ $mysql = getMySQLInfo();
             <div class="info-card">
                 <h3>�🛠️ Outils</h3>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="info_server.php" style="color: #9b59b6; text-decoration: none; padding: 8px; border: 1px solid #9b59b6; border-radius: 5px; text-align: center;">📊 Monitoring Système</a>
                     <a href="index2.php" style="color: #3498db; text-decoration: none; padding: 8px; border: 1px solid #3498db; border-radius: 5px; text-align: center;">📄 Page Test</a>
                     <a href="update.php" style="color: #27ae60; text-decoration: none; padding: 8px; border: 1px solid #27ae60; border-radius: 5px; text-align: center;">🔄 Mise à jour</a>
                     <button onclick="location.reload()" style="color: #e74c3c; background: none; border: 1px solid #e74c3c; padding: 8px; border-radius: 5px; cursor: pointer;">🔄 Actualiser</button>
