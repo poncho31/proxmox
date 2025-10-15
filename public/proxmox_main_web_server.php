@@ -1,4 +1,8 @@
 <?php
+// Charger les variables d'environnement
+require_once __DIR__ . '/../src/env.php';
+Env::load();
+
 // Fonction pour tester MySQL et récupérer des informations
 function getMySQLInfo() {
     $info = [
@@ -407,7 +411,7 @@ $mysql = getMySQLInfo();
                 </a>
 
                 <!-- Interface Proxmox -->
-                <a href="https://192.168.0.50:8006" target="_blank" class="site-card proxmox">
+                <a href="<?php echo Env::get('IP_PROXMOX_PUBLIC', 'https://192.168.0.50:8006'); ?>" target="_blank" class="site-card proxmox">
                     <span class="site-icon">⚙️</span>
                     <div class="site-title">Proxmox VE</div>
                     <div class="site-port">Port 8006</div>
