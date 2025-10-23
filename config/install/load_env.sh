@@ -13,6 +13,8 @@ load_environment_variables() {
         export CADDY_MAIN_IP=$(grep '^CADDY_MAIN_IP=' .env | cut -d'=' -f2-)
         export CADDY_PASSWORD=$(grep '^CADDY_PASSWORD=' .env | cut -d'=' -f2-)
         export CADDY_USER=$(grep '^CADDY_USER=' .env | cut -d'=' -f2-)
+        export VSCODE_AUTH=$(grep '^VSCODE_AUTH=' .env | cut -d'=' -f2-)
+        export VSCODE_PASSWORD=$(grep '^VSCODE_PASSWORD=' .env | cut -d'=' -f2-)
         export TAILSCALE_AUTHKEY=$(grep '^TAILSCALE_AUTHKEY=' .env | cut -d'=' -f2-)
         export TAILSCALE_HOSTNAME=$(grep '^TAILSCALE_HOSTNAME=' .env | cut -d'=' -f2-)
         echo "Environment variables loaded from .env"

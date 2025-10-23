@@ -23,6 +23,25 @@ https://$CADDY_MAIN_IP {
     file_server
     try_files {path} proxmox_main_web_server.php
 }
+
+https://$CADDY_MAIN_IP:81 {
+    tls internal
+    basicauth * {
+        $CADDY_USER $HASH
+    }
+    reverse_proxy localhost:8081 {
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+}
 EOF
 
     # Restart Caddy to apply configuration

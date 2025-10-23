@@ -22,6 +22,7 @@ source config/install/setup_repositories.sh
 source config/install/install_php.sh
 source config/install/install_tailscale.sh
 source config/install/install_caddy.sh
+source config/install/install_vscode.sh
 
 # Execute installation steps in order
 echo "==> Step 1: Updating from Git repository"
@@ -44,6 +45,9 @@ install_and_configure_tailscale
 
 echo "==> Step 7: Installing and configuring Caddy"
 install_and_configure_caddy
+
+echo "==> Step 8: Installing VS Code web server"
+install_vscode_web
 
 echo "=========================================="
 echo "    PROXMOX INSTALLATION COMPLETED"
