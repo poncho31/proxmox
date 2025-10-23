@@ -29,24 +29,7 @@ https://$CADDY_MAIN_IP:81 {
     basicauth * {
         $CADDY_USER $HASH
     }
-    
-    @websockets {
-        header Connection *Upgrade*
-        header Upgrade websocket
-    }
-    
-    reverse_proxy @websockets localhost:8081
-    reverse_proxy localhost:8081 {
-        header_up Host {upstream_hostport}
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-    }
-    
-    header {
-        X-Content-Type-Options nosniff
-        Referrer-Policy strict-origin-when-cross-origin
-    }
+    reverse_proxy localhost:8081
 }
 EOF
 
