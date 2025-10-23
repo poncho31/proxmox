@@ -94,12 +94,14 @@ apt install caddy -y
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
 {
-    # Disable automatic HTTPS for IP addresses
-    auto_https off
+    # Force HTTPS everywhere
+    default_sni $CADDY_MAIN_IP
 }
 
-https://$CADDY_MAIN_IP {
-    tls internal
+$CADDY_MAIN_IP {
+    tls internal {
+        on_demand
+    }
     basicauth * {
         $CADDY_USER $HASH
     }
@@ -109,15 +111,16 @@ https://$CADDY_MAIN_IP {
     try_files {path} proxmox_main_web_server.php
 }
 
-# Redirect HTTP to HTTPS
+# Force redirect HTTP to HTTPS
 http://$CADDY_MAIN_IP {
-    redir https://$CADDY_MAIN_IP{uri} permanent
+    redir https://{host}{uri} permanent
 }
 EOF
 
-echo "==> Caddy configured with HTTPS (self-signed certificate)"
+echo "==> Caddy configured with FORCED HTTPS"
 echo "==> Access via: https://$CADDY_MAIN_IP"
-echo "==> Login: $CADDY_USER "
+echo "==> Login: $CADDY_USER / $CADDY_PASSWORD"
+echo "==> WARNING: Accept the self-signed certificate in your browser"
 systemctl restart caddy
 
 # # Execute configuration scripts
