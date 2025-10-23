@@ -91,16 +91,10 @@ fi
 # Install caddy and configure it
 apt install caddy -y
 
-# Generate self-signed certificate
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/caddy.key \
-    -out /etc/ssl/certs/caddy.crt \
-    -subj "/CN=$CADDY_MAIN_IP" 2>/dev/null
-
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
 https://$CADDY_MAIN_IP {
-    tls /etc/ssl/certs/caddy.crt /etc/ssl/private/caddy.key
+    tls internal
     basicauth * {
         $CADDY_USER $HASH
     }
