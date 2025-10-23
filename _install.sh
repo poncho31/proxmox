@@ -91,16 +91,16 @@ fi
 # Install caddy and configure it
 apt install caddy -y
 
-# Create a simple self-signed certificate
+# Generate self-signed certificate
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/caddy-selfsigned.key \
-    -out /etc/ssl/certs/caddy-selfsigned.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/CN=$CADDY_MAIN_IP"
+    -keyout /etc/ssl/private/caddy.key \
+    -out /etc/ssl/certs/caddy.crt \
+    -subj "/CN=$CADDY_MAIN_IP" 2>/dev/null
 
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
-$CADDY_MAIN_IP {
-    tls /etc/ssl/certs/caddy-selfsigned.crt /etc/ssl/private/caddy-selfsigned.key
+https://$CADDY_MAIN_IP {
+    tls /etc/ssl/certs/caddy.crt /etc/ssl/private/caddy.key
     basicauth * {
         $CADDY_USER $HASH
     }
@@ -109,17 +109,7 @@ $CADDY_MAIN_IP {
     file_server
     try_files {path} proxmox_main_web_server.php
 }
-
-# Force redirect HTTP to HTTPS
-http://$CADDY_MAIN_IP {
-    redir https://$CADDY_MAIN_IP{uri} permanent
-}
 EOF
-
-echo "==> Caddy configured with explicit self-signed certificate"
-echo "==> Access via: https://$CADDY_MAIN_IP"
-echo "==> Login: $CADDY_USER"
-echo "==> Certificate will show as 'Not Secure' - this is normal for IP addresses"
 systemctl restart caddy
 
 # # Execute configuration scripts
