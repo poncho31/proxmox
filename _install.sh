@@ -45,21 +45,6 @@ install_and_configure_tailscale
 echo "==> Step 7: Installing and configuring Caddy"
 install_and_configure_caddy
 
-echo "==> Step 8: Executing additional configuration scripts (if they exist)"
-if [ -f "./config/init_proxmox.sh" ]; then
-    echo "==> Running init_proxmox.sh"
-    ./config/init_proxmox.sh
-else
-    echo "==> init_proxmox.sh not found, skipping"
-fi
-
-if [ -f "./config/tailscale_personnal_vpn.sh" ]; then
-    echo "==> Running tailscale_personnal_vpn.sh"
-    ./config/tailscale_personnal_vpn.sh
-else
-    echo "==> tailscale_personnal_vpn.sh not found, skipping"
-fi
-
 echo "=========================================="
 echo "    PROXMOX INSTALLATION COMPLETED"
 echo "=========================================="
