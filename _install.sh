@@ -1,6 +1,8 @@
 # Installation de GIT et de l'application (à faire manuellement une seule fois)
 # apt install git -y
 # git clone https://github.com/poncho31/proxmox.git /var/www/proxmox
+# chmod +x /var/www/proxmox/_install.sh
+
 cd /var/www/proxmox
 
 # Load environment variables from .env file
@@ -20,7 +22,7 @@ apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-
 # Install caddy and configure it
 apt install caddy -y
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
-cat > /etc/caddy/Caddyfile << 'EOF'
+cat > /etc/caddy/Caddyfile << EOF
 https://$CADDY_MAIN_IP {
     basicauth * {
         $CADDY_USER $HASH
