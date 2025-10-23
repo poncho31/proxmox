@@ -17,7 +17,10 @@ fi
 chmod +x config/*.sh
 
 # Install PHP and essential libraries
-apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache -y
+apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache php-fpm -y
+
+# Enable and start PHP-FPM
+systemctl enable --now php8.4-fpm
 
 # Install Tailscale FIRST (required for the IP to exist)
 echo "==> Installing Tailscale..."
@@ -52,7 +55,7 @@ $CADDY_MAIN_IP {
         $CADDY_USER $HASH
     }
     root * /var/www/proxmox/public
-    php_fastcgi unix//run/php/php8.2-fpm.sock
+    php_fastcgi unix//run/php/php8.4-fpm.sock
     file_server
     try_files {path} proxmox_main_web_server.php
 }
