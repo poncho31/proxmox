@@ -26,27 +26,28 @@ fi
 chmod +x config/*.sh
 
 # Fix Proxmox repositories (disable enterprise repos that cause 401 errors)
-echo "==> Fixing Proxmox repositories DEFINITIVELY..."
+echo "==> DESTROYING enterprise repositories COMPLETELY..."
 
-# Remove ALL enterprise repository files
-rm -f /etc/apt/sources.list.d/pve-enterprise.list
-rm -f /etc/apt/sources.list.d/ceph.list
-rm -f /etc/apt/sources.list.d/pve-install-repo.list
+# NUCLEAR OPTION: Remove and recreate ALL apt configuration
+rm -rf /etc/apt/sources.list.d/*
+rm -f /etc/apt/sources.list
 
-# Check and disable enterprise repos in main sources.list
-if [ -f /etc/apt/sources.list ]; then
-    sed -i 's|^deb.*enterprise.proxmox.com.*|# &|g' /etc/apt/sources.list
-    sed -i 's|^deb-src.*enterprise.proxmox.com.*|# &|g' /etc/apt/sources.list
-fi
+# Create a CLEAN sources.list
+cat > /etc/apt/sources.list << 'EOFAPT'
+deb http://deb.debian.org/debian trixie main contrib non-free-firmware
+deb-src http://deb.debian.org/debian trixie main contrib non-free-firmware
 
-# Check all sources.list.d files for enterprise repos
-find /etc/apt/sources.list.d/ -name "*.list" -exec sed -i 's|^deb.*enterprise.proxmox.com.*|# &|g' {} \;
+deb http://deb.debian.org/debian-security/ trixie-security main contrib non-free-firmware
+deb-src http://deb.debian.org/debian-security/ trixie-security main contrib non-free-firmware
 
-# Add Proxmox no-subscription repository
+deb http://deb.debian.org/debian trixie-updates main contrib non-free-firmware
+deb-src http://deb.debian.org/debian trixie-updates main contrib non-free-firmware
+EOFAPT
+
+# Add ONLY the no-subscription Proxmox repo
 echo "deb http://download.proxmox.com/debian/pve trixie pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
 
-echo "Enterprise repositories DISABLED"
-echo "No-subscription repository ADDED"
+echo "ALL repositories NUKED and REBUILT - NO MORE ENTERPRISE BULLSHIT!"
 
 # Update package list after fixing repositories
 apt update
