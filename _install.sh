@@ -8,10 +8,15 @@ git pull origin main
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    # Load .env but only export simple KEY=VALUE pairs (no spaces in values)
-    set -a
-    source <(grep -E '^[A-Z_]+=.+$' .env | grep -v '^#')
-    set +a
+    # Load only the variables we actually need, skip problematic SSH commands
+    export DATABASE_URL=$(grep '^DATABASE_URL=' .env | cut -d'=' -f2-)
+    export IP_PROXMOX_PUBLIC=$(grep '^IP_PROXMOX_PUBLIC=' .env | cut -d'=' -f2-)
+    export IP_PROXMOX_LOCAL=$(grep '^IP_PROXMOX_LOCAL=' .env | cut -d'=' -f2-)
+    export CADDY_MAIN_IP=$(grep '^CADDY_MAIN_IP=' .env | cut -d'=' -f2-)
+    export CADDY_PASSWORD=$(grep '^CADDY_PASSWORD=' .env | cut -d'=' -f2-)
+    export CADDY_USER=$(grep '^CADDY_USER=' .env | cut -d'=' -f2-)
+    export TAILSCALE_AUTHKEY=$(grep '^TAILSCALE_AUTHKEY=' .env | cut -d'=' -f2-)
+    export TAILSCALE_HOSTNAME=$(grep '^TAILSCALE_HOSTNAME=' .env | cut -d'=' -f2-)
     echo "Environment variables loaded from .env"
 else
     echo "Warning: .env file not found"
