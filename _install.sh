@@ -19,11 +19,35 @@ chmod +x config/*.sh
 # Install PHP and essential libraries
 apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache -y
 
+# Install Tailscale FIRST (required for the IP to exist)
+echo "==> Installing Tailscale..."
+echo "Get your auth key from https://login.tailscale.com/admin/settings/keys"
+read -p "Press [ENTER] to continue..."
+
+curl -fsSL https://tailscale.com/install.sh | sh
+systemctl enable --now tailscaled
+
+echo "==> Connecting to Tailscale with authkey from .env..."
+tailscale up --authkey "$TAILSCALE_AUTHKEY" --hostname "$TAILSCALE_HOSTNAME"
+
+echo "==> Waiting for Tailscale connection..."
+sleep 5
+
+# Verify Tailscale IP is available
+CURRENT_IP=$(tailscale ip -4)
+echo "==> Tailscale IP: $CURRENT_IP"
+echo "==> Expected IP: $CADDY_MAIN_IP"
+
+if [ "$CURRENT_IP" != "$CADDY_MAIN_IP" ]; then
+    echo "WARNING: Tailscale IP ($CURRENT_IP) doesn't match expected IP ($CADDY_MAIN_IP)"
+    echo "You may need to update CADDY_MAIN_IP in .env file"
+fi
+
 # Install caddy and configure it
 apt install caddy -y
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
-https://$CADDY_MAIN_IP {
+$CADDY_MAIN_IP {
     basicauth * {
         $CADDY_USER $HASH
     }
