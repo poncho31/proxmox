@@ -47,17 +47,11 @@ EOFAPT
 # Add ONLY the no-subscription Proxmox repo
 echo "deb http://download.proxmox.com/debian/pve trixie pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
 
-echo "ALL repositories NUKED and REBUILT - NO MORE ENTERPRISE BULLSHIT!"
-
 # Update package list after fixing repositories
 apt update
 
 # Install PHP and essential libraries (WITHOUT Apache!)
 apt install php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache php-fpm -y
-
-# Remove Apache if it was installed
-apt remove --purge apache2 apache2-* libapache2-* -y 2>/dev/null || true
-apt autoremove -y
 
 # Enable and start PHP-FPM
 systemctl enable --now php8.4-fpm
