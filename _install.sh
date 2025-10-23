@@ -8,7 +8,10 @@ git pull origin main
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+    # Load .env but only export simple KEY=VALUE pairs (no spaces in values)
+    set -a
+    source <(grep -E '^[A-Z_]+=.+$' .env | grep -v '^#')
+    set +a
     echo "Environment variables loaded from .env"
 else
     echo "Warning: .env file not found"
@@ -20,10 +23,12 @@ chmod +x config/*.sh
 # Fix Proxmox repositories (disable enterprise repos that cause 401 errors)
 echo "==> Fixing Proxmox repositories..."
 if [ -f /etc/apt/sources.list.d/pve-enterprise.list ]; then
-    sed -i 's/^deb/#deb/g' /etc/apt/sources.list.d/pve-enterprise.list
+    rm /etc/apt/sources.list.d/pve-enterprise.list
+    echo "Removed pve-enterprise.list"
 fi
 if [ -f /etc/apt/sources.list.d/ceph.list ]; then
-    sed -i 's/^deb/#deb/g' /etc/apt/sources.list.d/ceph.list
+    rm /etc/apt/sources.list.d/ceph.list
+    echo "Removed ceph.list"
 fi
 
 # Add Proxmox no-subscription repository
