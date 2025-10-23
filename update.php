@@ -157,9 +157,9 @@ $operations = [
     ],
     'permissions' => [
         'description' => 'Mise à jour des permissions des fichiers',
-        'command' => 'chown -R www-data:www-data /var/www/proxmox/git_app && chmod -R 755 /var/www/proxmox/git_app',
+        'command' => 'chown -R www-data:www-data /var/www/proxmox/git_app 2>/dev/null || true && chmod -R 755 /var/www/proxmox/git_app 2>/dev/null || true',
         'icon' => '🔐',
-        'success_message' => 'Permissions des fichiers mises à jour',
+        'success_message' => 'Permissions des fichiers mises à jour (dossier .git exclu)',
         'error_message' => 'Échec de la mise à jour des permissions'
     ],
     'cache' => [
