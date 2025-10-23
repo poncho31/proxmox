@@ -4,6 +4,8 @@
 # chmod +x /var/www/proxmox/_install.sh
 
 cd /var/www/proxmox
+git reset --hard
+git pull origin main
 
 # Load environment variables from .env file
 if [ -f .env ]; then
