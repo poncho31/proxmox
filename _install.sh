@@ -52,8 +52,12 @@ echo "ALL repositories NUKED and REBUILT - NO MORE ENTERPRISE BULLSHIT!"
 # Update package list after fixing repositories
 apt update
 
-# Install PHP and essential libraries
-apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache php-fpm -y
+# Install PHP and essential libraries (WITHOUT Apache!)
+apt install php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache php-fpm -y
+
+# Remove Apache if it was installed
+apt remove --purge apache2 apache2-* libapache2-* -y 2>/dev/null || true
+apt autoremove -y
 
 # Enable and start PHP-FPM
 systemctl enable --now php8.4-fpm
@@ -119,7 +123,7 @@ EOF
 
 echo "==> Caddy configured with HTTPS (self-signed certificate)"
 echo "==> Access via: https://$CADDY_MAIN_IP"
-echo "==> Login: $CADDY_USER / $CADDY_PASSWORD"
+echo "==> Login: $CADDY_USER "
 systemctl restart caddy
 
 # # Execute configuration scripts
