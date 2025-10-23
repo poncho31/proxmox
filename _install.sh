@@ -92,9 +92,10 @@ fi
 
 # Install caddy and configure it
 apt install caddy -y
+
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
-$CADDY_MAIN_IP {
+http://$CADDY_MAIN_IP {
     basicauth * {
         $CADDY_USER $HASH
     }
@@ -104,6 +105,9 @@ $CADDY_MAIN_IP {
     try_files {path} proxmox_main_web_server.php
 }
 EOF
+
+echo "==> Caddy configured on HTTP port 80"
+echo "==> Access via: http://$CADDY_MAIN_IP"
 systemctl restart caddy
 
 # # Execute configuration scripts
