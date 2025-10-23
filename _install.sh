@@ -91,17 +91,16 @@ fi
 # Install caddy and configure it
 apt install caddy -y
 
+# Create a simple self-signed certificate
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/caddy-selfsigned.key \
+    -out /etc/ssl/certs/caddy-selfsigned.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/CN=$CADDY_MAIN_IP"
+
 HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 cat > /etc/caddy/Caddyfile << EOF
-{
-    # Force HTTPS everywhere
-    default_sni $CADDY_MAIN_IP
-}
-
 $CADDY_MAIN_IP {
-    tls internal {
-        on_demand
-    }
+    tls /etc/ssl/certs/caddy-selfsigned.crt /etc/ssl/private/caddy-selfsigned.key
     basicauth * {
         $CADDY_USER $HASH
     }
@@ -113,14 +112,14 @@ $CADDY_MAIN_IP {
 
 # Force redirect HTTP to HTTPS
 http://$CADDY_MAIN_IP {
-    redir https://{host}{uri} permanent
+    redir https://$CADDY_MAIN_IP{uri} permanent
 }
 EOF
 
-echo "==> Caddy configured with FORCED HTTPS"
+echo "==> Caddy configured with explicit self-signed certificate"
 echo "==> Access via: https://$CADDY_MAIN_IP"
-echo "==> Login: $CADDY_USER / $CADDY_PASSWORD"
-echo "==> WARNING: Accept the self-signed certificate in your browser"
+echo "==> Login: $CADDY_USER"
+echo "==> Certificate will show as 'Not Secure' - this is normal for IP addresses"
 systemctl restart caddy
 
 # # Execute configuration scripts
