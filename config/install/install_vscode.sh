@@ -27,7 +27,6 @@ cert: false
 disable-telemetry: true
 disable-update-check: true
 disable-workspace-trust: true
-workspace: /var/www/proxmox
 EOF
 
     # Création du service systemd pour code-server
@@ -49,7 +48,7 @@ Environment=USER=root
 WorkingDirectory=/var/www/proxmox
 ExecStartPre=/bin/mkdir -p /root/.local/share/code-server
 ExecStartPre=/bin/chown -R root:root /root/.local/share/code-server
-ExecStart=/usr/bin/code-server --config /root/.config/code-server/config.yaml
+ExecStart=/usr/bin/code-server --config /root/.config/code-server/config.yaml /var/www/proxmox
 Restart=always
 RestartSec=10
 StandardOutput=journal
