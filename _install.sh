@@ -26,18 +26,27 @@ fi
 chmod +x config/*.sh
 
 # Fix Proxmox repositories (disable enterprise repos that cause 401 errors)
-echo "==> Fixing Proxmox repositories..."
-if [ -f /etc/apt/sources.list.d/pve-enterprise.list ]; then
-    rm /etc/apt/sources.list.d/pve-enterprise.list
-    echo "Removed pve-enterprise.list"
+echo "==> Fixing Proxmox repositories DEFINITIVELY..."
+
+# Remove ALL enterprise repository files
+rm -f /etc/apt/sources.list.d/pve-enterprise.list
+rm -f /etc/apt/sources.list.d/ceph.list
+rm -f /etc/apt/sources.list.d/pve-install-repo.list
+
+# Check and disable enterprise repos in main sources.list
+if [ -f /etc/apt/sources.list ]; then
+    sed -i 's|^deb.*enterprise.proxmox.com.*|# &|g' /etc/apt/sources.list
+    sed -i 's|^deb-src.*enterprise.proxmox.com.*|# &|g' /etc/apt/sources.list
 fi
-if [ -f /etc/apt/sources.list.d/ceph.list ]; then
-    rm /etc/apt/sources.list.d/ceph.list
-    echo "Removed ceph.list"
-fi
+
+# Check all sources.list.d files for enterprise repos
+find /etc/apt/sources.list.d/ -name "*.list" -exec sed -i 's|^deb.*enterprise.proxmox.com.*|# &|g' {} \;
 
 # Add Proxmox no-subscription repository
 echo "deb http://download.proxmox.com/debian/pve trixie pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
+
+echo "Enterprise repositories DISABLED"
+echo "No-subscription repository ADDED"
 
 # Update package list after fixing repositories
 apt update
