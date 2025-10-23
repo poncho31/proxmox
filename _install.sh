@@ -1,8 +1,7 @@
 # Installation de GIT et de l'application (à faire manuellement une seule fois)
 # apt install git -y
 # git clone https://github.com/poncho31/proxmox.git /var/www/proxmox
-# chmod +x /var/www/proxmox/_install.sh
-
+chmod +x /var/www/proxmox/_install.sh
 cd /var/www/proxmox
 git reset --hard
 git pull origin main
@@ -18,6 +17,21 @@ fi
 # Make scripts executable
 chmod +x config/*.sh
 
+# Fix Proxmox repositories (disable enterprise repos that cause 401 errors)
+echo "==> Fixing Proxmox repositories..."
+if [ -f /etc/apt/sources.list.d/pve-enterprise.list ]; then
+    sed -i 's/^deb/#deb/g' /etc/apt/sources.list.d/pve-enterprise.list
+fi
+if [ -f /etc/apt/sources.list.d/ceph.list ]; then
+    sed -i 's/^deb/#deb/g' /etc/apt/sources.list.d/ceph.list
+fi
+
+# Add Proxmox no-subscription repository
+echo "deb http://download.proxmox.com/debian/pve trixie pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
+
+# Update package list after fixing repositories
+apt update
+
 # Install PHP and essential libraries
 apt install php libapache2-mod-php php-mysql php-curl php-json php-mbstring php-xml php-zip php-gd php-intl php-bcmath php-soap php-sqlite3 php-cli php-common php-opcache php-fpm -y
 
@@ -26,10 +40,18 @@ systemctl enable --now php8.4-fpm
 
 # Install Tailscale FIRST (required for the IP to exist)
 echo "==> Installing Tailscale..."
-echo "Get your auth key from https://login.tailscale.com/admin/settings/keys"
-read -p "Press [ENTER] to continue..."
 
-curl -fsSL https://tailscale.com/install.sh | sh
+# Install required dependencies for Tailscale
+apt install -y curl gnupg lsb-release
+
+# Add Tailscale's package signing key and repository
+curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
+curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
+
+# Update and install Tailscale
+apt update
+apt install -y tailscale
+
 systemctl enable --now tailscaled
 
 echo "==> Connecting to Tailscale with authkey from .env..."
