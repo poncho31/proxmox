@@ -1,33 +1,3 @@
-# Configuration principale HTTPS
-https://100.104.128.114 {
-    tls internal
-    basicauth * {
-        root $2a$14$aiNxLTuKThNvmIaLmgcl5uLeiCOewPcs5BLksu0cgTx2IXP74.Kue
-    }
-    root * /var/www/proxmox/git_app/public
-    php_fastcgi unix//run/php/php8.4-fpm.sock
-    file_server
-    try_files {path} proxmox_main_web_server.php
-}
-
-# VS CODE
-https://100.104.128.114:81 {
-    tls internal
-    basicauth * {
-        root $2a$14$aiNxLTuKThNvmIaLmgcl5uLeiCOewPcs5BLksu0cgTx2IXP74.Kue
-    }
-    reverse_proxy localhost:8081
-}
-
-# Interface Go2rtc
-https://100.104.128.114:82 {
-    tls internal
-    basicauth * {
-        root $2a$14$aiNxLTuKThNvmIaLmgcl5uLeiCOewPcs5BLksu0cgTx2IXP74.Kue
-    }
-    reverse_proxy http://192.168.0.51:1984
-}
-
 # Configuration locale pour développement (optionnel)
 :80 {
         root * /var/www/proxmox/git_app/public
