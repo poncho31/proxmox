@@ -264,6 +264,14 @@ $mysql = getMySQLInfo();
             background: linear-gradient(135deg, #FF6B35, #F7931E);
         }
 
+        .site-card.cameras {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .site-card.vscode {
+            background: linear-gradient(135deg, #007ACC, #0066A8);
+        }
+
         .site-card.proxmox {
             background: linear-gradient(135deg, #E74C3C, #C0392B);
         }
@@ -403,10 +411,24 @@ $mysql = getMySQLInfo();
                     <div class="site-port">Port 81</div>
                 </a>
 
-                <!-- Application Rust -->
-                <a href="http://<?php echo $system['server_name']; ?>:82" target="_blank" class="site-card rust">
-                    <span class="site-icon">🦀</span>
-                    <div class="site-title">Rust App</div>
+                <!-- Surveillance Caméras -->
+                <a href="cameras.php" class="site-card cameras">
+                    <span class="site-icon">📹</span>
+                    <div class="site-title">Caméras</div>
+                    <div class="site-port">Surveillance</div>
+                </a>
+
+                <!-- VS Code Server -->
+                <a href="<?php echo Env::get('URL_VSCODE', 'https://100.104.128.114:81'); ?>" target="_blank" class="site-card vscode">
+                    <span class="site-icon">💻</span>
+                    <div class="site-title">VS Code</div>
+                    <div class="site-port">Port 81</div>
+                </a>
+
+                <!-- Interface go2rtc -->
+                <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>" target="_blank" class="site-card rust">
+                    <span class="site-icon">🎥</span>
+                    <div class="site-title">go2rtc</div>
                     <div class="site-port">Port 82</div>
                 </a>
 
@@ -464,7 +486,15 @@ $mysql = getMySQLInfo();
                     <span class="info-value status-online">● Port 81</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Rust App</span>
+                    <span class="info-label">Caméras</span>
+                    <span class="info-value status-online">● Surveillance</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">VS Code</span>
+                    <span class="info-value status-online">● Port 81</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">go2rtc</span>
                     <span class="info-value status-online">● Port 82</span>
                 </div>
             </div>

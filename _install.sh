@@ -49,6 +49,14 @@ install_and_configure_caddy
 echo "==> Step 8: Installing VS Code web server"
 install_vscode_web
 
+if [ "$INSTALL_GO2RTC" = "true" ]; then
+    echo "==> Step 9: Installing go2rtc video proxy"
+    source config/install/install_go2rtc.sh
+    install_go2rtc
+else
+    echo "==> Step 9: Skipping go2rtc installation"
+fi
+
 echo "=========================================="
 echo "    PROXMOX INSTALLATION COMPLETED"
 echo "=========================================="
