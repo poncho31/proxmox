@@ -93,7 +93,7 @@ function printInfo($message) {
 $operations = [
     'git_reset' => [
         'description' => 'Réinitialisation des fichiers modifiés',
-        'command' => 'cd /var/www/proxmox/git_app && git reset --hard',
+        'command' => 'cd /var/www/proxmox && git reset --hard',
         'icon' => '🔄',
         'success_message' => 'Fichiers locaux réinitialisés',
         'error_message' => 'Échec de la réinitialisation Git',
@@ -101,7 +101,7 @@ $operations = [
     ],
     'git' => [
         'description' => 'Mise à jour du code depuis Git',
-        'command' => 'cd /var/www/proxmox/git_app && git pull origin main',
+        'command' => 'cd /var/www/proxmox && git pull origin main',
         'icon' => '📥',
         'success_message' => 'Code mis à jour depuis le dépôt Git',
         'error_message' => 'Échec de la mise à jour Git',
@@ -123,7 +123,7 @@ $operations = [
     'caddy_config' => [
         'description' => 'Adaptation de la configuration Caddy',
         'command' => function() {
-            $configPath = '/var/www/proxmox/git_app/config/Caddyfile';
+            $configPath = '/var/www/proxmox/config/Caddyfile';
             $systemConfigPath = '/etc/caddy/Caddyfile';
             
             // Vérifier si le fichier de config existe
@@ -157,7 +157,7 @@ $operations = [
     ],
     'permissions' => [
         'description' => 'Mise à jour des permissions des fichiers',
-        'command' => 'chown -R www-data:www-data /var/www/proxmox/git_app 2>/dev/null || true && chmod -R 755 /var/www/proxmox/git_app 2>/dev/null || true',
+        'command' => 'chown -R www-data:www-data /var/www/proxmox 2>/dev/null || true && chmod -R 755 /var/www/proxmox 2>/dev/null || true',
         'icon' => '🔐',
         'success_message' => 'Permissions des fichiers mises à jour (dossier .git exclu)',
         'error_message' => 'Échec de la mise à jour des permissions'
