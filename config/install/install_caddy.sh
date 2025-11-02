@@ -22,7 +22,7 @@ https://$CADDY_MAIN_IP {
     root * /var/www/proxmox/public
     php_fastcgi unix//run/php/php8.4-fpm.sock
     file_server
-    try_files {path} proxmox_main_web_server.php
+    try_files {path} index.php
 }
 
 # VS Code Web

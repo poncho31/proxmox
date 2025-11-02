@@ -264,7 +264,7 @@ $mysql = getMySQLInfo();
             background: linear-gradient(135deg, #FF6B35, #F7931E);
         }
 
-        .site-card.cameras {
+        .site-card.domotique {
             background: linear-gradient(135deg, #9b59b6, #8e44ad);
         }
 
@@ -412,7 +412,7 @@ $mysql = getMySQLInfo();
                 </a>
 
                 <!-- Surveillance Caméras -->
-                <a href="cameras.php" class="site-card cameras">
+                <a href="domotique.php" class="site-card domotique">
                     <span class="site-icon">📹</span>
                     <div class="site-title">Caméras</div>
                     <div class="site-port">Surveillance</div>

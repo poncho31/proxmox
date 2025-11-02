@@ -85,7 +85,7 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
             margin: 0 auto;
         }
 
-        .cameras-grid {
+        .domotique-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 20px;
@@ -230,7 +230,7 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
         }
 
         @media (max-width: 768px) {
-            .cameras-grid {
+            .domotique-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -261,14 +261,14 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
         <h1>📹 Surveillance Caméras</h1>
         <p>Interface de monitoring vidéo - <?php echo date('d/m/Y H:i:s'); ?></p>
         <div class="nav-buttons">
-            <a href="proxmox_main_web_server.php" class="nav-btn back">🏠 Retour Hub</a>
+            <a href="index.php" class="nav-btn back">🏠 Retour Hub</a>
             <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>" target="_blank" class="nav-btn">🔧 Interface go2rtc</a>
             <button onclick="location.reload()" class="nav-btn">🔄 Actualiser</button>
         </div>
     </div>
 
     <div class="container">
-        <div class="cameras-grid">
+        <div class="domotique-grid">
             <!-- Caméra 1 -->
             <div class="camera-card">
                 <h2 class="camera-title">
