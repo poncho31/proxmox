@@ -2,29 +2,15 @@
 # Module: install_go2rtc.sh
 # Description: Install go2rtc container with environment variables from .env
 
-# Chemin vers le répertoire racine du projet
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-
-# Charger les variables d'environnement
-if [ -f "$ROOT_DIR/.env" ]; then
-    source "$SCRIPT_DIR/load_env.sh"
-    if ! load_environment_variables; then
-        echo "Erreur: Impossible de charger les variables d'environnement"
-        exit 1
+install_go2rtc() {
+    echo "==> Installing go2rtc video proxy..."
+    
+    # Vérifier les variables essentielles
+    if [ -z "$GO2RTC_IP" ] || [ -z "$CAMERA1_IP" ] || [ -z "$CAMERA1_USER" ] || [ -z "$CAMERA1_PASS" ]; then
+        echo "Erreur: Variables go2rtc manquantes dans .env"
+        echo "Vérifiez: GO2RTC_IP, CAMERA1_IP, CAMERA1_USER, CAMERA1_PASS"
+        return 1
     fi
-    cd "$ROOT_DIR"
-else
-    echo "Erreur: Fichier .env non trouvé dans $ROOT_DIR"
-    exit 1
-fi
-
-# Vérifier les variables essentielles
-if [ -z "$GO2RTC_IP" ] || [ -z "$CAMERA1_IP" ] || [ -z "$CAMERA1_USER" ] || [ -z "$CAMERA1_PASS" ]; then
-    echo "Erreur: Variables go2rtc manquantes dans .env"
-    echo "Vérifiez: GO2RTC_IP, CAMERA1_IP, CAMERA1_USER, CAMERA1_PASS"
-    exit 1
-fi
 
 echo "================================================================"
 echo "🚀 Installation de go2rtc avec variables d'environnement"
@@ -49,48 +35,48 @@ pct create 101 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
   --password $CADDY_PASSWORD \
   --start 1
 
-pct enter 101
+    echo "Configuration du container go2rtc..."
+    
+    # Attendre que le container soit démarré
+    sleep 10
+    
+    # Configurer DNS pour résoudre les problèmes de résolution
+    pct exec 101 -- bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+    pct exec 101 -- bash -c "echo 'nameserver 8.8.4.4' >> /etc/resolv.conf"
 
-# Configurer DNS pour résoudre les problèmes de résolution
-echo "nameserver 8.8.8.8" > /etc/resolv.conf
-echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+    # Tester la connectivité
+    echo "Test de connectivité DNS..."
+    pct exec 101 -- nslookup deb.debian.org || echo "Problème DNS détecté"
 
-# Tester la connectivité
-echo "Test de connectivité DNS..."
-nslookup deb.debian.org || echo "Problème DNS détecté"
+    # Mise à jour et installation des paquets
+    pct exec 101 -- apt update
+    pct exec 101 -- apt install -y curl sudo
 
-# Mise à jour et installation des paquets
-apt update
-apt install -y curl sudo
+    # Installation de Docker via le script officiel (plus fiable)
+    pct exec 101 -- curl -fsSL https://get.docker.com -o get-docker.sh
+    pct exec 101 -- sh get-docker.sh
 
-# Installation de Docker via le script officiel (plus fiable)
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
+    # Démarrer et activer Docker
+    pct exec 101 -- systemctl start docker
+    pct exec 101 -- systemctl enable docker
 
-# Démarrer et activer Docker
-systemctl start docker
-systemctl enable docker
+    # L'utilisateur root est déjà configuré avec le mot de passe du conteneur  
+    # Ajouter root au groupe docker pour pouvoir gérer les conteneurs
+    pct exec 101 -- usermod -aG docker root
 
-# L'utilisateur root est déjà configuré avec le mot de passe du conteneur  
-# Ajouter root au groupe docker pour pouvoir gérer les conteneurs
-usermod -aG docker root
+    # Attendre que Docker soit complètement démarré
+    sleep 5
 
-# Attendre que Docker soit complètement démarré
-sleep 5
+    # Vérifier que Docker fonctionne
+    pct exec 101 -- docker --version
+    pct exec 101 -- systemctl status docker --no-pager
 
-# Vérifier que Docker fonctionne
-docker --version
-systemctl status docker --no-pager
+    # Créer le répertoire pour go2rtc uniquement
+    pct exec 101 -- mkdir -p /opt/go2rtc/config
+    pct exec 101 -- chown -R root:root /opt/go2rtc
 
-
-
-# Créer le répertoire pour go2rtc uniquement
-mkdir -p /opt/go2rtc/config
-chown -R root:root /opt/go2rtc
-cd /opt/go2rtc
-
-# Créer le fichier docker-compose.yml avec les variables d'environnement
-cat > /opt/go2rtc/docker-compose.yml <<EOF
+    # Créer le fichier docker-compose.yml avec les variables d'environnement (temporairement sur l'hôte)
+    cat > /tmp/docker-compose.yml <<EOF
 services:
   # Proxy RTSP pour caméras Tapo
   go2rtc:
@@ -107,8 +93,11 @@ services:
 
 EOF
 
-# Créer la configuration go2rtc avec les variables d'environnement
-cat > /opt/go2rtc/config/go2rtc.yaml <<EOF
+    # Copier le fichier dans le container
+    pct push 101 /tmp/docker-compose.yml /opt/go2rtc/docker-compose.yml
+
+    # Créer la configuration go2rtc avec les variables d'environnement (temporairement sur l'hôte)
+    cat > /tmp/go2rtc.yaml <<EOF
 streams:
   # Pour caméras Tapo avec RTSP natif (FONCTIONNE !)
   ${CAMERA1_NAME:-tapo_camera1}:
@@ -128,24 +117,30 @@ webrtc:
 
 EOF
 
-# Ajuster les permissions
-chown -R root:root /opt/go2rtc/config
+    # Copier le fichier de configuration dans le container
+    pct push 101 /tmp/go2rtc.yaml /opt/go2rtc/config/go2rtc.yaml
 
-# Vérifier que Docker est prêt
-echo "Vérification de Docker..."
-docker info > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo "Erreur: Docker n'est pas prêt. Redémarrage du service..."
-    systemctl restart docker
+    # Ajuster les permissions
+    pct exec 101 -- chown -R root:root /opt/go2rtc/config
+
+    # Vérifier que Docker est prêt
+    echo "Vérification de Docker..."
+    pct exec 101 -- docker info > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Erreur: Docker n'est pas prêt. Redémarrage du service..."
+        pct exec 101 -- systemctl restart docker
+        sleep 10
+    fi
+
+    # Aller dans le répertoire go2rtc et démarrer le service
+    echo "Démarrage du service go2rtc..."
+    pct exec 101 -- bash -c "cd /opt/go2rtc && docker compose up -d"
+
+    # Attendre le démarrage
     sleep 10
-fi
 
-# Démarrer go2rtc
-echo "Démarrage du service go2rtc..."
-docker compose up -d
-
-# Attendre le démarrage
-sleep 10
+    # Nettoyer les fichiers temporaires
+    rm -f /tmp/docker-compose.yml /tmp/go2rtc.yaml
 
 # Afficher les informations de configuration avec variables d'environnement
 echo "================================================================"
@@ -164,3 +159,6 @@ echo ""
 echo "🔄 Redémarrer le service :"
 echo "   docker restart go2rtc"
 echo "================================================================"
+
+    return 0
+}
