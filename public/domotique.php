@@ -9,6 +9,8 @@ $go2rtc_port = Env::get('GO2RTC_PORT', '1984');
 $go2rtc_webrtc_port = Env::get('GO2RTC_WEBRTC_PORT', '8555');
 $camera1_name = Env::get('CAMERA1_NAME', 'tapo_camera1');
 $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
+$camera2_name = Env::get('CAMERA2_NAME', 'tapo_camera2');
+$camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -291,6 +293,33 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
                         🎥 Flux Vidéo MSE
                     </a>
                     <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/api/frame.jpeg?src=<?php echo $camera1_name; ?>" 
+                       target="_blank" class="stream-btn api">
+                        📸 Photo Instantanée
+                    </a>
+                </div>
+            </div>
+            <!-- Caméra 2 -->
+            <div class="camera-card">
+                <h2 class="camera-title">
+                    <span class="status-indicator status-online"></span>
+                    <?php echo htmlspecialchars($camera2_label); ?>
+                </h2>
+                
+                <div class="stream-container">
+                    <iframe 
+                        class="stream-iframe" 
+                        src="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera2_name; ?>&mode=mse"
+                        allow="camera; microphone; autoplay"
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <div class="stream-options">
+                    <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera2_name; ?>&mode=mse" 
+                       target="_blank" class="stream-btn webrtc">
+                        🎥 Flux Vidéo MSE
+                    </a>
+                    <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/api/frame.jpeg?src=<?php echo $camera2_name; ?>" 
                        target="_blank" class="stream-btn api">
                         📸 Photo Instantanée
                     </a>

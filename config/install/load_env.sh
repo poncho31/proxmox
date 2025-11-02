@@ -30,7 +30,14 @@ load_environment_variables() {
         export CAMERA1_IP=$(grep '^CAMERA1_IP=' .env | cut -d'=' -f2-)
         export CAMERA1_USER=$(grep '^CAMERA1_USER=' .env | cut -d'=' -f2-)
         export CAMERA1_PASS=$(grep '^CAMERA1_PASS=' .env | cut -d'=' -f2-)
-        
+
+        # Variables caméras
+        export CAMERA2_NAME=$(grep '^CAMERA2_NAME=' .env | cut -d'=' -f2-)
+        export CAMERA2_LABEL=$(grep '^CAMERA2_LABEL=' .env | cut -d'=' -f2-)
+        export CAMERA2_IP=$(grep '^CAMERA2_IP=' .env | cut -d'=' -f2-)
+        export CAMERA2_USER=$(grep '^CAMERA2_USER=' .env | cut -d'=' -f2-)
+        export CAMERA2_PASS=$(grep '^CAMERA2_PASS=' .env | cut -d'=' -f2-)
+
         # Variables VS Code
         export VSCODE_PORT=$(grep '^VSCODE_PORT=' .env | cut -d'=' -f2-)
         export VSCODE_IP=$(grep '^VSCODE_IP=' .env | cut -d'=' -f2-)

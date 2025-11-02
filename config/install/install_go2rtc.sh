@@ -98,14 +98,22 @@ EOF
     # Créer la configuration go2rtc avec les variables d'environnement (temporairement sur l'hôte)
     cat > /tmp/go2rtc.yaml <<EOF
 streams:
-  # Pour caméras Tapo avec RTSP natif (FONCTIONNE !)
+  # Pour caméras 1
   ${CAMERA1_NAME:-tapo_camera1}:
     - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream2"
   
-  # Stream HD si besoin (optionnel)
-  # ${CAMERA1_NAME:-tapo_camera1}_hd:
-  #   - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream1"
+  Stream HD si besoin (optionnel)
+  ${CAMERA1_NAME:-tapo_camera1}_hd:
+    - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream1"
   
+  # Pour caméras 2
+  ${CAMERA2_NAME:-tapo_camera2}:
+    - "rtsp://${CAMERA2_USER}:${CAMERA2_PASS}@${CAMERA2_IP}:554/stream2"
+
+  Stream HD si besoin (optionnel)
+  ${CAMERA2_NAME:-tapo_camera2}_hd:
+    - "rtsp://${CAMERA2_USER}:${CAMERA2_PASS}@${CAMERA2_IP}:554/stream1"
+
 # Configuration API avec support CORS
 api:
   listen: ":${GO2RTC_PORT:-1984}"
