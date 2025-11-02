@@ -19,6 +19,7 @@ load_environment_variables() {
         export TAILSCALE_HOSTNAME=$(grep '^TAILSCALE_HOSTNAME=' .env | cut -d'=' -f2-)
         
         # Variables go2rtc
+        export INSTALL_GO2RTC=$(grep '^INSTALL_GO2RTC=' .env | cut -d'=' -f2-)
         export GO2RTC_IP=$(grep '^GO2RTC_IP=' .env | cut -d'=' -f2-)
         export GO2RTC_PORT=$(grep '^GO2RTC_PORT=' .env | cut -d'=' -f2-)
         export GO2RTC_WEBRTC_PORT=$(grep '^GO2RTC_WEBRTC_PORT=' .env | cut -d'=' -f2-)
@@ -33,7 +34,7 @@ load_environment_variables() {
         # Variables VS Code
         export VSCODE_PORT=$(grep '^VSCODE_PORT=' .env | cut -d'=' -f2-)
         export VSCODE_IP=$(grep '^VSCODE_IP=' .env | cut -d'=' -f2-)
-        
+
         echo "Environment variables loaded from .env"
     else
         echo "Warning: .env file not found"
