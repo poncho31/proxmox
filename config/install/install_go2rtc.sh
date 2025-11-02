@@ -102,7 +102,7 @@ streams:
   ${CAMERA1_NAME:-tapo_camera1}:
     - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream2"
   
-  Stream HD si besoin (optionnel)
+  # Camera 1 HD
   ${CAMERA1_NAME:-tapo_camera1}_hd:
     - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream1"
   
@@ -110,7 +110,7 @@ streams:
   ${CAMERA2_NAME:-tapo_camera2}:
     - "rtsp://${CAMERA2_USER}:${CAMERA2_PASS}@${CAMERA2_IP}:554/stream2"
 
-  Stream HD si besoin (optionnel)
+  # Camera 2 HD
   ${CAMERA2_NAME:-tapo_camera2}_hd:
     - "rtsp://${CAMERA2_USER}:${CAMERA2_PASS}@${CAMERA2_IP}:554/stream1"
 
