@@ -41,12 +41,17 @@ https://$CADDY_MAIN_IP:82 {
     basicauth * {
         $CADDY_USER $HASH
     }
+
+    # Headers pour iframe
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        Content-Security-Policy "frame-ancestors 'self' https://$CADDY_MAIN_IP"
+    }
+
     reverse_proxy http://$GO2RTC_IP:$GO2RTC_PORT {
-        header_up Host {upstream_hostport}
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-        header_up X-Forwarded-Host {host}
+        transport http {
+            versions h1
+        }
     }
 }
 EOF

@@ -85,7 +85,6 @@ services:
     restart: unless-stopped
     ports:
       - "${GO2RTC_PORT:-1984}:1984"
-      - "${GO2RTC_WEBRTC_PORT:-8555}:8555"
     volumes:
       - /opt/go2rtc/config/go2rtc.yaml:/config/go2rtc.yaml
     environment:
@@ -107,13 +106,11 @@ streams:
   # ${CAMERA1_NAME:-tapo_camera1}_hd:
   #   - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream1"
   
+# Configuration API avec support CORS
 api:
   listen: ":${GO2RTC_PORT:-1984}"
+  origin: "*"  # Permettre les requêtes cross-origin pour reverse proxy
 
-webrtc:
-  listen: ":${GO2RTC_WEBRTC_PORT:-8555}"
-  candidates:
-    - "${GO2RTC_IP}:${GO2RTC_WEBRTC_PORT:-8555}"
 
 EOF
 

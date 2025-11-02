@@ -279,24 +279,20 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
                 <div class="stream-container">
                     <iframe 
                         class="stream-iframe" 
-                        src="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=webrtc"
+                        src="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse"
                         allow="camera; microphone; autoplay"
                         loading="lazy">
                     </iframe>
                 </div>
 
                 <div class="stream-options">
-                    <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=webrtc" 
+                    <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse" 
                        target="_blank" class="stream-btn webrtc">
-                        🎥 WebRTC
-                    </a>
-                    <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=hls" 
-                       target="_blank" class="stream-btn">
-                        📺 HLS
+                        🎥 Flux Vidéo MSE
                     </a>
                     <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/api/frame.jpeg?src=<?php echo $camera1_name; ?>" 
                        target="_blank" class="stream-btn api">
-                        📸 Photo
+                        📸 Photo Instantanée
                     </a>
                 </div>
             </div>
@@ -311,8 +307,8 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
                     <span class="info-value"><?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?></span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">📡 WebRTC Port</span>
-                    <span class="info-value"><?php echo $go2rtc_webrtc_port; ?></span>
+                    <span class="info-label">� Mode Stream</span>
+                    <span class="info-value">MSE (Media Source Extensions)</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">📹 Caméras</span>
@@ -329,10 +325,10 @@ $camera1_label = Env::get('CAMERA1_LABEL', 'Caméra Tapo 1');
         <div class="info-panel">
             <h3>💡 Instructions d'utilisation</h3>
             <div style="color: #555; line-height: 1.6;">
-                <p><strong>🎥 WebRTC :</strong> Stream en temps réel, faible latence (recommandé)</p>
-                <p><strong>📺 HLS :</strong> Compatible avec tous les navigateurs, latence plus élevée</p>
-                <p><strong>📸 Photo :</strong> Image fixe actualisée automatiquement</p>
-                <p><strong>🔧 Interface go2rtc :</strong> Configuration avancée et diagnostics</p>
+                <p><strong>🎥 Flux Vidéo MSE :</strong> Stream en temps réel via WebSocket, compatible avec reverse proxy HTTPS</p>
+                <p><strong>� Photo Instantanée :</strong> Image fixe de la caméra actualisée en temps réel</p>
+                <p><strong>� Interface go2rtc :</strong> Configuration avancée et diagnostics du serveur vidéo</p>
+                <p><strong>� URL directe :</strong> <?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse</p>
             </div>
         </div>
     </div>
