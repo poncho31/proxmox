@@ -405,7 +405,7 @@ $mysql = getMySQLInfo();
             <h2>🌐 Sites Disponibles</h2>
             <div class="sites-grid">
                 <!-- Environnement PHP -->
-                <a href="http://<?php echo $system['server_name']; ?>:81" target="_blank" class="site-card php">
+                <a href="http://<?php echo $system['server_name']; ?>/todo_list.php" target="_blank" class="site-card php">
                     <span class="site-icon">🐘</span>
                     <div class="site-title">TODO List</div>
                     <div class="site-port">Port 81</div>
@@ -423,13 +423,6 @@ $mysql = getMySQLInfo();
                     <span class="site-icon">💻</span>
                     <div class="site-title">VS Code</div>
                     <div class="site-port">Port 81</div>
-                </a>
-
-                <!-- Interface go2rtc -->
-                <a href="<?php echo Env::get('URL_GO2RTC', 'https://100.104.128.114:82'); ?>" target="_blank" class="site-card rust">
-                    <span class="site-icon">🎥</span>
-                    <div class="site-title">go2rtc</div>
-                    <div class="site-port">Port 82</div>
                 </a>
 
                 <!-- Interface Proxmox -->
