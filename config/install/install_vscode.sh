@@ -96,7 +96,7 @@ fi
 # -------------------------------------------------------
 echo "==> Writing global Continue config to /root/.continue/config.yaml"
 mkdir -p /root/.continue
-cat > /root/.continue/config.yaml <<"EOF"
+cat > /root/.continue/config.yaml <<EOF
 name: Local Config
 version: 1.0.0
 schema: v1
@@ -104,7 +104,7 @@ models:
   - name: Local StarCoder 1b
     provider: ollama
     model: starcoder:1b
-    apiBase: http://'"${TAILSCALE_IP}"':83/ollama/'"${AI_API_TOKEN}"'
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
     temperature: 0.2
     maxTokens: 2048
     systemPrompt: |
