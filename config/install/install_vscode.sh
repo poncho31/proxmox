@@ -101,7 +101,7 @@ name: Local Config
 version: 1.0.0
 schema: v1
 models:
-  - name: Local StarCoder
+  - name: Local StarCoder 1b
     provider: ollama
     model: starcoder:1b
     apiBase: http://'"${TAILSCALE_IP}"':83/ollama/'"${AI_API_TOKEN}"'
