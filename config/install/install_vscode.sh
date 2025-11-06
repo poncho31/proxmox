@@ -96,7 +96,7 @@ fi
 # -------------------------------------------------------
 echo "==> Writing global Continue config to /root/.continue/config.yaml"
 mkdir -p /root/.continue
-cat > /root/.continue/config.yaml <<'EOF'
+cat > /root/.continue/config.yaml <<"EOF"
 name: Local Config
 version: 1.0.0
 schema: v1
@@ -104,7 +104,7 @@ models:
   - name: Local StarCoder
     provider: ollama
     model: starcoder:1b
-    apiBase: http://$TAILSCALE_IP:83/ollama/$AI_API_TOKEN
+    apiBase: http://'"${TAILSCALE_IP}"':83/ollama/'"${AI_API_TOKEN}"'
     temperature: 0.2
     maxTokens: 2048
     systemPrompt: |
@@ -113,6 +113,7 @@ models:
       Always format your responses as markdown code blocks.
     roles: [chat, edit, apply, summarize]
 EOF
+
 
 echo "==> Locating Continue extension directory..."
 CONTINUE_DIR=$(find /root/.local/share/code-server/extensions -maxdepth 1 -type d -name "continue.continue-*" | sort | tail -n 1)
