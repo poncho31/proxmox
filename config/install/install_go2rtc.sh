@@ -4,7 +4,7 @@
 
 install_go2rtc() {
     echo "==> Installing go2rtc video proxy..."
-    
+
     # Vérifier les variables essentielles
     if [ -z "$GO2RTC_IP" ] || [ -z "$CAMERA1_IP" ] || [ -z "$CAMERA1_USER" ] || [ -z "$CAMERA1_PASS" ]; then
         echo "Erreur: Variables go2rtc manquantes dans .env"
@@ -30,16 +30,16 @@ pct create 101 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
   --swap 256 \
   --rootfs local-lvm:4 \
   --net0 name=eth0,bridge=vmbr0,ip=$GO2RTC_IP/24,gw=192.168.0.1 \
-  --unprivileged 1 \
+  --unprivileged 0 \
   --features nesting=1 \
   --password $CADDY_PASSWORD \
   --start 1
 
     echo "Configuration du container go2rtc..."
-    
+
     # Attendre que le container soit démarré
     sleep 10
-    
+
     # Configurer DNS pour résoudre les problèmes de résolution
     pct exec 101 -- bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
     pct exec 101 -- bash -c "echo 'nameserver 8.8.4.4' >> /etc/resolv.conf"
@@ -60,7 +60,7 @@ pct create 101 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
     pct exec 101 -- systemctl start docker
     pct exec 101 -- systemctl enable docker
 
-    # L'utilisateur root est déjà configuré avec le mot de passe du conteneur  
+    # L'utilisateur root est déjà configuré avec le mot de passe du conteneur
     # Ajouter root au groupe docker pour pouvoir gérer les conteneurs
     pct exec 101 -- usermod -aG docker root
 
@@ -101,11 +101,11 @@ streams:
   # Pour caméras 1
   ${CAMERA1_NAME:-tapo_camera1}:
     - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream2"
-  
+
   # Camera 1 HD
   ${CAMERA1_NAME:-tapo_camera1}_hd:
     - "rtsp://${CAMERA1_USER}:${CAMERA1_PASS}@${CAMERA1_IP}:554/stream1"
-  
+
   # Pour caméras 2
   ${CAMERA2_NAME:-tapo_camera2}:
     - "rtsp://${CAMERA2_USER}:${CAMERA2_PASS}@${CAMERA2_IP}:554/stream2"
