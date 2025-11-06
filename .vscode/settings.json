@@ -1,0 +1,52 @@
+{
+    // 🌙 Apparence
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.iconTheme": "vscode-icons",
+    "editor.fontFamily": "Fira Code, JetBrains Mono, Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 14,
+    "editor.lineHeight": 22,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.minimap.enabled": false,
+    "editor.renderWhitespace": "boundary",
+    "editor.renderControlCharacters": false,
+    "editor.guides.indentation": true,
+    // ⚙️ Ergonomie
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.autoSave": "onFocusChange",
+    // 🐘 PHP
+    "php.validate.enable": true,
+    "php.validate.executablePath": "/usr/bin/php", // adapte selon ton système
+    "php.suggest.basic": false,
+    "intelephense.environment.includePaths": [
+        "vendor"
+    ],
+    "intelephense.format.enable": true,
+    "intelephense.files.exclude": [
+        "**/vendor/**",
+        "**/.git/**"
+    ],
+    "intelephense.telemetry.enabled": false,
+    // 🦀 Rust
+    "rust-analyzer.procMacro.enable": true,
+    "rust-analyzer.hover.actions.enable": true,
+    // 🔍 Recherche et navigation
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true,
+        "**/target": true
+    },
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    // 🔌 Extensions recommandées
+    "extensions.ignoreRecommendations": false
+}

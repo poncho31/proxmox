@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # =======================================================
-# VS CODE WEB INSTALLATION MODULE
+# VS CODE WEB + OLLAMA + CONTINUE INSTALLATION MODULE
 # =======================================================
 
 install_vscode_web() {
     echo "==> Installing VS Code web server..."
-    
-    # Installation de code-server (VS Code léger) si pas déjà installé
-    if [ ! -f "/usr/bin/code-server" ]; then
+
+    # Installation de code-server si absent
+    if ! command -v code-server >/dev/null 2>&1; then
         echo "Downloading and installing code-server..."
         curl -fsSL https://code-server.dev/install.sh | sh
     else
@@ -18,7 +18,7 @@ install_vscode_web() {
     # Configuration de code-server
     echo "Configuring code-server..."
     mkdir -p /root/.config/code-server /root/.local/share/code-server
-    
+
     cat > /root/.config/code-server/config.yaml <<EOF
 bind-addr: 0.0.0.0:8081
 auth: $VSCODE_AUTH
@@ -29,7 +29,7 @@ disable-update-check: true
 disable-workspace-trust: true
 EOF
 
-    # Création du service systemd pour code-server
+    # Service systemd unique pour code-server
     echo "Creating systemd service for code-server..."
     cat > /etc/systemd/system/code-server.service <<'EOF'
 [Unit]
@@ -58,33 +58,110 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
-    # Rechargement systemd et activation du service
-    echo "Starting code-server service..."
     systemctl daemon-reload
-    systemctl enable code-server.service
+    systemctl enable --now code-server.service
 
-    # Nettoyer les anciens processus code-server
-    pkill -f code-server || true
-    sleep 2
+#!/bin/bash
 
-    systemctl start code-server.service
+# -------------------------------------------------------
+# Installation d’Ollama et du modèle Starcoder
+# -------------------------------------------------------
+echo "==> Checking Ollama installation..."
+if ! command -v ollama >/dev/null 2>&1; then
+    curl -fsSL https://ollama.com/install.sh | sh
+else
+    echo "Ollama already installed."
+fi
 
-    # Vérification que code-server fonctionne
-    echo "Verifying code-server installation..."
-    sleep 5
-    if systemctl is-active --quiet code-server.service; then
-        echo "✓ Code-server started successfully on port 8081"
-        echo "Testing connectivity..."
-        if curl -s http://localhost:8081 >/dev/null 2>&1; then
-            echo "✓ Code-server is responding correctly"
-        else
-            echo "⚠ Code-server is not responding on port 8081"
-        fi
-    else
-        echo "✗ Warning: Code-server failed to start"
-        echo "Service logs:"
-        journalctl -xeu code-server.service --no-pager -n 10
-    fi
+echo "==> Checking if Starcoder model is already pulled..."
+if ! ollama list | grep -q "starcoder:1b"; then
+    ollama pull starcoder:1b
+else
+    echo "Starcoder model already present."
+fi
 
-    echo "==> VS Code web installation completed"
+# -------------------------------------------------------
+# Installation de l’extension Continue
+# -------------------------------------------------------
+echo "==> Installing Continue extension in code-server..."
+CODE_SERVER_BIN=$(which code-server || true)
+if [ -n "$CODE_SERVER_BIN" ]; then
+    $CODE_SERVER_BIN --install-extension continue.continue
+else
+    echo "!! code-server binary not found in PATH"
+fi
+
+# -------------------------------------------------------
+# Config Continue (global + extension)
+# -------------------------------------------------------
+echo "==> Writing global Continue config to /root/.continue/config.yaml"
+mkdir -p /root/.continue
+cat > /root/.continue/config.yaml <<'EOF'
+name: Local Config
+version: 1.0.0
+schema: v1
+models:
+  - name: Local StarCoder
+    provider: ollama
+    model: starcoder:1b
+    apiBase: http://$TAILSCALE_IP:83/ollama/$AI_API_TOKEN
+    temperature: 0.2
+    maxTokens: 2048
+    systemPrompt: |
+      You are a helpful coding assistant.
+      Provide concise and accurate code suggestions.
+      Always format your responses as markdown code blocks.
+    roles: [chat, edit, apply, summarize]
+EOF
+
+echo "==> Locating Continue extension directory..."
+CONTINUE_DIR=$(find /root/.local/share/code-server/extensions -maxdepth 1 -type d -name "continue.continue-*" | sort | tail -n 1)
+
+if [ -n "$CONTINUE_DIR" ]; then
+    echo "==> Writing Continue config also to $CONTINUE_DIR/.continue/config.yaml"
+    mkdir -p "$CONTINUE_DIR/.continue"
+    cp /root/.continue/config.yaml "$CONTINUE_DIR/.continue/config.yaml"
+else
+    echo "!! Continue extension not found. Please check code-server installation."
+fi
+
+echo "==> Setup complete."
+echo "Open VS Code Web on https://100.104.128.114:81/"
+echo "In the Continue extension, 'Local StarCoder' should now appear automatically."
+
 }
+
+uninstall_vscode(){
+    echo "==> Arrêt des services code-server..."
+    systemctl stop code-server.service 2>/dev/null || true
+    systemctl stop code-server@root.service 2>/dev/null || true
+
+    echo "==> Désactivation des services..."
+    systemctl disable code-server.service 2>/dev/null || true
+    systemctl disable code-server@root.service 2>/dev/null || true
+
+    echo "==> Suppression des unités systemd..."
+    rm -f /etc/systemd/system/code-server.service
+    rm -f /etc/systemd/system/code-server@root.service
+    systemctl daemon-reload
+    systemctl reset-failed
+
+    echo "==> Suppression du binaire code-server..."
+    rm -f /usr/bin/code-server
+
+    echo "==> Suppression des répertoires de configuration et données..."
+    rm -rf /root/.config/code-server
+    rm -rf /root/.local/share/code-server
+    rm -rf /root/.cache/code-server
+    rm -rf /root/.vscode-oss
+    rm -rf /root/.continue   # ancien emplacement inutile
+
+    echo "==> Vérification qu’aucun processus code-server ne tourne..."
+    pkill -9 -f code-server 2>/dev/null || true
+
+    echo "==> Nettoyage terminé. code-server est supprimé."
+
+}
+
+# Lance la fonction
+install_vscode_web

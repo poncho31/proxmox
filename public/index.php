@@ -4,7 +4,8 @@ require_once __DIR__ . '/../src/env.php';
 Env::load();
 
 // Fonction pour tester MySQL et récupérer des informations
-function getMySQLInfo() {
+function getMySQLInfo()
+{
     $info = [
         'status' => 'Déconnecté',
         'version' => 'N/A',
@@ -14,7 +15,7 @@ function getMySQLInfo() {
         'tables' => 'N/A',
         'error' => null
     ];
-    
+
     try {
         // Lire directement le fichier .env
         $envPaths = [
@@ -22,7 +23,7 @@ function getMySQLInfo() {
             '/var/www/proxmox/git_app/.env',
             dirname(__DIR__) . '/.env'
         ];
-        
+
         $envContent = null;
         foreach ($envPaths as $envPath) {
             if (file_exists($envPath) && is_readable($envPath)) {
@@ -30,21 +31,21 @@ function getMySQLInfo() {
                 break;
             }
         }
-        
+
         if (!$envContent) {
             throw new Exception("Fichier .env non trouvé dans les chemins: " . implode(', ', $envPaths));
         }
-        
+
         // Parser DATABASE_URL depuis le contenu .env
         if (preg_match('/DATABASE_URL=(.+)/', $envContent, $matches)) {
             $databaseUrl = trim($matches[1]);
-            
+
             // Parser l'URL de base de données
             $parsed = parse_url($databaseUrl);
             if (!$parsed) {
                 throw new Exception("Format DATABASE_URL invalide: $databaseUrl");
             }
-            
+
             $config = [
                 'host' => $parsed['host'] ?? 'localhost',
                 'port' => $parsed['port'] ?? 3306,
@@ -55,19 +56,19 @@ function getMySQLInfo() {
         } else {
             throw new Exception("DATABASE_URL non trouvée dans le fichier .env");
         }
-        
+
         // Tests de connectivité avant la connexion PDO
         $host = $config['host'];
         $port = $config['port'];
-        
+
         // Test 1: Ping du serveur MySQL
         $pingResult = exec("ping -c 1 -W 1 $host 2>/dev/null", $pingOutput, $pingCode);
         $pingSuccess = $pingCode === 0;
-        
+
         // Test 2: Test de port avec telnet/nc
         $portResult = exec("timeout 3 bash -c \"echo > /dev/tcp/$host/$port\" 2>/dev/null", $portOutput, $portCode);
         $portOpen = $portCode === 0;
-        
+
         // Si les tests de base échouent, donner plus d'infos
         if (!$pingSuccess || !$portOpen) {
             $diagnostics = [
@@ -77,63 +78,63 @@ function getMySQLInfo() {
             ];
             throw new Exception("Connectivité MySQL échouée - " . implode(", ", $diagnostics));
         }
-            
+
         $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
         $pdo = new PDO($dsn, $config['username'], $config['password'], [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_TIMEOUT => 5
         ]);
-            
-            $info['status'] = 'Connecté';
-            
-            // Version MySQL
-            $stmt = $pdo->query("SELECT VERSION() as version");
-            $result = $stmt->fetch();
-            $info['version'] = $result['version'] ?? 'N/A';
-            
-            // Uptime du serveur
-            $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Uptime'");
-            $result = $stmt->fetch();
-            if ($result) {
-                $uptime = intval($result['Value']);
-                $days = floor($uptime / 86400);
-                $hours = floor(($uptime % 86400) / 3600);
-                $minutes = floor(($uptime % 3600) / 60);
-                $info['uptime'] = "{$days}j {$hours}h {$minutes}m";
-            }
-            
-            // Nombre de connexions
-            $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Threads_connected'");
-            $result = $stmt->fetch();
-            $info['connections'] = $result['Value'] ?? 'N/A';
-            
-            // Nombre de bases de données
-            $stmt = $pdo->query("SHOW DATABASES");
-            $databases = $stmt->fetchAll();
-            $info['databases'] = count($databases);
-            
-            // Nombre de tables dans la base actuelle (si elle existe)
-            try {
-                $pdo->exec("USE " . $config['dbname']);
-                $stmt = $pdo->query("SHOW TABLES");
-                $tables = $stmt->fetchAll();
-                $info['tables'] = count($tables);
-            } catch (Exception $e) {
-                $info['tables'] = 'DB non trouvée';
-            }
-        
+
+        $info['status'] = 'Connecté';
+
+        // Version MySQL
+        $stmt = $pdo->query("SELECT VERSION() as version");
+        $result = $stmt->fetch();
+        $info['version'] = $result['version'] ?? 'N/A';
+
+        // Uptime du serveur
+        $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Uptime'");
+        $result = $stmt->fetch();
+        if ($result) {
+            $uptime = intval($result['Value']);
+            $days = floor($uptime / 86400);
+            $hours = floor(($uptime % 86400) / 3600);
+            $minutes = floor(($uptime % 3600) / 60);
+            $info['uptime'] = "{$days}j {$hours}h {$minutes}m";
+        }
+
+        // Nombre de connexions
+        $stmt = $pdo->query("SHOW STATUS WHERE Variable_name = 'Threads_connected'");
+        $result = $stmt->fetch();
+        $info['connections'] = $result['Value'] ?? 'N/A';
+
+        // Nombre de bases de données
+        $stmt = $pdo->query("SHOW DATABASES");
+        $databases = $stmt->fetchAll();
+        $info['databases'] = count($databases);
+
+        // Nombre de tables dans la base actuelle (si elle existe)
+        try {
+            $pdo->exec("USE " . $config['dbname']);
+            $stmt = $pdo->query("SHOW TABLES");
+            $tables = $stmt->fetchAll();
+            $info['tables'] = count($tables);
+        } catch (Exception $e) {
+            $info['tables'] = 'DB non trouvée';
+        }
     } catch (Exception $e) {
         $info['status'] = 'Erreur';
         $info['error'] = $e->getMessage();
     }
-    
+
     return $info;
 }
 
 // Récupération des informations système
-function getSystemInfo() {
+function getSystemInfo()
+{
     $info = [];
-    
+
     // Informations serveur de base
     $server_name = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? gethostname();
     // Si c'est encore "_", on utilise l'IP du serveur ou localhost
@@ -144,7 +145,7 @@ function getSystemInfo() {
     $info['client_ip'] = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
     $info['php_version'] = PHP_VERSION;
     $info['current_time'] = date('d/m/Y H:i:s');
-    
+
     // Load average (si disponible sur Linux)
     if (file_exists('/proc/loadavg')) {
         $load = file_get_contents('/proc/loadavg');
@@ -152,7 +153,7 @@ function getSystemInfo() {
     } else {
         $info['load_avg'] = 'N/A';
     }
-    
+
     // Mémoire (si disponible)
     if (file_exists('/proc/meminfo')) {
         $meminfo = file_get_contents('/proc/meminfo');
@@ -164,7 +165,7 @@ function getSystemInfo() {
     } else {
         $info['memory'] = 'N/A';
     }
-    
+
     return $info;
 }
 
@@ -173,6 +174,7 @@ $mysql = getMySQLInfo();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -364,7 +366,7 @@ $mysql = getMySQLInfo();
             body {
                 padding: 5px;
             }
-            
+
             .container {
                 gap: 10px;
             }
@@ -373,7 +375,8 @@ $mysql = getMySQLInfo();
                 font-size: 1.8rem;
             }
 
-            .sites-section, .info-section {
+            .sites-section,
+            .info-section {
                 margin: 0 5px;
             }
 
@@ -392,6 +395,7 @@ $mysql = getMySQLInfo();
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- En-tête -->
@@ -419,7 +423,7 @@ $mysql = getMySQLInfo();
                 </a>
 
                 <!-- VS Code Server -->
-                <a href="<?php echo Env::get('URL_VSCODE', 'https://100.104.128.114:81'); ?>" target="_blank" class="site-card vscode">
+                <a href="<?php echo Env::get('URL_VSCODE', ''); ?>" target="_blank" class="site-card vscode">
                     <span class="site-icon">💻</span>
                     <div class="site-title">VS Code</div>
                     <div class="site-port">Port 81</div>
@@ -521,10 +525,10 @@ $mysql = getMySQLInfo();
                     <span class="info-value"><?php echo $mysql['tables']; ?></span>
                 </div>
                 <?php if ($mysql['error']): ?>
-                <div class="info-item">
-                    <span class="info-label">⚠️ Erreur</span>
-                    <span class="info-value status-warning" style="font-size: 0.8rem; word-break: break-all;"><?php echo htmlspecialchars($mysql['error']); ?></span>
-                </div>
+                    <div class="info-item">
+                        <span class="info-label">⚠️ Erreur</span>
+                        <span class="info-value status-warning" style="font-size: 0.8rem; word-break: break-all;"><?php echo htmlspecialchars($mysql['error']); ?></span>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -559,4 +563,5 @@ $mysql = getMySQLInfo();
         });
     </script>
 </body>
+
 </html>

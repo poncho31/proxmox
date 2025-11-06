@@ -4,7 +4,7 @@
 
 load_environment_variables() {
     echo "==> Loading environment variables..."
-    
+
     if [ -f .env ]; then
         # Load only the variables we actually need, skip problematic SSH commands
         export DATABASE_URL=$(grep '^DATABASE_URL=' .env | cut -d'=' -f2-)
@@ -17,13 +17,16 @@ load_environment_variables() {
         export VSCODE_PASSWORD=$(grep '^VSCODE_PASSWORD=' .env | cut -d'=' -f2-)
         export TAILSCALE_AUTHKEY=$(grep '^TAILSCALE_AUTHKEY=' .env | cut -d'=' -f2-)
         export TAILSCALE_HOSTNAME=$(grep '^TAILSCALE_HOSTNAME=' .env | cut -d'=' -f2-)
-        
+        export TAILSCALE_DNS=$(grep '^TAILSCALE_DNS=' .env | cut -d'=' -f2-)
+        export TAILSCALE_IP=$(grep '^TAILSCALE_IP=' .env | cut -d'=' -f2-)
+        export TAILSCALE_SUBNETS=$(grep '^TAILSCALE_SUBNETS=' .env | cut -d'=' -f2-)
+
         # Variables go2rtc
         export INSTALL_GO2RTC=$(grep '^INSTALL_GO2RTC=' .env | cut -d'=' -f2-)
         export GO2RTC_IP=$(grep '^GO2RTC_IP=' .env | cut -d'=' -f2-)
         export GO2RTC_PORT=$(grep '^GO2RTC_PORT=' .env | cut -d'=' -f2-)
         export GO2RTC_WEBRTC_PORT=$(grep '^GO2RTC_WEBRTC_PORT=' .env | cut -d'=' -f2-)
-        
+
         # Variables caméras
         export CAMERA1_NAME=$(grep '^CAMERA1_NAME=' .env | cut -d'=' -f2-)
         export CAMERA1_LABEL=$(grep '^CAMERA1_LABEL=' .env | cut -d'=' -f2-)
@@ -41,6 +44,10 @@ load_environment_variables() {
         # Variables VS Code
         export VSCODE_PORT=$(grep '^VSCODE_PORT=' .env | cut -d'=' -f2-)
         export VSCODE_IP=$(grep '^VSCODE_IP=' .env | cut -d'=' -f2-)
+
+        # AI API
+        export AI_API_TOKEN=$(grep '^AI_API_TOKEN=' .env | cut -d'=' -f2-)
+
 
         echo "Environment variables loaded from .env"
     else
