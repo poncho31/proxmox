@@ -64,7 +64,7 @@ EOF
 #!/bin/bash
 
 # -------------------------------------------------------
-# Installation d’Ollama et du modèle Starcoder
+# Installation d'Ollama avec optimisations système
 # -------------------------------------------------------
 echo "==> Checking Ollama installation..."
 if ! command -v ollama >/dev/null 2>&1; then
@@ -73,13 +73,30 @@ else
     echo "Ollama already installed."
 fi
 
+# Configuration des variables d'optimisation Ollama
+echo "==> Configuring Ollama optimization settings..."
+cat > /etc/systemd/system/ollama.service.d/override.conf <<EOF
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0:11434"
+Environment="OLLAMA_ORIGINS=*"
+Environment="OLLAMA_NUM_PARALLEL=1"
+Environment="OLLAMA_MAX_LOADED_MODELS=1"
+Environment="OLLAMA_FLASH_ATTENTION=1"
+Environment="OLLAMA_LLM_LIBRARY=cpu"
+Environment="OLLAMA_NOPRUNE=1"
+Environment="GOMAXPROCS=4"
+EOF
+
+mkdir -p /etc/systemd/system/ollama.service.d/
+
 echo "==> Pulling coding models..."
 
 # Liste des modèles à télécharger (optimisés pour 6GB RAM / 4 CPU)
+# Ordre de priorité : du plus léger au plus lourd
 MODELS=(
-    "codegemma:2b"
-    "deepseek-coder:1.3b"
-    "starcoder2:3b"
+    "deepseek-coder:1.3b"    # Ultra rapide - Autocomplétion
+    "codegemma:2b"           # Rapide - Code général
+    "starcoder2:3b"          # Équilibré - Explications
 )
 
 echo "==> Starting model download loop..."
@@ -95,8 +112,13 @@ for model in "${MODELS[@]}"; do
 done
 echo "==> Model download loop completed"
 
+# Redémarrage d'Ollama avec les nouvelles optimisations
+echo "==> Restarting Ollama with optimizations..."
+systemctl daemon-reload
+systemctl restart ollama
+
 # -------------------------------------------------------
-# Installation de l’extension Continue
+# Installation de l'extension Continue
 # -------------------------------------------------------
 echo "==> Installing Continue extension in code-server..."
 CODE_SERVER_BIN=$(which code-server || true)
@@ -116,41 +138,77 @@ name: Local Config
 version: 1.0.0
 schema: v1
 models:
-  - name: CodeGemma 2B (Fast & Light)
-    provider: ollama
-    model: codegemma:2b
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.1
-    maxTokens: 2048
-    systemPrompt: |
-      You are CodeGemma, a specialized coding assistant optimized for speed and accuracy.
-      Focus on code completion, bug fixes, and concise explanations.
-      Prioritize efficient, readable code with proper syntax.
-    roles: [chat, edit, apply, summarize]
-
-  - name: DeepSeek Coder 1.3B (Ultra Fast)
+  - name: 🚀 DeepSeek Coder (Ultra Fast)
     provider: ollama
     model: deepseek-coder:1.3b
     apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    temperature: 0.1
+    maxTokens: 1024
+    contextLength: 4096
+    requestOptions:
+      numPredict: 1024
+      numCtx: 4096
+      numGpu: 0
+      numThread: 4
+      repeatPenalty: 1.1
+      topK: 40
+      topP: 0.9
+    systemPrompt: "Code completion and quick fixes only. Be concise."
+    roles: [edit, apply]
+
+  - name: ⚡ CodeGemma (Balanced)
+    provider: ollama
+    model: codegemma:2b
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
     temperature: 0.2
-    maxTokens: 2048
-    systemPrompt: |
-      You are DeepSeek Coder, an ultra-fast coding assistant.
-      Provide instant code suggestions and quick problem solving.
-      Excel at code completion and syntax corrections.
+    maxTokens: 1536
+    contextLength: 6144
+    requestOptions:
+      numPredict: 1536
+      numCtx: 6144
+      numGpu: 0
+      numThread: 4
+      repeatPenalty: 1.1
+      topK: 50
+      topP: 0.85
+    systemPrompt: "Provide efficient code solutions with brief explanations."
     roles: [chat, edit, apply]
 
-  - name: StarCoder2 3B (Balanced)
+  - name: 🧠 StarCoder2 (Smart)
     provider: ollama
     model: starcoder2:3b
     apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.2
-    maxTokens: 3072
-    systemPrompt: |
-      You are StarCoder2, a balanced coding assistant.
-      Provide quality code with good explanations while staying responsive.
-      Focus on best practices and maintainable solutions.
+    temperature: 0.3
+    maxTokens: 2048
+    contextLength: 8192
+    requestOptions:
+      numPredict: 2048
+      numCtx: 8192
+      numGpu: 0
+      numThread: 4
+      repeatPenalty: 1.1
+      topK: 60
+      topP: 0.8
+    systemPrompt: "Explain code logic and provide detailed solutions with best practices."
     roles: [chat, summarize]
+
+# Optimisation Continue
+tabAutocompleteModel: 🚀 DeepSeek Coder (Ultra Fast)
+defaultModel: ⚡ CodeGemma (Balanced)
+
+# Configuration de performance
+experimental:
+  useChromiumForDocsCrawling: false
+
+# Cache et optimisations
+allowAnonymousTelemetry: false
+disableIndexing: false
+disableSessionTitles: true
+
+# Paramètres d'interface optimisés
+ui:
+  codeBlockToolbar: false
+  displayRawMarkdown: false
 EOF
 
 
