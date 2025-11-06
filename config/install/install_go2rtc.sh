@@ -83,8 +83,7 @@ services:
     container_name: go2rtc
     image: alexxit/go2rtc:latest
     restart: unless-stopped
-    ports:
-      - "${GO2RTC_PORT:-1984}:1984"
+    network_mode: host
     volumes:
       - /opt/go2rtc/config/go2rtc.yaml:/config/go2rtc.yaml
     environment:
