@@ -6,13 +6,14 @@
 # apt install git -y
 # git clone https://github.com/poncho31/proxmox.git /var/www/proxmox
 
-echo "=========================================="
-echo "    PROXMOX INSTALLATION STARTING"
-echo "=========================================="
-
 # Make this script executable and change to project directory
 chmod +x /var/www/proxmox/_install.sh
 cd /var/www/proxmox
+
+# Load common functions first
+source config/install/common_functions.sh
+
+print_header "PROXMOX INSTALLATION STARTING"
 
 # Load all installation modules
 source config/install/load_env.sh
@@ -25,43 +26,41 @@ source config/install/install_caddy.sh
 source config/install/install_vscode.sh
 
 # Execute installation steps in order
-echo "==> Step 1: Updating from Git repository"
+print_step "1" "Updating from Git repository"
 update_from_git
 
-echo "==> Step 2: Loading environment variables"
+print_step "2" "Loading environment variables"
 load_environment_variables
 
-echo "==> Step 3: Setting up file permissions"
+print_step "3" "Setting up file permissions"
 setup_permissions
 
-echo "==> Step 4: Configuring Proxmox repositories"
+print_step "4" "Configuring Proxmox repositories"
 setup_proxmox_repositories
 
-echo "==> Step 5: Installing PHP"
+print_step "5" "Installing PHP"
 install_php
 
-echo "==> Step 6: Installing and configuring Tailscale"
+print_step "6" "Installing and configuring Tailscale"
 install_and_configure_tailscale
 
-echo "==> Step 7: Installing and configuring Caddy"
+print_step "7" "Installing and configuring Caddy"
 install_and_configure_caddy
 
-echo "==> Step 8: Installing VS Code web server"
+print_step "8" "Installing VS Code web server"
 install_vscode_web
 
-echo "DEBUG: INSTALL_GO2RTC=$INSTALL_GO2RTC"
+print_info "DEBUG: INSTALL_GO2RTC=$INSTALL_GO2RTC"
 if [ "$INSTALL_GO2RTC" = "true" ]; then
-    echo "==> Step 9: Installing go2rtc video proxy"
+    print_step "9" "Installing go2rtc video proxy"
     source config/install/install_go2rtc.sh
     install_go2rtc
 else
-    echo "==> Step 9: Skipping go2rtc installation"
+    print_step "9" "Skipping go2rtc installation"
 fi
 
-echo "=========================================="
-echo "    PROXMOX INSTALLATION COMPLETED"
-echo "=========================================="
-echo "==> All installation steps completed successfully!"
-echo "==> You can now access your Proxmox web interface at: https://$CADDY_MAIN_IP"
-echo "==> Login with username: $CADDY_USER"
-echo "=========================================="
+# Installation summary
+print_installation_summary "https://$CADDY_MAIN_IP" "$CADDY_USER"
+
+# Services summary
+print_services_summary "$CADDY_MAIN_IP" "$VSCODE_IP" "$VSCODE_PORT" "$GO2RTC_IP" "$GO2RTC_PORT"
