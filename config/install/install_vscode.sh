@@ -75,12 +75,11 @@ fi
 
 echo "==> Pulling coding models..."
 
-# Liste des modèles à télécharger
+# Liste des modèles à télécharger (optimisés pour 6GB RAM / 4 CPU)
 MODELS=(
-    "starcoder:1b"
-    "codellama:7b-code"
-    "codellama:7b-instruct"
-    "phi3:14b"
+    "codegemma:2b"
+    "deepseek-coder:1.3b"
+    "starcoder2:3b"
 )
 
 echo "==> Starting model download loop..."
@@ -117,52 +116,40 @@ name: Local Config
 version: 1.0.0
 schema: v1
 models:
-  - name: Local StarCoder 1b
+  - name: CodeGemma 2B (Fast & Light)
     provider: ollama
-    model: starcoder:1b
+    model: codegemma:2b
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    temperature: 0.1
+    maxTokens: 2048
+    systemPrompt: |
+      You are CodeGemma, a specialized coding assistant optimized for speed and accuracy.
+      Focus on code completion, bug fixes, and concise explanations.
+      Prioritize efficient, readable code with proper syntax.
+    roles: [chat, edit, apply, summarize]
+
+  - name: DeepSeek Coder 1.3B (Ultra Fast)
+    provider: ollama
+    model: deepseek-coder:1.3b
     apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
     temperature: 0.2
     maxTokens: 2048
     systemPrompt: |
-      You are a helpful coding assistant.
-      Provide concise and accurate code suggestions.
-      Always format your responses as markdown code blocks.
-    roles: [chat, edit, apply, summarize]
-
-  - name: CodeLlama 7b Code
-    provider: ollama
-    model: codellama:7b-code
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.1
-    maxTokens: 4096
-    systemPrompt: |
-      You are an expert coding assistant specialized in code generation and completion.
-      Focus on writing clean, efficient, and well-documented code.
-      Provide contextual code suggestions with proper syntax.
+      You are DeepSeek Coder, an ultra-fast coding assistant.
+      Provide instant code suggestions and quick problem solving.
+      Excel at code completion and syntax corrections.
     roles: [chat, edit, apply]
 
-  - name: CodeLlama 7b Instruct
+  - name: StarCoder2 3B (Balanced)
     provider: ollama
-    model: codellama:7b-instruct
+    model: starcoder2:3b
     apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.3
-    maxTokens: 4096
+    temperature: 0.2
+    maxTokens: 3072
     systemPrompt: |
-      You are a coding mentor and assistant.
-      Help with debugging, code explanation, and best practices.
-      Provide step-by-step guidance for complex problems.
-    roles: [chat, summarize]
-
-  - name: Phi3 Medium 14b
-    provider: ollama
-    model: phi3:14b
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.3
-    maxTokens: 4096
-    systemPrompt: |
-      You are Phi-3, a capable coding and reasoning assistant.
-      Provide detailed explanations and help with complex logic.
-      Focus on code quality, testing, and maintainability.
+      You are StarCoder2, a balanced coding assistant.
+      Provide quality code with good explanations while staying responsive.
+      Focus on best practices and maintainable solutions.
     roles: [chat, summarize]
 EOF
 
