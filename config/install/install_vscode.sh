@@ -73,12 +73,27 @@ else
     echo "Ollama already installed."
 fi
 
-echo "==> Checking if Starcoder model is already pulled..."
-if ! ollama list | grep -q "starcoder:1b"; then
-    ollama pull starcoder:1b
-else
-    echo "Starcoder model already present."
-fi
+echo "==> Pulling coding models..."
+
+# Liste des modèles à télécharger
+MODELS=(
+    "starcoder:1b"
+    "codellama:7b-code"
+    "codellama:7b-instruct"
+    "deepseek-coder:6.7b"
+    "qwen2.5-coder:7b"
+    "phi3:14b"
+)
+
+for model in "${MODELS[@]}"; do
+    echo "Checking model: $model"
+    if ! ollama list | grep -q "$model"; then
+        echo "Pulling $model..."
+        ollama pull "$model"
+    else
+        echo "$model already present."
+    fi
+done
 
 # -------------------------------------------------------
 # Installation de l’extension Continue
@@ -112,6 +127,30 @@ models:
       Provide concise and accurate code suggestions.
       Always format your responses as markdown code blocks.
     roles: [chat, edit, apply, summarize]
+
+  - name: CodeLlama 7b Code
+    provider: ollama
+    model: codellama:7b-code
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    temperature: 0.1
+    maxTokens: 4096
+    systemPrompt: |
+      You are an expert coding assistant specialized in code generation and completion.
+      Focus on writing clean, efficient, and well-documented code.
+      Provide contextual code suggestions with proper syntax.
+    roles: [chat, edit, apply]
+
+  - name: Phi3 Medium 14b
+    provider: ollama
+    model: phi3:14b
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    temperature: 0.3
+    maxTokens: 4096
+    systemPrompt: |
+      You are Phi-3, a capable coding and reasoning assistant.
+      Provide detailed explanations and help with complex logic.
+      Focus on code quality, testing, and maintainability.
+    roles: [chat, summarize]
 EOF
 
 
