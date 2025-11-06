@@ -80,20 +80,21 @@ MODELS=(
     "starcoder:1b"
     "codellama:7b-code"
     "codellama:7b-instruct"
-    "deepseek-coder:6.7b"
-    "qwen2.5-coder:7b"
     "phi3:14b"
 )
 
+echo "==> Starting model download loop..."
 for model in "${MODELS[@]}"; do
-    echo "Checking model: $model"
+    echo "🔍 Checking model: $model"
     if ! ollama list | grep -q "$model"; then
-        echo "Pulling $model..."
+        echo "⬇️  Pulling $model..."
         ollama pull "$model"
+        echo "✅ $model downloaded successfully"
     else
-        echo "$model already present."
+        echo "✅ $model already present."
     fi
 done
+echo "==> Model download loop completed"
 
 # -------------------------------------------------------
 # Installation de l’extension Continue
@@ -139,6 +140,18 @@ models:
       Focus on writing clean, efficient, and well-documented code.
       Provide contextual code suggestions with proper syntax.
     roles: [chat, edit, apply]
+
+  - name: CodeLlama 7b Instruct
+    provider: ollama
+    model: codellama:7b-instruct
+    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    temperature: 0.3
+    maxTokens: 4096
+    systemPrompt: |
+      You are a coding mentor and assistant.
+      Help with debugging, code explanation, and best practices.
+      Provide step-by-step guidance for complex problems.
+    roles: [chat, summarize]
 
   - name: Phi3 Medium 14b
     provider: ollama
