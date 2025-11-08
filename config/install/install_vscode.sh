@@ -61,61 +61,6 @@ EOF
     systemctl daemon-reload
     systemctl enable --now code-server.service
 
-#!/bin/bash
-
-# -------------------------------------------------------
-# Installation d'Ollama avec optimisations système
-# -------------------------------------------------------
-echo "==> Checking Ollama installation..."
-if ! command -v ollama >/dev/null 2>&1; then
-    curl -fsSL https://ollama.com/install.sh | sh
-else
-    echo "Ollama already installed."
-fi
-
-# Configuration des variables d'optimisation Ollama
-echo "==> Configuring Ollama optimization settings..."
-cat > /etc/systemd/system/ollama.service.d/override.conf <<EOF
-[Service]
-Environment="OLLAMA_HOST=0.0.0.0:11434"
-Environment="OLLAMA_ORIGINS=*"
-Environment="OLLAMA_NUM_PARALLEL=1"
-Environment="OLLAMA_MAX_LOADED_MODELS=1"
-Environment="OLLAMA_FLASH_ATTENTION=1"
-Environment="OLLAMA_LLM_LIBRARY=cpu"
-Environment="OLLAMA_NOPRUNE=1"
-Environment="GOMAXPROCS=4"
-EOF
-
-mkdir -p /etc/systemd/system/ollama.service.d/
-
-echo "==> Pulling coding models..."
-
-# Liste des modèles à télécharger (optimisés pour 6GB RAM / 4 CPU)
-# Ordre de priorité : du plus léger au plus lourd
-MODELS=(
-    "deepseek-coder:1.3b"    # Ultra rapide - Autocomplétion
-    "codegemma:2b"           # Rapide - Code général
-    "starcoder2:3b"          # Équilibré - Explications
-)
-
-echo "==> Starting model download loop..."
-for model in "${MODELS[@]}"; do
-    echo "🔍 Checking model: $model"
-    if ! ollama list | grep -q "$model"; then
-        echo "⬇️  Pulling $model..."
-        ollama pull "$model"
-        echo "✅ $model downloaded successfully"
-    else
-        echo "✅ $model already present."
-    fi
-done
-echo "==> Model download loop completed"
-
-# Redémarrage d'Ollama avec les nouvelles optimisations
-echo "==> Restarting Ollama with optimizations..."
-systemctl daemon-reload
-systemctl restart ollama
 
 # -------------------------------------------------------
 # Installation de l'extension Continue
@@ -138,28 +83,10 @@ name: Local Config
 version: 1.0.0
 schema: v1
 models:
-  - name: 🚀 DeepSeek Coder (Ultra Fast)
+  - name: DeepSeek Coder latest (Ultra Fast)
     provider: ollama
-    model: deepseek-coder:1.3b
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.1
-    maxTokens: 1024
-    contextLength: 4096
-    requestOptions:
-      numPredict: 1024
-      numCtx: 4096
-      numGpu: 0
-      numThread: 4
-      repeatPenalty: 1.1
-      topK: 40
-      topP: 0.9
-    systemPrompt: "Code completion and quick fixes only. Be concise."
-    roles: [edit, apply]
-
-  - name: ⚡ CodeGemma (Balanced)
-    provider: ollama
-    model: codegemma:2b
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
+    model: deepseek-coder:latest
+    apiBase: http://${TAILSCALE_IP}:83/
     temperature: 0.2
     maxTokens: 1536
     contextLength: 6144
@@ -173,42 +100,6 @@ models:
       topP: 0.85
     systemPrompt: "Provide efficient code solutions with brief explanations."
     roles: [chat, edit, apply]
-
-  - name: 🧠 StarCoder2 (Smart)
-    provider: ollama
-    model: starcoder2:3b
-    apiBase: http://${TAILSCALE_IP}:83/ollama/${AI_API_TOKEN}
-    temperature: 0.3
-    maxTokens: 2048
-    contextLength: 8192
-    requestOptions:
-      numPredict: 2048
-      numCtx: 8192
-      numGpu: 0
-      numThread: 4
-      repeatPenalty: 1.1
-      topK: 60
-      topP: 0.8
-    systemPrompt: "Explain code logic and provide detailed solutions with best practices."
-    roles: [chat, summarize]
-
-# Optimisation Continue
-tabAutocompleteModel: 🚀 DeepSeek Coder (Ultra Fast)
-defaultModel: ⚡ CodeGemma (Balanced)
-
-# Configuration de performance
-experimental:
-  useChromiumForDocsCrawling: false
-
-# Cache et optimisations
-allowAnonymousTelemetry: false
-disableIndexing: false
-disableSessionTitles: true
-
-# Paramètres d'interface optimisés
-ui:
-  codeBlockToolbar: false
-  displayRawMarkdown: false
 EOF
 
 
@@ -260,6 +151,3 @@ uninstall_vscode(){
     echo "==> Nettoyage terminé. code-server est supprimé."
 
 }
-
-# Lance la fonction
-install_vscode_web

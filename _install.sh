@@ -24,6 +24,7 @@ source config/install/install_php.sh
 source config/install/install_tailscale.sh
 source config/install/install_caddy.sh
 source config/install/install_vscode.sh
+source config/install/install_ai.sh
 
 # Execute installation steps in order
 print_step "1" "Updating from Git repository"
@@ -50,13 +51,16 @@ install_and_configure_caddy
 print_step "8" "Installing VS Code web server"
 install_vscode_web
 
+print_step "9" "Installing Ollama AI"
+install_ollama
+
 print_info "DEBUG: INSTALL_GO2RTC=$INSTALL_GO2RTC"
 if [ "$INSTALL_GO2RTC" = "true" ]; then
-    print_step "9" "Installing go2rtc video proxy"
+    print_step "10" "Installing go2rtc video proxy"
     source config/install/install_go2rtc.sh
     install_go2rtc
 else
-    print_step "9" "Skipping go2rtc installation"
+    print_step "10" "Skipping go2rtc installation"
 fi
 
 # Installation summary

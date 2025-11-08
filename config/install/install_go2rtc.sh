@@ -32,7 +32,7 @@ pct create 101 local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst \
   --net0 name=eth0,bridge=vmbr0,ip=$GO2RTC_IP/24,gw=192.168.0.1 \
   --unprivileged 0 \
   --features nesting=1 \
-  --password $CADDY_PASSWORD \
+  --password $GO2RTC_SERVER_PASSWORD \
   --start 1
 
     echo "Configuration du container go2rtc..."

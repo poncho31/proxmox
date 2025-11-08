@@ -1,4 +1,5 @@
 #!/bin/bash
+# chmod +x ./_load.sh ; ./_load.sh
 
 # Make this script executable and change to project directory
 chmod +x /var/www/proxmox/_install.sh
@@ -13,6 +14,8 @@ source config/install/install_php.sh
 source config/install/install_tailscale.sh
 source config/install/install_caddy.sh
 source config/install/install_vscode.sh
+source config/install/install_ai.sh
+source config/install/init_server.sh
 
 load_environment_variables
 
@@ -62,6 +65,24 @@ if [ "$1" = "go2rtc" ]; then
     echo "Installing go2rtc video proxy"
     source config/install/install_go2rtc.sh
     install_go2rtc
+fi
+
+if [ "$1" = "install_ai_ollama" ]; then
+    echo "Installing AI"
+    source config/install/install_ai.sh
+    install_ollama
+fi
+
+if [ "$1" = "install_ai_stable_diffusion" ]; then
+    echo "Installing AI"
+    source config/install/install_ai.sh
+    install_ollama
+fi
+
+if [ "$1" = "ai_model" ]; then
+    # chmod +x ./_load.sh ; ./_load.sh ai_model "Resume php language" false
+    echo "Run AI Model : $AI_BASE_MODEL"
+    source config/cmd/cmd_curl_run_ai.sh "$2" $3
 fi
 
 echo "=========================================="

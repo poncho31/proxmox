@@ -34,19 +34,6 @@ https://$CADDY_MAIN_IP:81 {
     reverse_proxy $VSCODE_IP:$VSCODE_PORT
 }
 
-# AI API
-http://$CADDY_MAIN_IP:83 {
-
-  @allow_from_caddy remote_ip $CADDY_MAIN_IP
-
-  handle @allow_from_caddy {
-    handle_path /ollama/$AI_API_TOKEN/* {
-      reverse_proxy http://localhost:11434
-    }
-  }
-  respond "Unauthorized" 403
-}
-
 
 # Interface Go2rtc pour gestion de flux vidéo en temps réel (ex: caméra)
 https://$CADDY_MAIN_IP:82 {
@@ -68,6 +55,28 @@ https://$CADDY_MAIN_IP:82 {
         }
     }
 }
+
+# AI API
+http://$CADDY_MAIN_IP:83 {
+  @allow_from_caddy remote_ip $CADDY_MAIN_IP
+
+  handle @allow_from_caddy {
+    reverse_proxy http://$AI_IP:$AI_PORT {
+      flush_interval -1
+      transport http {
+        versions h1
+      }
+      header_up Host {http.reverse_proxy.upstream.hostport}
+      header_up X-Real-IP {http.request.remote}
+      header_up X-Forwarded-For {http.request.remote}
+      header_up X-Forwarded-Proto {http.request.scheme}
+    }
+  }
+
+  respond "Unauthorized PROXMOX" 403
+}
+
+
 EOF
 
     # Restart Caddy to apply configuration

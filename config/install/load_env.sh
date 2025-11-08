@@ -46,7 +46,30 @@ load_environment_variables() {
         export VSCODE_IP=$(grep '^VSCODE_IP=' .env | cut -d'=' -f2-)
 
         # AI API
-        export AI_API_TOKEN=$(grep '^AI_API_TOKEN=' .env | cut -d'=' -f2-)
+        export AI_CONTAINER_ID=$(grep '^AI_CONTAINER_ID=' .env | cut -d'=' -f2-)
+        export AI_HOSTNAME=$(grep '^AI_HOSTNAME=' .env | cut -d'=' -f2-)
+        export AI_CORES=$(grep '^AI_CORES=' .env | cut -d'=' -f2-)
+        export AI_MEMORY=$(grep '^AI_MEMORY=' .env | cut -d'=' -f2-)
+        export AI_SWAP=$(grep '^AI_SWAP=' .env | cut -d'=' -f2-)
+        export AI_ROOTFS=$(grep '^AI_ROOTFS=' .env | cut -d'=' -f2-)
+        export AI_IP=$(grep '^AI_IP=' .env | cut -d'=' -f2-)
+        export AI_IP_PORT=$(grep '^AI_IP_PORT=' .env | cut -d'=' -f2-)
+        export AI_GATEWAY=$(grep '^AI_GATEWAY=' .env | cut -d'=' -f2-)
+        export AI_SERVER_PASSWORD=$(grep '^AI_SERVER_PASSWORD=' .env | cut -d'=' -f2-)
+        export AI_BASE_MODEL=$(grep '^AI_BASE_MODEL=' .env | cut -d'=' -f2-)
+
+        # SERVER INIT
+        export SERVER_CONTAINER_ID=$(grep '^SERVER_CONTAINER_ID=' .env | cut -d'=' -f2-)
+        export SERVER_HOSTNAME=$(grep '^SERVER_HOSTNAME=' .env | cut -d'=' -f2-)
+        export SERVER_CORES=$(grep '^SERVER_CORES=' .env | cut -d'=' -f2-)
+        export SERVER_MEMORY=$(grep '^SERVER_MEMORY=' .env | cut -d'=' -f2-)
+        export SERVER_SWAP=$(grep '^SERVER_SWAP=' .env | cut -d'=' -f2-)
+        export SERVER_ROOTFS=$(grep '^SERVER_ROOTFS=' .env | cut -d'=' -f2-)
+        export SERVER_IP=$(grep '^SERVER_IP=' .env | cut -d'=' -f2-)
+        export SERVER_GATEWAY=$(grep '^SERVER_GATEWAY=' .env | cut -d'=' -f2-)
+        export SERVER_PASSWORD=$(grep '^SERVER_PASSWORD=' .env | cut -d'=' -f2-)
+        export SERVER_INIT=$(grep '^SERVER_INIT=' .env | cut -d'=' -f2-)
+        export SERVER_FORCE_INIT=$(grep '^SERVER_FORCE_INIT=' .env | cut -d'=' -f2-)
 
 
         echo "Environment variables loaded from .env"
