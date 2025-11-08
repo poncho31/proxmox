@@ -76,7 +76,7 @@ fi
 if [ "$1" = "install_ai_stable_diffusion" ]; then
     echo "Installing AI"
     source config/install/install_ai.sh
-    install_ollama
+    install_stable_diffusion
 fi
 
 if [ "$1" = "ai_model" ]; then

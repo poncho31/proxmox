@@ -116,5 +116,5 @@ install_stable_diffusion() {
     echo "💡 Tu peux l’exécuter manuellement ou en arrière-plan avec : pct exec $CONTAINER_ID -- nohup bash -c '$COMMAND' &"
 
     # Optionnel : lancer automatiquement
-    # pct exec "$CONTAINER_ID" -- bash -c "$COMMAND"
+    pct exec "$CONTAINER_ID" -- bash -c "$COMMAND"
 }
