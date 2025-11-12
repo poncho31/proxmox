@@ -1,0 +1,113 @@
+{
+    "id": "888f11e8-3a4a-400a-92f8-1da230784a95",
+    "revision": 0,
+    "last_node_id": 1,
+    "last_link_id": 0,
+    "nodes": [
+        {
+            "id": 1,
+            "type": "EdgeTTS_Speak_Text",
+            "pos": [
+                -116.5657787063022,
+                85.2298796195007
+            ],
+            "size": [
+                809.1843043995243,
+                314.5255648038049
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "voice",
+                    "name": "voice",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "voice"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "rate",
+                    "name": "rate",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "rate"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "output_mode",
+                    "name": "output_mode",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "output_mode"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "output_folder",
+                    "name": "output_folder",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "output_folder"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "filename_prefix",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "file_path",
+                    "name": "file_path",
+                    "type": "STRING",
+                    "links": null
+                }
+            ],
+            "properties": {
+                "cnr_id": "ComfyUI-TTS",
+                "ver": "5b3afd7067ee0126ac1ba4d412b12426a8ff525d",
+                "Node name for S&R": "EdgeTTS_Speak_Text"
+            },
+            "widgets_values": [
+                "Bonjour !dzd z z zd zdzdz dz  dzzdz ",
+                "fr-FR-HenriNeural",
+                "medium",
+                "both",
+                "ComfyUI\\output",
+                "voix_"
+            ]
+        }
+    ],
+    "links": [],
+    "groups": [],
+    "config": {},
+    "extra": {
+        "ds": {
+            "scale": 1.0789149435800613,
+            "offset": [
+                217.29786172372462,
+                129.4055209421935
+            ]
+        }
+    },
+    "version": 0.4
+}

@@ -1,0 +1,618 @@
+{
+    "id": "1cafb84c-fc77-4326-b84f-73f87114a1dc",
+    "revision": 0,
+    "last_node_id": 9,
+    "last_link_id": 9,
+    "nodes": [
+        {
+            "id": 3,
+            "type": "roop",
+            "pos": [
+                500,
+                250
+            ],
+            "size": [
+                315,
+                200
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 2
+                },
+                {
+                    "localized_name": "reference_image",
+                    "name": "reference_image",
+                    "type": "IMAGE",
+                    "link": 1
+                },
+                {
+                    "localized_name": "swap_model",
+                    "name": "swap_model",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "swap_model"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "faces_index",
+                    "name": "faces_index",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "faces_index"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "reference_faces_index",
+                    "name": "reference_faces_index",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "reference_faces_index"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "console_logging_level",
+                    "name": "console_logging_level",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "console_logging_level"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        3
+                    ]
+                }
+            ],
+            "title": "Face Swap",
+            "properties": {
+                "cnr_id": "ComfyUI_roop",
+                "ver": "d35f4aaed6568ed95691b7258fac7814d6544a02",
+                "Node name for S&R": "roop"
+            },
+            "widgets_values": [
+                "inswapper_128.onnx",
+                "0",
+                "0",
+                1
+            ]
+        },
+        {
+            "id": 5,
+            "type": "ImageUpscaleWithModel",
+            "pos": [
+                900,
+                200
+            ],
+            "size": [
+                315,
+                130
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "modèle_d'agrandissement",
+                    "name": "upscale_model",
+                    "type": "UPSCALE_MODEL",
+                    "link": 5
+                },
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 3
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        6
+                    ]
+                }
+            ],
+            "title": "Upscale 2x",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "ImageUpscaleWithModel"
+            },
+            "widgets_values": []
+        },
+        {
+            "id": 7,
+            "type": "ImageSharpen",
+            "pos": [
+                1700,
+                200
+            ],
+            "size": [
+                315,
+                106
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 8
+                },
+                {
+                    "localized_name": "rayon_d'affûtage",
+                    "name": "sharpen_radius",
+                    "type": "INT",
+                    "widget": {
+                        "name": "sharpen_radius"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "sigma",
+                    "name": "sigma",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "sigma"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "alpha",
+                    "name": "alpha",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "alpha"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        7
+                    ]
+                }
+            ],
+            "title": "Sharpen Details",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "ImageSharpen"
+            },
+            "widgets_values": [
+                1,
+                1,
+                0.3
+            ]
+        },
+        {
+            "id": 4,
+            "type": "SaveImage",
+            "pos": [
+                2100,
+                200
+            ],
+            "size": [
+                320,
+                270
+            ],
+            "flags": {},
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "images",
+                    "name": "images",
+                    "type": "IMAGE",
+                    "link": 7
+                },
+                {
+                    "localized_name": "préfixe_du_nom_de_fichier",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [],
+            "title": "Save HD Image",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68"
+            },
+            "widgets_values": [
+                "roop_hd_faceswap"
+            ]
+        },
+        {
+            "id": 8,
+            "type": "FaceRestoreModelLoader",
+            "pos": [
+                900,
+                450
+            ],
+            "size": [
+                315,
+                60
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "FACERESTORE_MODEL",
+                    "name": "FACERESTORE_MODEL",
+                    "type": "FACERESTORE_MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        9
+                    ]
+                }
+            ],
+            "title": "Face Restore Model",
+            "properties": {
+                "cnr_id": "facerestore_cf",
+                "ver": "ff4d7a5c102441d8f058dd6135797ffb57b6c6ad",
+                "Node name for S&R": "FaceRestoreModelLoader"
+            },
+            "widgets_values": [
+                "GFPGANv1.4.pth"
+            ]
+        },
+        {
+            "id": 9,
+            "type": "FaceRestoreCFWithModel",
+            "pos": [
+                1300,
+                200
+            ],
+            "size": [
+                315,
+                102
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "facerestore_model",
+                    "name": "facerestore_model",
+                    "type": "FACERESTORE_MODEL",
+                    "link": 9
+                },
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 6
+                },
+                {
+                    "localized_name": "facedetection",
+                    "name": "facedetection",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "facedetection"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "codeformer_fidelity",
+                    "name": "codeformer_fidelity",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "codeformer_fidelity"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        8
+                    ]
+                }
+            ],
+            "title": "Restore Face Quality",
+            "properties": {
+                "cnr_id": "facerestore_cf",
+                "ver": "ff4d7a5c102441d8f058dd6135797ffb57b6c6ad",
+                "Node name for S&R": "FaceRestoreCFWithModel"
+            },
+            "widgets_values": [
+                "retinaface_resnet50",
+                0.5
+            ]
+        },
+        {
+            "id": 6,
+            "type": "UpscaleModelLoader",
+            "pos": [
+                500,
+                600
+            ],
+            "size": [
+                315,
+                60
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "nom_du_modèle",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE_DE_MISE_À_L'ÉCHELLE",
+                    "name": "UPSCALE_MODEL",
+                    "type": "UPSCALE_MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        5
+                    ]
+                }
+            ],
+            "title": "Upscale Model",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "UpscaleModelLoader"
+            },
+            "widgets_values": [
+                "RealESRGAN_x2plus.pth"
+            ]
+        },
+        {
+            "id": 1,
+            "type": "LoadImage",
+            "pos": [
+                100,
+                100
+            ],
+            "size": [
+                320,
+                314
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "image"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "choisissez le fichier à télécharger",
+                    "name": "upload",
+                    "type": "IMAGEUPLOAD",
+                    "widget": {
+                        "name": "upload"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        1
+                    ]
+                },
+                {
+                    "localized_name": "MASQUE",
+                    "name": "MASK",
+                    "type": "MASK",
+                    "links": null
+                }
+            ],
+            "title": "Visage Source (HD)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "LoadImage"
+            },
+            "widgets_values": [
+                "roop_hd_faceswap_00004_.png",
+                "image"
+            ]
+        },
+        {
+            "id": 2,
+            "type": "LoadImage",
+            "pos": [
+                93.03245367403369,
+                489.4827625138094
+            ],
+            "size": [
+                320,
+                314.00000000000006
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "image"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "choisissez le fichier à télécharger",
+                    "name": "upload",
+                    "type": "IMAGEUPLOAD",
+                    "widget": {
+                        "name": "upload"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        2
+                    ]
+                },
+                {
+                    "localized_name": "MASQUE",
+                    "name": "MASK",
+                    "type": "MASK",
+                    "links": null
+                }
+            ],
+            "title": "Image Cible",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "LoadImage"
+            },
+            "widgets_values": [
+                "73ca5d77f266bb5dcf97d4c0c105187d-4092977616.jpg",
+                "image"
+            ]
+        }
+    ],
+    "links": [
+        [
+            1,
+            1,
+            0,
+            3,
+            1,
+            "IMAGE"
+        ],
+        [
+            2,
+            2,
+            0,
+            3,
+            0,
+            "IMAGE"
+        ],
+        [
+            3,
+            3,
+            0,
+            5,
+            1,
+            "IMAGE"
+        ],
+        [
+            5,
+            6,
+            0,
+            5,
+            0,
+            "UPSCALE_MODEL"
+        ],
+        [
+            6,
+            5,
+            0,
+            9,
+            1,
+            "IMAGE"
+        ],
+        [
+            7,
+            7,
+            0,
+            4,
+            0,
+            "IMAGE"
+        ],
+        [
+            8,
+            9,
+            0,
+            7,
+            0,
+            "IMAGE"
+        ],
+        [
+            9,
+            8,
+            0,
+            9,
+            0,
+            "FACERESTORE_MODEL"
+        ]
+    ],
+    "groups": [],
+    "config": {},
+    "extra": {
+        "ds": {
+            "scale": 0.6303940863128517,
+            "offset": [
+                664.5176701853119,
+                135.41843368720637
+            ]
+        }
+    },
+    "version": 0.4
+}

@@ -1,0 +1,902 @@
+﻿{
+    "id": "04392a3c-cd1f-4ec4-a58b-9df60d5ef738",
+    "revision": 0,
+    "last_node_id": 20,
+    "last_link_id": 50,
+    "nodes": [
+        {
+            "id": 3,
+            "type": "CLIPTextEncode",
+            "pos": [
+                400,
+                300
+            ],
+            "size": [
+                400,
+                200
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "clip",
+                    "name": "clip",
+                    "type": "CLIP",
+                    "link": 3
+                },
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "CONDITIONNEMENT",
+                    "name": "CONDITIONING",
+                    "type": "CONDITIONING",
+                    "links": [
+                        6
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+                "cartoon, anime, 3d render, cgi, fake, painting, sketch, illustration, bad quality, blurry, low resolution, deformed, distorted, disfigured, bad anatomy, mutation, static image, text, watermark"
+            ]
+        },
+        {
+            "id": 6,
+            "type": "VAEDecode",
+            "pos": [
+                1200,
+                50
+            ],
+            "size": [
+                210,
+                46
+            ],
+            "flags": {},
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "échantillons",
+                    "name": "samples",
+                    "type": "LATENT",
+                    "link": 9
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "type": "VAE",
+                    "link": 4
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "links": [
+                        10
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "VAEDecode"
+            },
+            "widgets_values": []
+        },
+        {
+            "id": 7,
+            "type": "VHS_VideoCombine",
+            "pos": [
+                1200,
+                150
+            ],
+            "size": [
+                315,
+                643
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "images",
+                    "name": "images",
+                    "type": "IMAGE",
+                    "link": 10
+                },
+                {
+                    "localized_name": "audio",
+                    "name": "audio",
+                    "shape": 7,
+                    "type": "AUDIO",
+                    "link": null
+                },
+                {
+                    "localized_name": "meta_batch",
+                    "name": "meta_batch",
+                    "shape": 7,
+                    "type": "VHS_BatchManager",
+                    "link": null
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "shape": 7,
+                    "type": "VAE",
+                    "link": null
+                },
+                {
+                    "localized_name": "frame_rate",
+                    "name": "frame_rate",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "frame_rate"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "loop_count",
+                    "name": "loop_count",
+                    "type": "INT",
+                    "widget": {
+                        "name": "loop_count"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "filename_prefix",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "format",
+                    "name": "format",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "format"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "pingpong",
+                    "name": "pingpong",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "pingpong"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "save_output",
+                    "name": "save_output",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "save_output"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "pix_fmt",
+                    "type": [
+                        "yuv420p",
+                        "yuv420p10le"
+                    ],
+                    "widget": {
+                        "name": "pix_fmt"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "crf",
+                    "type": "INT",
+                    "widget": {
+                        "name": "crf"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "save_metadata",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "save_metadata"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "trim_to_audio",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "trim_to_audio"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "Filenames",
+                    "name": "Filenames",
+                    "type": "VHS_FILENAMES",
+                    "links": null
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfyui-videohelpersuite",
+                "ver": "8923bd836bdab8b7bbdf4ed104b7d045e70c66e2",
+                "Node name for S&R": "VHS_VideoCombine"
+            },
+            "widgets_values": {
+                "frame_rate": 8,
+                "loop_count": 0,
+                "filename_prefix": "animatediff_video",
+                "format": "video/h264-mp4",
+                "pix_fmt": "yuv420p",
+                "crf": 19,
+                "save_metadata": true,
+                "trim_to_audio": false,
+                "pingpong": false,
+                "save_output": true,
+                "videopreview": {
+                    "hidden": false,
+                    "paused": false,
+                    "params": {
+                        "filename": "animatediff_video_00001.mp4",
+                        "subfolder": "",
+                        "type": "output",
+                        "format": "video/h264-mp4",
+                        "frame_rate": 8,
+                        "workflow": "animatediff_video_00001.png",
+                        "fullpath": "H:\\IA\\ComfyUI_windows_portable_nvidia\\ComfyUI_windows_portable\\ComfyUI\\output\\animatediff_video_00001.mp4"
+                    }
+                }
+            }
+        },
+        {
+            "id": 8,
+            "type": "ADE_UseEvolvedSampling",
+            "pos": [
+                800,
+                -277.3711982929874
+            ],
+            "size": [
+                350,
+                118
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 12
+                },
+                {
+                    "localized_name": "m_models",
+                    "name": "m_models",
+                    "shape": 7,
+                    "type": "M_MODELS",
+                    "link": 13
+                },
+                {
+                    "localized_name": "context_options",
+                    "name": "context_options",
+                    "shape": 7,
+                    "type": "CONTEXT_OPTIONS",
+                    "link": null
+                },
+                {
+                    "localized_name": "sample_settings",
+                    "name": "sample_settings",
+                    "shape": 7,
+                    "type": "SAMPLE_SETTINGS",
+                    "link": null
+                },
+                {
+                    "localized_name": "beta_schedule",
+                    "name": "beta_schedule",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "beta_schedule"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE",
+                    "name": "MODEL",
+                    "type": "MODEL",
+                    "links": [
+                        8
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_UseEvolvedSampling"
+            },
+            "widgets_values": [
+                "sqrt_linear (AnimateDiff)"
+            ]
+        },
+        {
+            "id": 9,
+            "type": "ADE_LoadAnimateDiffModel",
+            "pos": [
+                50,
+                200
+            ],
+            "size": [
+                315,
+                58
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "ad_settings",
+                    "name": "ad_settings",
+                    "shape": 7,
+                    "type": "AD_SETTINGS",
+                    "link": null
+                },
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MOTION_MODEL",
+                    "name": "MOTION_MODEL",
+                    "type": "MOTION_MODEL_ADE",
+                    "links": [
+                        11
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_LoadAnimateDiffModel"
+            },
+            "widgets_values": [
+                "mm_sd_v15_v2.ckpt"
+            ]
+        },
+        {
+            "id": 10,
+            "type": "ADE_ApplyAnimateDiffModel",
+            "pos": [
+                425.7138385027795,
+                -127.37119829298739
+            ],
+            "size": [
+                350,
+                202
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "motion_model",
+                    "name": "motion_model",
+                    "type": "MOTION_MODEL_ADE",
+                    "link": 11
+                },
+                {
+                    "localized_name": "motion_lora",
+                    "name": "motion_lora",
+                    "shape": 7,
+                    "type": "MOTION_LORA",
+                    "link": null
+                },
+                {
+                    "localized_name": "scale_multival",
+                    "name": "scale_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "effect_multival",
+                    "name": "effect_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "ad_keyframes",
+                    "name": "ad_keyframes",
+                    "shape": 7,
+                    "type": "AD_KEYFRAMES",
+                    "link": null
+                },
+                {
+                    "localized_name": "prev_m_models",
+                    "name": "prev_m_models",
+                    "shape": 7,
+                    "type": "M_MODELS",
+                    "link": null
+                },
+                {
+                    "localized_name": "per_block",
+                    "name": "per_block",
+                    "shape": 7,
+                    "type": "PER_BLOCK",
+                    "link": null
+                },
+                {
+                    "localized_name": "start_percent",
+                    "name": "start_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "start_percent"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "end_percent",
+                    "name": "end_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "end_percent"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "M_MODELS",
+                    "name": "M_MODELS",
+                    "type": "M_MODELS",
+                    "links": [
+                        13
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_ApplyAnimateDiffModel"
+            },
+            "widgets_values": [
+                0,
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "type": "CheckpointLoaderSimple",
+            "pos": [
+                50,
+                50
+            ],
+            "size": [
+                315,
+                98
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "nom_ckpt",
+                    "name": "ckpt_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "ckpt_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE",
+                    "name": "MODEL",
+                    "type": "MODEL",
+                    "links": [
+                        12
+                    ]
+                },
+                {
+                    "localized_name": "CLIP",
+                    "name": "CLIP",
+                    "type": "CLIP",
+                    "links": [
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "localized_name": "VAE",
+                    "name": "VAE",
+                    "type": "VAE",
+                    "links": [
+                        4
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CheckpointLoaderSimple"
+            },
+            "widgets_values": [
+                "dreamshaper_8.safetensors"
+            ]
+        },
+        {
+            "id": 4,
+            "type": "EmptyLatentImage",
+            "pos": [
+                857.5142031416133,
+                -139.8004447995095
+            ],
+            "size": [
+                315,
+                106
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "largeur",
+                    "name": "width",
+                    "type": "INT",
+                    "widget": {
+                        "name": "width"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "hauteur",
+                    "name": "height",
+                    "type": "INT",
+                    "widget": {
+                        "name": "height"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "taille_du_lot",
+                    "name": "batch_size",
+                    "type": "INT",
+                    "widget": {
+                        "name": "batch_size"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "links": [
+                        7
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "EmptyLatentImage"
+            },
+            "widgets_values": [
+                512,
+                512,
+                16
+            ]
+        },
+        {
+            "id": 5,
+            "type": "KSampler",
+            "pos": [
+                850,
+                50
+            ],
+            "size": [
+                315,
+                262
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 8
+                },
+                {
+                    "localized_name": "positive",
+                    "name": "positive",
+                    "type": "CONDITIONING",
+                    "link": 5
+                },
+                {
+                    "localized_name": "negative",
+                    "name": "negative",
+                    "type": "CONDITIONING",
+                    "link": 6
+                },
+                {
+                    "localized_name": "latent_image",
+                    "name": "latent_image",
+                    "type": "LATENT",
+                    "link": 7
+                },
+                {
+                    "localized_name": "seed",
+                    "name": "seed",
+                    "type": "INT",
+                    "widget": {
+                        "name": "seed"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "steps",
+                    "name": "steps",
+                    "type": "INT",
+                    "widget": {
+                        "name": "steps"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "cfg",
+                    "name": "cfg",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "cfg"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "sampler_name",
+                    "name": "sampler_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "sampler_name"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "scheduler",
+                    "name": "scheduler",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "scheduler"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "denoise",
+                    "name": "denoise",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "denoise"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "links": [
+                        9
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "KSampler"
+            },
+            "widgets_values": [
+                323132107350308,
+                "randomize",
+                20,
+                7,
+                "euler",
+                "normal",
+                1
+            ]
+        },
+        {
+            "id": 2,
+            "type": "CLIPTextEncode",
+            "pos": [
+                400,
+                50
+            ],
+            "size": [
+                400,
+                200
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "clip",
+                    "name": "clip",
+                    "type": "CLIP",
+                    "link": 2
+                },
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "CONDITIONNEMENT",
+                    "name": "CONDITIONING",
+                    "type": "CONDITIONING",
+                    "links": [
+                        5
+                    ]
+                }
+            ],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+                "A beautiful woman dancing gracefully with smooth movements, (professional video footage:1.3), (photorealistic:1.4), (high quality:1.2), sharp focus, natural lighting, cinematic color grading, 8k uhd, dslr, film grain"
+            ]
+        }
+    ],
+    "links": [
+        [
+            2,
+            1,
+            1,
+            2,
+            0,
+            "CLIP"
+        ],
+        [
+            3,
+            1,
+            1,
+            3,
+            0,
+            "CLIP"
+        ],
+        [
+            4,
+            1,
+            2,
+            6,
+            1,
+            "VAE"
+        ],
+        [
+            5,
+            2,
+            0,
+            5,
+            1,
+            "CONDITIONING"
+        ],
+        [
+            6,
+            3,
+            0,
+            5,
+            2,
+            "CONDITIONING"
+        ],
+        [
+            7,
+            4,
+            0,
+            5,
+            3,
+            "LATENT"
+        ],
+        [
+            8,
+            8,
+            0,
+            5,
+            0,
+            "MODEL"
+        ],
+        [
+            9,
+            5,
+            0,
+            6,
+            0,
+            "LATENT"
+        ],
+        [
+            10,
+            6,
+            0,
+            7,
+            0,
+            "IMAGE"
+        ],
+        [
+            11,
+            9,
+            0,
+            10,
+            0,
+            "MOTION_MODEL"
+        ],
+        [
+            12,
+            1,
+            0,
+            8,
+            0,
+            "MODEL"
+        ],
+        [
+            13,
+            10,
+            0,
+            8,
+            1,
+            "M_MODELS"
+        ]
+    ],
+    "groups": [],
+    "config": {},
+    "extra": {
+        "ds": {
+            "scale": 0.7758564814814821,
+            "offset": [
+                9.560301249911731,
+                265.8534049368922
+            ]
+        }
+    },
+    "version": 0.4
+}

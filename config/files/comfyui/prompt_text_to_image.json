@@ -1,0 +1,1147 @@
+[
+    {
+        "category": "Âge",
+        "objective": "Rajeunir",
+        "prompt": "Transform the reference image into a photorealistic portrait at age 25. Preserve facial identity, smooth skin, bright youthful eyes, no wrinkles. Natural lighting, DSLR optics, shallow depth of field."
+    },
+    {
+        "category": "Âge",
+        "objective": "Vieillir",
+        "prompt": "Modify the reference image to depict the person at age 65. Add realistic wrinkles, grey hair, softened jawline, aged skin texture. Maintain core identity and expression."
+    },
+    {
+        "category": "Genre / Identité",
+        "objective": "Masculin → Féminin",
+        "prompt": "Reimagine the person as female while preserving facial structure. Adjust hairstyle, skin texture, and clothing. Photorealistic rendering with soft lighting and natural emotion."
+    },
+    {
+        "category": "Genre / Identité",
+        "objective": "Féminin → Masculin",
+        "prompt": "Transform the reference image into a male version of the person. Retain core facial features, add masculine jawline, short hairstyle, and subtle facial hair. Realistic lighting and skin tone."
+    },
+    {
+        "category": "Expression",
+        "objective": "Neutre → Sourire",
+        "prompt": "Modify the portrait to show a natural smile. Bright eyes, relaxed cheeks, subtle teeth visibility. Preserve identity and lighting setup. Photorealistic rendering."
+    },
+    {
+        "category": "Expression",
+        "objective": "Neutre → Sérieux",
+        "prompt": "Adjust the expression to a serious, contemplative look. Slight brow tension, closed lips, cinematic shadows. Photorealistic rendering."
+    },
+    {
+        "category": "Expression",
+        "objective": "Neutre → Tristesse",
+        "prompt": "Transform the expression into a subtle sadness. Downturned lips, softened gaze, gentle shadows under the eyes. Photorealistic rendering."
+    },
+    {
+        "category": "Expression",
+        "objective": "Neutre → Joie intense",
+        "prompt": "Modify the portrait to show intense joy. Wide smile, sparkling eyes, lifted eyebrows, natural laugh lines. Photorealistic rendering."
+    },
+    {
+        "category": "Style vestimentaire",
+        "objective": "Casual → Élégant",
+        "prompt": "Change clothing to formal attire: tailored suit or elegant dress. Maintain pose and lighting. Add realistic fabric texture and folds. Photorealistic rendering."
+    },
+    {
+        "category": "Style vestimentaire",
+        "objective": "Moderne → Vintage",
+        "prompt": "Apply a 1970s vintage look. Retro hairstyle, muted tones, analog film texture, grain, and soft lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Style vestimentaire",
+        "objective": "Décontracté → Sportif",
+        "prompt": "Transform clothing into athletic wear. Add realistic fabric stretch, breathable textures, and dynamic posture. Photorealistic rendering."
+    },
+    {
+        "category": "Style vestimentaire",
+        "objective": "Neutre → Fantaisie",
+        "prompt": "Apply fantasy-style clothing: flowing robes, metallic accents, magical accessories. Preserve realism in fabric and lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Contexte / Fond",
+        "objective": "Studio → Extérieur",
+        "prompt": "Replace background with a golden hour park scene. Soft sunlight, blurred trees, warm tones. Keep lighting consistent with face. Photorealistic rendering."
+    },
+    {
+        "category": "Contexte / Fond",
+        "objective": "Neutre → Urbain",
+        "prompt": "Add a realistic urban background with soft bokeh. Simulate depth and ambient light reflections. Photorealistic rendering."
+    },
+    {
+        "category": "Contexte / Fond",
+        "objective": "Neutre → Intérieur cosy",
+        "prompt": "Place the subject in a warm indoor setting: soft furniture, ambient lighting, blurred background elements. Photorealistic rendering."
+    },
+    {
+        "category": "Contexte / Fond",
+        "objective": "Neutre → Paysage naturel",
+        "prompt": "Add a realistic mountain or forest background. Misty atmosphere, soft light diffusion, depth of field preserved. Photorealistic rendering."
+    },
+    {
+        "category": "Style artistique",
+        "objective": "Réaliste → Mode",
+        "prompt": "Transform into a fashion editorial portrait. Dramatic lighting, avant-garde clothing, Vogue-style composition. Photorealistic rendering."
+    },
+    {
+        "category": "Style artistique",
+        "objective": "Réaliste → Fantastique",
+        "prompt": "Apply a subtle fantasy aesthetic: ethereal lighting, soft glow, magical background elements. Preserve facial realism. Photorealistic rendering."
+    },
+    {
+        "category": "Style artistique",
+        "objective": "Réaliste → Cyberpunk",
+        "prompt": "Apply cyberpunk styling: neon lights, futuristic clothing, urban tech background. Maintain photorealistic skin and lighting."
+    },
+    {
+        "category": "Style artistique",
+        "objective": "Réaliste → Noir & Blanc",
+        "prompt": "Convert to high-contrast black and white portrait. Emphasize texture, lighting, and emotional depth. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance / Éclairage",
+        "objective": "Neutre → Cinématographique",
+        "prompt": "Enhance lighting to cinematic style: soft shadows, warm highlights, deep contrast. Simulate film-grade dynamic range. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance / Éclairage",
+        "objective": "Neutre → Studio",
+        "prompt": "Apply professional studio lighting with softboxes and controlled shadows. High clarity, neutral background, and balanced exposure. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance / Éclairage",
+        "objective": "Neutre → Golden Hour",
+        "prompt": "Simulate golden hour lighting: warm tones, soft shadows, natural glow on skin and hair. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance / Éclairage",
+        "objective": "Neutre → Nuit",
+        "prompt": "Transform lighting to nighttime ambiance: cool tones, soft rim light, subtle shadows, and low-key mood. Photorealistic rendering."
+    },
+    {
+        "category": "Détails du visage",
+        "objective": "Peau réaliste",
+        "prompt": "Add ultra-realistic skin texture with visible pores, subtle imperfections, and natural subsurface scattering. Maintain smoothness without plastic effect."
+    },
+    {
+        "category": "Détails du visage",
+        "objective": "Yeux expressifs",
+        "prompt": "Enhance eye realism: detailed irises, natural reflections, sharp eyelashes, and emotional depth. Maintain symmetry and gaze direction."
+    },
+    {
+        "category": "Détails du visage",
+        "objective": "Cheveux détaillés",
+        "prompt": "Add individual hair strands with realistic flow, volume, and texture. Simulate natural lighting and shadow interplay."
+    },
+    {
+        "category": "Détails du visage",
+        "objective": "Barbe réaliste",
+        "prompt": "Add a realistic beard: natural density, varied hair length, soft shadows, and skin integration."
+    },
+    {
+        "category": "Posture / Angle",
+        "objective": "Face → Profil",
+        "prompt": "Rotate the subject to a side profile. Maintain facial identity, lighting consistency, and realistic anatomy. Photorealistic rendering."
+    },
+    {
+        "category": "Posture / Angle",
+        "objective": "Face → Trois-quarts",
+        "prompt": "Adjust angle to a three-quarter view. Preserve depth, lighting, and facial proportions. Photorealistic rendering."
+    },
+    {
+        "category": "Posture / Angle",
+        "objective": "Face → Regard vers le bas",
+        "prompt": "Tilt head slightly downward. Add soft shadows on eyelids, relaxed expression, and cinematic lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Posture / Angle",
+        "objective": "Face → Regard vers le haut",
+        "prompt": "Tilt head slightly upward. Emphasize jawline, neck tension, and dramatic lighting from below. Photorealistic rendering."
+    },
+    {
+        "category": "Accessoires",
+        "objective": "Ajouter lunettes",
+        "prompt": "Add realistic eyeglasses: transparent lenses, subtle reflections, accurate frame shadows on skin. Photorealistic rendering."
+    },
+    {
+        "category": "Accessoires",
+        "objective": "Ajouter chapeau",
+        "prompt": "Add a realistic hat: natural fabric texture, accurate shadowing, and integration with hairstyle. Photorealistic rendering."
+    },
+    {
+        "category": "Accessoires",
+        "objective": "Ajouter bijoux",
+        "prompt": "Add subtle jewelry: earrings or necklace with realistic metal reflections and skin interaction. Photorealistic rendering."
+    },
+    {
+        "category": "Accessoires",
+        "objective": "Ajouter casque audio",
+        "prompt": "Add realistic headphones: matte texture, soft padding, accurate shadowing, and ear integration. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Confiance",
+        "prompt": "Adjust posture and expression to convey confidence. Slight smile, direct gaze, relaxed shoulders, and cinematic lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Mystère",
+        "prompt": "Create a mysterious mood: low-key lighting, soft shadows, indirect gaze, and subtle expression. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Joie",
+        "prompt": "Enhance expression to radiate joy: wide smile, sparkling eyes, uplifted eyebrows, and warm lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Tristesse",
+        "prompt": "Modify expression to reflect sadness: downturned lips, softened gaze, gentle shadows under eyes, and cool lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Mystère",
+        "prompt": "Create a mysterious mood: low-key lighting, soft shadows, indirect gaze, and cinematic contrast. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Tension dramatique",
+        "prompt": "Add dramatic tension: furrowed brows, intense eye contact, harsh lighting from one side, deep shadows. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Sérénité",
+        "prompt": "Convey serenity: relaxed posture, soft smile, ambient lighting, pastel tones, and gentle background blur. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Mélancolie",
+        "prompt": "Create a melancholic atmosphere: distant gaze, cool lighting, desaturated tones, and soft facial shadows. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Fierté",
+        "prompt": "Depict pride: upright posture, confident gaze, strong jawline, and directional lighting from above. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Émerveillement",
+        "prompt": "Show wonder: wide eyes, slightly open mouth, soft glow on the face, and magical ambient light. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Fatigue",
+        "prompt": "Depict fatigue: heavy eyelids, subtle eye bags, slouched posture, and flat ambient lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Colère contenue",
+        "prompt": "Convey restrained anger: tight lips, tense jaw, narrowed eyes, and harsh directional shadows. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Curiosité",
+        "prompt": "Express curiosity: tilted head, raised eyebrows, focused eyes, and soft directional lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Ambiance émotionnelle",
+        "objective": "Détermination",
+        "prompt": "Show determination: intense gaze, squared shoulders, strong contrast lighting, and sharp facial definition. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau maquillée",
+        "prompt": "Add realistic makeup: soft foundation, subtle blush, natural lip gloss, and detailed eye shadow. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau mouillée",
+        "prompt": "Simulate wet skin: reflective highlights, water droplets, and realistic skin gloss under soft lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau bronzée",
+        "prompt": "Apply a natural tan: warm skin tones, subtle freckles, and sun-kissed highlights on cheeks and nose. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau pâle",
+        "prompt": "Render pale skin: cool undertones, soft shadows, and translucent texture with visible capillaries. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau avec taches de rousseur",
+        "prompt": "Add realistic freckles: scattered across cheeks and nose, soft edges, and natural pigmentation. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau vieillie",
+        "prompt": "Add aged skin texture: fine wrinkles, age spots, and realistic sagging under natural lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau luisante",
+        "prompt": "Simulate oily skin: reflective highlights on forehead and nose, visible pores, and soft shadows. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau mate",
+        "prompt": "Render matte skin: soft light diffusion, minimal shine, and smooth texture with even tone. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau texturée",
+        "prompt": "Enhance skin realism: visible pores, micro-wrinkles, subtle imperfections, and natural light scattering. Photorealistic rendering."
+    },
+    {
+        "category": "Texture / Peau",
+        "objective": "Peau parfaite",
+        "prompt": "Create flawless skin: smooth texture, even tone, no blemishes, soft lighting, and subtle glow. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Regard séducteur",
+        "prompt": "Create a seductive gaze: half-closed eyes, intense eye contact, slight head tilt, soft shadows on face, subtle lip parting, and warm cinematic lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Lèvres sensuelles",
+        "prompt": "Enhance lips with sensual detail: fuller appearance, natural gloss, soft shadows, slight parting, realistic texture, and warm lighting on lower face. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Épaules dénudées",
+        "prompt": "Transform to show bare shoulders: smooth skin texture, elegant collarbone, soft lighting gradient, natural posture, and intimate framing. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Cheveux détachés",
+        "prompt": "Add flowing, loose hair: voluminous waves, natural movement, soft highlights, individual strands, and romantic backlight. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Expression suggestive",
+        "prompt": "Create a suggestive expression: knowing smile, confident gaze, relaxed features, subtle mystery, and soft dramatic lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Posture élégante",
+        "prompt": "Adjust to elegant sensual posture: graceful neck curve, relaxed shoulders, confident bearing, soft shadows on décolletage, and refined lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Éclairage intimiste",
+        "prompt": "Apply intimate lighting: warm soft glow, strategic shadows, candlelit ambiance, enhanced skin luminosity, and romantic atmosphere. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Look boudoir",
+        "prompt": "Transform into boudoir style portrait: soft focus, warm tones, intimate setting, delicate fabrics, romantic lighting, and refined elegance. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Peau lumineuse",
+        "prompt": "Add luminous skin effect: subtle glow, soft highlights on curves, warm undertones, natural radiance, and diffused lighting. Photorealistic rendering."
+    },
+    {
+        "category": "Sensualité",
+        "objective": "Regard mystérieux",
+        "prompt": "Create mysterious sensual gaze: lowered eyelids, sultry eye contact, soft eye shadows, romantic lighting, and enigmatic expression. Photorealistic rendering."
+    },
+    {
+        "category": "Ethnicity",
+        "objective": "European features",
+        "prompt": "Depict the person with European features: fair skin, light eyes, straight or wavy hair. Preserve facial identity and render with photorealistic lighting and texture."
+    },
+    {
+        "category": "Ethnicity",
+        "objective": "African features",
+        "prompt": "Depict the person with African features: dark skin tone, coiled or braided hair, strong bone structure. Maintain identity and ensure photorealistic rendering."
+    },
+    {
+        "category": "Ethnicity",
+        "objective": "Asian features",
+        "prompt": "Depict the person with Asian features: almond-shaped eyes, smooth skin, straight black hair. Preserve identity and render with photorealistic lighting and detail."
+    },
+    {
+        "category": "Ethnicity",
+        "objective": "Middle Eastern features",
+        "prompt": "Depict the person with Middle Eastern features: olive skin, dark hair, intense gaze. Maintain core identity and render with photorealistic realism."
+    },
+    {
+        "category": "Profession",
+        "objective": "Doctor",
+        "prompt": "Render the person as a medical professional: white coat, stethoscope, clinical lighting, calm expression. Preserve identity and ensure photorealistic realism."
+    },
+    {
+        "category": "Profession",
+        "objective": "Artist",
+        "prompt": "Depict the person as an artist: creative attire, paintbrush or sketchbook, studio background, natural lighting. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Profession",
+        "objective": "Chef",
+        "prompt": "Render the person as a chef: white uniform, kitchen background, warm lighting, confident posture. Maintain identity and photorealistic texture."
+    },
+    {
+        "category": "Profession",
+        "objective": "Engineer",
+        "prompt": "Depict the person as an engineer: construction helmet, technical plans, industrial background. Preserve identity and ensure photorealistic lighting and realism."
+    },
+    {
+        "category": "Action",
+        "objective": "Reading",
+        "prompt": "Show the person reading a book: focused gaze, soft lighting, relaxed posture, realistic book texture. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Action",
+        "objective": "Walking",
+        "prompt": "Depict the person in motion: walking posture, dynamic background blur, natural lighting. Maintain identity and ensure photorealistic realism."
+    },
+    {
+        "category": "Action",
+        "objective": "Working on laptop",
+        "prompt": "Show the person using a laptop: focused expression, screen glow, modern workspace. Preserve identity and render photorealistically."
+    },
+    {
+        "category": "Action",
+        "objective": "Taking a photo",
+        "prompt": "Depict the person holding a camera: precise gaze, outdoor or studio setting, realistic gear. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Life Scene",
+        "objective": "Breakfast moment",
+        "prompt": "Place the person at a breakfast table: morning light, realistic food textures, relaxed mood. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Life Scene",
+        "objective": "Reading in bed",
+        "prompt": "Show the person reading in bed: soft blankets, ambient lighting, intimate setting. Preserve identity and ensure photorealistic realism."
+    },
+    {
+        "category": "Life Scene",
+        "objective": "Forest walk",
+        "prompt": "Depict the person walking in a forest: natural light filtering through trees, serene expression, realistic foliage. Photorealistic rendering."
+    },
+    {
+        "category": "Life Scene",
+        "objective": "Coffee moment",
+        "prompt": "Show the person enjoying coffee: warm tones, visible steam, cozy atmosphere. Preserve identity and render photorealistically."
+    },
+    {
+        "category": "Season",
+        "objective": "Winter atmosphere",
+        "prompt": "Place the person in a winter setting: soft snow, cold breath, warm clothing, frosty background. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Season",
+        "objective": "Summer vibe",
+        "prompt": "Depict the person in a summer setting: bright sunlight, tanned skin, light clothing, beach or park background. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Season",
+        "objective": "Autumn mood",
+        "prompt": "Place the person in an autumn scene: warm tones, falling leaves, cozy clothing, soft lighting. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Season",
+        "objective": "Spring freshness",
+        "prompt": "Depict the person in a spring setting: blooming flowers, pastel tones, fresh light, joyful expression. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Social Interaction",
+        "objective": "Handshake",
+        "prompt": "Show the person engaged in a handshake: confident posture, direct gaze, realistic hand contact. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Social Interaction",
+        "objective": "Hug",
+        "prompt": "Depict the person in a warm hug: relaxed expression, soft lighting, emotional connection. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Social Interaction",
+        "objective": "Conversation",
+        "prompt": "Show the person in a conversation: expressive face, natural gestures, realistic background blur. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Complex Emotion",
+        "objective": "Nostalgia",
+        "prompt": "Convey nostalgia: distant gaze, soft lighting, subtle smile, warm tones. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Complex Emotion",
+        "objective": "Surprise",
+        "prompt": "Depict surprise: wide eyes, slightly open mouth, raised eyebrows, dynamic lighting. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Complex Emotion",
+        "objective": "Embarrassment",
+        "prompt": "Show embarrassment: blushing cheeks, shy smile, lowered gaze, soft shadows. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Cultural Environment",
+        "objective": "Japanese traditional",
+        "prompt": "Depict the person in a Japanese traditional setting: kimono, tatami background, soft ambient light. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Cultural Environment",
+        "objective": "Indian festive",
+        "prompt": "Show the person in an Indian festive setting: colorful attire, jewelry, warm lighting, celebratory background. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Cultural Environment",
+        "objective": "Nordic minimalism",
+        "prompt": "Place the person in a Nordic minimalist interior: clean lines, neutral tones, soft natural light. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Cultural Environment",
+        "objective": "Moroccan decor",
+        "prompt": "Depict the person in a Moroccan-inspired setting: ornate patterns, warm colors, ambient lantern light. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Sexe / Genre",
+        "objective": "Homme masculin",
+        "prompt": "Render as a masculine male: strong jawline, defined facial structure, masculine features, natural male proportions. Photorealistic rendering with anatomical accuracy."
+    },
+    {
+        "category": "Sexe / Genre",
+        "objective": "Femme féminine",
+        "prompt": "Render as a feminine female: soft facial features, feminine bone structure, natural female proportions, delicate characteristics. Photorealistic rendering with anatomical accuracy."
+    },
+    {
+        "category": "Sexe / Genre",
+        "objective": "Androgyne",
+        "prompt": "Render with androgynous features: balanced masculine and feminine traits, neutral styling, ambiguous characteristics. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Sexe / Genre",
+        "objective": "Non-binaire",
+        "prompt": "Render with non-binary presentation: gender-neutral styling, balanced features, modern aesthetic. Photorealistic rendering with preserved identity."
+    },
+    {
+        "category": "Corps / Physique",
+        "objective": "Athlétique",
+        "prompt": "Depict athletic physique: toned muscles, defined features, active posture, fitness aesthetic. Photorealistic rendering with natural proportions."
+    },
+    {
+        "category": "Corps / Physique",
+        "objective": "Mince",
+        "prompt": "Render slim physique: lean build, delicate frame, graceful proportions. Photorealistic rendering with natural appearance."
+    },
+    {
+        "category": "Corps / Physique",
+        "objective": "Musclé",
+        "prompt": "Depict muscular physique: developed muscles, strong build, powerful presence, defined muscle groups. Photorealistic rendering with anatomical accuracy."
+    },
+    {
+        "category": "Corps / Physique",
+        "objective": "Corpulent",
+        "prompt": "Render fuller physique: natural body curves, realistic proportions, confident posture. Photorealistic rendering with body positivity."
+    },
+    {
+        "category": "Nudité artistique",
+        "objective": "Épaules et dos nu",
+        "prompt": "Artistic bare shoulders and back: elegant posture, soft lighting on skin, tasteful composition, classical art style. Photorealistic rendering with refined aesthetics."
+    },
+    {
+        "category": "Nudité artistique",
+        "objective": "Torse nu artistique",
+        "prompt": "Artistic bare torso: classical sculpture lighting, refined shadows, museum-quality composition, tasteful framing. Photorealistic rendering with artistic integrity."
+    },
+    {
+        "category": "Nudité artistique",
+        "objective": "Silhouette nue",
+        "prompt": "Artistic nude silhouette: backlit contours, elegant curves, shadow play, refined composition. Photorealistic rendering with artistic sensibility."
+    },
+    {
+        "category": "Nudité artistique",
+        "objective": "Nu académique",
+        "prompt": "Academic nude study: classical pose, museum lighting, Renaissance-inspired composition, anatomical precision. Photorealistic rendering with art historical reference."
+    },
+    {
+        "category": "Intimité",
+        "objective": "Moment tendre",
+        "prompt": "Capture tender intimate moment: soft embrace, emotional closeness, warm lighting, gentle expressions. Photorealistic rendering with emotional depth."
+    },
+    {
+        "category": "Intimité",
+        "objective": "Regard complice",
+        "prompt": "Show knowing intimate gaze: shared understanding, close proximity, soft focus, emotional connection. Photorealistic rendering with subtle emotion."
+    },
+    {
+        "category": "Intimité",
+        "objective": "Proximité physique",
+        "prompt": "Depict physical closeness: natural body language, comfortable proximity, warm atmosphere, authentic connection. Photorealistic rendering with realistic interaction."
+    },
+    {
+        "category": "Intimité",
+        "objective": "Après-midi cocooning",
+        "prompt": "Show cozy intimate afternoon: relaxed posture, soft blankets, warm light, peaceful atmosphere. Photorealistic rendering with homey comfort."
+    },
+    {
+        "category": "Cheveux",
+        "objective": "Cheveux longs",
+        "prompt": "Render long flowing hair: individual strands, natural movement, realistic texture, soft highlights. Photorealistic rendering with hair physics."
+    },
+    {
+        "category": "Cheveux",
+        "objective": "Cheveux courts",
+        "prompt": "Render short hair: clean lines, precise cut, natural texture, modern styling. Photorealistic rendering with hair detail."
+    },
+    {
+        "category": "Cheveux",
+        "objective": "Cheveux bouclés",
+        "prompt": "Render curly hair: natural curl pattern, voluminous texture, bouncy movement, realistic shine. Photorealistic rendering with curl definition."
+    },
+    {
+        "category": "Cheveux",
+        "objective": "Cheveux raides",
+        "prompt": "Render straight hair: sleek texture, smooth flow, natural shine, clean lines. Photorealistic rendering with hair precision."
+    },
+    {
+        "category": "Cheveux",
+        "objective": "Chauve",
+        "prompt": "Render bald head: smooth scalp, natural skin texture, subtle highlights, confident appearance. Photorealistic rendering with skin detail."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Blond",
+        "prompt": "Render blonde hair: golden tones, natural highlights, sun-kissed effect, realistic color gradient. Photorealistic rendering with color accuracy."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Brun",
+        "prompt": "Render brown hair: rich chocolate tones, natural depth, subtle highlights, warm undertones. Photorealistic rendering with color richness."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Noir",
+        "prompt": "Render black hair: deep dark tones, natural shine, blue-black highlights, lustrous finish. Photorealistic rendering with color depth."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Roux",
+        "prompt": "Render red hair: vibrant copper tones, natural variation, warm highlights, ginger hues. Photorealistic rendering with color vibrancy."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Gris/Argenté",
+        "prompt": "Render grey/silver hair: natural silver tones, sophisticated shine, elegant appearance, realistic aging. Photorealistic rendering with distinguished look."
+    },
+    {
+        "category": "Couleur cheveux",
+        "objective": "Multicolore",
+        "prompt": "Render multicolored hair: creative color blend, vibrant tones, artistic gradient, modern styling. Photorealistic rendering with color transitions."
+    },
+    {
+        "category": "Morphologie visage",
+        "objective": "Visage ovale",
+        "prompt": "Render oval face shape: balanced proportions, harmonious features, classic beauty, natural symmetry. Photorealistic rendering with facial accuracy."
+    },
+    {
+        "category": "Morphologie visage",
+        "objective": "Visage carré",
+        "prompt": "Render square face shape: strong jawline, angular features, defined structure, powerful presence. Photorealistic rendering with facial definition."
+    },
+    {
+        "category": "Morphologie visage",
+        "objective": "Visage rond",
+        "prompt": "Render round face shape: soft curves, full cheeks, gentle features, youthful appearance. Photorealistic rendering with facial softness."
+    },
+    {
+        "category": "Morphologie visage",
+        "objective": "Visage triangulaire",
+        "prompt": "Render triangular face shape: pointed chin, broad forehead, distinctive angles, unique structure. Photorealistic rendering with facial geometry."
+    },
+    {
+        "category": "Morphologie visage",
+        "objective": "Visage en coeur",
+        "prompt": "Render heart-shaped face: wide forehead, narrow chin, delicate jawline, romantic proportions. Photorealistic rendering with facial elegance."
+    },
+    {
+        "category": "Pilosité faciale",
+        "objective": "Barbe complète",
+        "prompt": "Render full beard: dense coverage, natural growth pattern, groomed appearance, realistic texture. Photorealistic rendering with hair detail."
+    },
+    {
+        "category": "Pilosité faciale",
+        "objective": "Barbe de trois jours",
+        "prompt": "Render stubble: short facial hair, natural shadow, masculine texture, rugged appearance. Photorealistic rendering with stubble realism."
+    },
+    {
+        "category": "Pilosité faciale",
+        "objective": "Moustache",
+        "prompt": "Render mustache: styled upper lip hair, groomed appearance, classic or modern style. Photorealistic rendering with hair precision."
+    },
+    {
+        "category": "Pilosité faciale",
+        "objective": "Bouc",
+        "prompt": "Render goatee: chin beard, clean lines, groomed style, distinctive appearance. Photorealistic rendering with facial hair detail."
+    },
+    {
+        "category": "Pilosité faciale",
+        "objective": "Imberbe",
+        "prompt": "Render clean-shaven face: smooth skin, no facial hair, fresh appearance, clear complexion. Photorealistic rendering with skin smoothness."
+    },
+    {
+        "category": "Tatouages",
+        "objective": "Tatouage bras",
+        "prompt": "Add arm tattoo: realistic ink texture, detailed design, skin integration, artistic pattern. Photorealistic rendering with tattoo realism."
+    },
+    {
+        "category": "Tatouages",
+        "objective": "Tatouage cou",
+        "prompt": "Add neck tattoo: visible design, realistic placement, ink detail, bold or subtle style. Photorealistic rendering with skin texture."
+    },
+    {
+        "category": "Tatouages",
+        "objective": "Tatouage torse",
+        "prompt": "Add chest tattoo: large-scale design, anatomical flow, realistic shading, artistic composition. Photorealistic rendering with body integration."
+    },
+    {
+        "category": "Tatouages",
+        "objective": "Tatouage facial",
+        "prompt": "Add facial tattoo: cultural or modern design, precise placement, realistic ink, bold statement. Photorealistic rendering with facial detail."
+    },
+    {
+        "category": "Piercings",
+        "objective": "Piercing nez",
+        "prompt": "Add nose piercing: realistic metal, subtle or bold style, natural placement, light reflection. Photorealistic rendering with jewelry detail."
+    },
+    {
+        "category": "Piercings",
+        "objective": "Piercing lèvre",
+        "prompt": "Add lip piercing: realistic metal ring or stud, precise placement, natural skin interaction. Photorealistic rendering with metallic shine."
+    },
+    {
+        "category": "Piercings",
+        "objective": "Piercing sourcil",
+        "prompt": "Add eyebrow piercing: metal barbell or ring, clean placement, realistic shadows. Photorealistic rendering with piercing detail."
+    },
+    {
+        "category": "Piercings",
+        "objective": "Multiples piercings oreille",
+        "prompt": "Add multiple ear piercings: varied jewelry, realistic placement, metal shine, fashionable styling. Photorealistic rendering with jewelry precision."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Enfant (8-12 ans)",
+        "prompt": "Render as child aged 8-12: youthful features, innocent expression, age-appropriate proportions, natural childhood appearance. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Adolescent (13-17 ans)",
+        "prompt": "Render as teenager aged 13-17: developing features, youthful skin, teenage proportions, natural adolescent appearance. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Jeune adulte (18-25 ans)",
+        "prompt": "Render as young adult aged 18-25: mature features, youthful vitality, adult proportions, fresh appearance. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Adulte (30-40 ans)",
+        "prompt": "Render as adult aged 30-40: established features, slight maturity signs, confident appearance, prime age characteristics. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Maturité (50-60 ans)",
+        "prompt": "Render as mature adult aged 50-60: refined features, distinguished appearance, natural aging signs, sophisticated look. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Âge spécifique",
+        "objective": "Senior (70+ ans)",
+        "prompt": "Render as senior aged 70+: wise features, pronounced aging, deep character lines, dignified appearance. Photorealistic rendering with age accuracy."
+    },
+    {
+        "category": "Position du corps",
+        "objective": "Assis décontracté",
+        "prompt": "Show relaxed sitting position: comfortable posture, natural body language, casual placement, at-ease appearance. Photorealistic rendering with body realism."
+    },
+    {
+        "category": "Position du corps",
+        "objective": "Debout confiant",
+        "prompt": "Show confident standing position: upright posture, strong presence, grounded stance, assertive body language. Photorealistic rendering with posture accuracy."
+    },
+    {
+        "category": "Position du corps",
+        "objective": "Allongé relaxé",
+        "prompt": "Show relaxed lying position: comfortable recline, natural body flow, peaceful posture, restful appearance. Photorealistic rendering with body placement."
+    },
+    {
+        "category": "Position du corps",
+        "objective": "Accroupi",
+        "prompt": "Show crouching position: bent knees, balanced posture, dynamic stance, active positioning. Photorealistic rendering with anatomical accuracy."
+    },
+    {
+        "category": "Position du corps",
+        "objective": "En mouvement",
+        "prompt": "Show body in motion: dynamic posture, movement blur, active stance, kinetic energy. Photorealistic rendering with motion capture."
+    },
+    {
+        "category": "Météo / Conditions",
+        "objective": "Pluie",
+        "prompt": "Place person in rain: water droplets on skin and hair, wet clothing, rain backdrop, moody atmosphere. Photorealistic rendering with weather effects."
+    },
+    {
+        "category": "Météo / Conditions",
+        "objective": "Neige",
+        "prompt": "Show person in snowfall: snowflakes on hair and shoulders, cold breath visible, winter atmosphere, soft white light. Photorealistic rendering with snow effects."
+    },
+    {
+        "category": "Météo / Conditions",
+        "objective": "Brouillard",
+        "prompt": "Place person in fog: mysterious atmosphere, diffused lighting, reduced visibility, ethereal mood. Photorealistic rendering with fog effects."
+    },
+    {
+        "category": "Météo / Conditions",
+        "objective": "Vent",
+        "prompt": "Show person in wind: hair flowing, clothing movement, dynamic energy, natural force. Photorealistic rendering with wind effects."
+    },
+    {
+        "category": "Météo / Conditions",
+        "objective": "Orage",
+        "prompt": "Place person during storm: dramatic lighting, intense atmosphere, powerful sky, moody shadows. Photorealistic rendering with storm ambiance."
+    },
+    {
+        "category": "Heure de la journée",
+        "objective": "Aube",
+        "prompt": "Show person at dawn: soft morning light, pastel sky colors, fresh atmosphere, new day energy. Photorealistic rendering with morning glow."
+    },
+    {
+        "category": "Heure de la journée",
+        "objective": "Midi",
+        "prompt": "Depict person at midday: bright overhead sun, strong shadows, vibrant colors, energetic lighting. Photorealistic rendering with noon light."
+    },
+    {
+        "category": "Heure de la journée",
+        "objective": "Crépuscule",
+        "prompt": "Show person at dusk: purple and orange sky, soft shadows, romantic lighting, day's end atmosphere. Photorealistic rendering with twilight tones."
+    },
+    {
+        "category": "Heure de la journée",
+        "objective": "Minuit",
+        "prompt": "Place person at midnight: deep darkness, moonlight or artificial light, mysterious mood, quiet atmosphere. Photorealistic rendering with night lighting."
+    },
+    {
+        "category": "Heure de la journée",
+        "objective": "Heure bleue",
+        "prompt": "Show person during blue hour: cool blue tones, soft ambient light, cinematic atmosphere, magical twilight. Photorealistic rendering with blue hour aesthetics."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Plage",
+        "prompt": "Place person on beach: sand, ocean backdrop, natural sunlight, relaxed coastal atmosphere. Photorealistic rendering with beach environment."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Montagne",
+        "prompt": "Show person in mountains: alpine scenery, majestic peaks, crisp air atmosphere, outdoor adventure mood. Photorealistic rendering with mountain backdrop."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Forêt tropicale",
+        "prompt": "Place person in rainforest: lush vegetation, humid atmosphere, filtered green light, exotic environment. Photorealistic rendering with jungle setting."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Désert",
+        "prompt": "Show person in desert: sand dunes, harsh sunlight, arid atmosphere, vast open space. Photorealistic rendering with desert landscape."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Ville de nuit",
+        "prompt": "Place person in city at night: neon lights, urban backdrop, nightlife energy, modern architecture. Photorealistic rendering with city lights."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Bibliothèque",
+        "prompt": "Show person in library: books surrounding, warm reading lights, scholarly atmosphere, quiet ambiance. Photorealistic rendering with library setting."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Café parisien",
+        "prompt": "Place person in Parisian café: charming terrace, European ambiance, coffee culture, elegant casual setting. Photorealistic rendering with café atmosphere."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Gratte-ciel",
+        "prompt": "Show person in skyscraper: modern interior, glass windows, city view, corporate atmosphere. Photorealistic rendering with urban highrise setting."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Musée d'art",
+        "prompt": "Place person in art museum: gallery lighting, artworks backdrop, cultured atmosphere, refined environment. Photorealistic rendering with museum setting."
+    },
+    {
+        "category": "Lieux / Environnements",
+        "objective": "Salle de sport",
+        "prompt": "Show person in gym: fitness equipment, athletic environment, motivational atmosphere, workout setting. Photorealistic rendering with gym backdrop."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Yoga",
+        "prompt": "Depict person doing yoga: flexible pose, peaceful expression, mat setting, mindful atmosphere. Photorealistic rendering with yoga aesthetics."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Course à pied",
+        "prompt": "Show person running: athletic movement, determined expression, outdoor or track setting, dynamic energy. Photorealistic rendering with running motion."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Natation",
+        "prompt": "Depict person swimming: water environment, athletic form, pool or ocean setting, aquatic motion. Photorealistic rendering with water effects."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Cyclisme",
+        "prompt": "Show person cycling: bike setting, outdoor environment, active posture, cycling gear. Photorealistic rendering with biking scene."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Escalade",
+        "prompt": "Place person rock climbing: gripping holds, focused expression, vertical wall, athletic strength. Photorealistic rendering with climbing scene."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Danse",
+        "prompt": "Show person dancing: graceful movement, expressive pose, dynamic energy, artistic flow. Photorealistic rendering with dance motion."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Boxe",
+        "prompt": "Depict person boxing: fighting stance, gloves worn, intense focus, gym or ring setting. Photorealistic rendering with boxing scene."
+    },
+    {
+        "category": "Sports / Activités",
+        "objective": "Ski",
+        "prompt": "Show person skiing: winter gear, snowy mountain, athletic posture, cold weather environment. Photorealistic rendering with ski scene."
+    },
+    {
+        "category": "Instruments de musique",
+        "objective": "Guitare",
+        "prompt": "Show person playing guitar: holding instrument, focused expression, musical atmosphere, strings visible. Photorealistic rendering with guitar scene."
+    },
+    {
+        "category": "Instruments de musique",
+        "objective": "Piano",
+        "prompt": "Depict person at piano: hands on keys, musical concentration, elegant posture, concert or home setting. Photorealistic rendering with piano scene."
+    },
+    {
+        "category": "Instruments de musique",
+        "objective": "Violon",
+        "prompt": "Show person playing violin: classical posture, bow in motion, refined atmosphere, musical elegance. Photorealistic rendering with violin scene."
+    },
+    {
+        "category": "Instruments de musique",
+        "objective": "Batterie",
+        "prompt": "Place person at drums: drumsticks in hand, energetic posture, rock or studio setting, rhythmic energy. Photorealistic rendering with drum scene."
+    },
+    {
+        "category": "Instruments de musique",
+        "objective": "Saxophone",
+        "prompt": "Show person playing saxophone: jazz atmosphere, instrument held, smooth posture, musical sophistication. Photorealistic rendering with sax scene."
+    },
+    {
+        "category": "Technologies",
+        "objective": "Casque VR",
+        "prompt": "Show person wearing VR headset: futuristic device, immersed expression, tech environment, virtual reality scene. Photorealistic rendering with VR tech."
+    },
+    {
+        "category": "Technologies",
+        "objective": "Smartphone",
+        "prompt": "Depict person using smartphone: device in hand, screen glow on face, modern connectivity, contemporary scene. Photorealistic rendering with phone interaction."
+    },
+    {
+        "category": "Technologies",
+        "objective": "Gaming",
+        "prompt": "Show person gaming: controller in hand, focused concentration, screen light reflection, gamer atmosphere. Photorealistic rendering with gaming scene."
+    },
+    {
+        "category": "Technologies",
+        "objective": "Streaming",
+        "prompt": "Place person streaming: camera setup, microphone visible, content creator vibe, modern media setting. Photorealistic rendering with streaming setup."
+    },
+    {
+        "category": "Véhicules",
+        "objective": "Moto",
+        "prompt": "Show person on motorcycle: leather gear, bike visible, road setting, adventurous atmosphere. Photorealistic rendering with motorcycle scene."
+    },
+    {
+        "category": "Véhicules",
+        "objective": "Voiture classique",
+        "prompt": "Place person with classic car: vintage automobile, nostalgic atmosphere, elegant pose, retro aesthetics. Photorealistic rendering with classic car."
+    },
+    {
+        "category": "Véhicules",
+        "objective": "Avion",
+        "prompt": "Show person near aircraft: aviation setting, pilot or traveler vibe, airport or hangar, travel atmosphere. Photorealistic rendering with airplane scene."
+    },
+    {
+        "category": "Véhicules",
+        "objective": "Bateau",
+        "prompt": "Depict person on boat: nautical setting, ocean or lake backdrop, sailing atmosphere, maritime vibe. Photorealistic rendering with boat scene."
+    },
+    {
+        "category": "Animaux",
+        "objective": "Avec chien",
+        "prompt": "Show person with dog: pet interaction, affectionate pose, outdoor or home setting, companionship mood. Photorealistic rendering with dog present."
+    },
+    {
+        "category": "Animaux",
+        "objective": "Avec chat",
+        "prompt": "Place person with cat: feline companion, gentle interaction, cozy atmosphere, pet bonding. Photorealistic rendering with cat present."
+    },
+    {
+        "category": "Animaux",
+        "objective": "Avec cheval",
+        "prompt": "Show person with horse: equestrian setting, majestic animal, outdoor ranch or stable, noble atmosphere. Photorealistic rendering with horse present."
+    },
+    {
+        "category": "Animaux",
+        "objective": "Avec oiseau",
+        "prompt": "Depict person with bird: exotic or domestic bird, gentle handling, nature connection, avian interaction. Photorealistic rendering with bird present."
+    },
+    {
+        "category": "Cuisine / Gastronomie",
+        "objective": "Cuisiner",
+        "prompt": "Show person cooking: kitchen setting, food preparation, chef posture, culinary atmosphere. Photorealistic rendering with cooking scene."
+    },
+    {
+        "category": "Cuisine / Gastronomie",
+        "objective": "Dégustation vin",
+        "prompt": "Place person wine tasting: glass in hand, refined setting, sommelier atmosphere, elegant pose. Photorealistic rendering with wine scene."
+    },
+    {
+        "category": "Cuisine / Gastronomie",
+        "objective": "Pâtisserie",
+        "prompt": "Show person baking: pastry preparation, kitchen warmth, baker's atmosphere, sweet creation. Photorealistic rendering with baking scene."
+    },
+    {
+        "category": "Cuisine / Gastronomie",
+        "objective": "Barista",
+        "prompt": "Depict person as barista: coffee preparation, café setting, latte art, professional atmosphere. Photorealistic rendering with coffee scene."
+    },
+    {
+        "category": "Art / Création",
+        "objective": "Peinture",
+        "prompt": "Show person painting: brush in hand, canvas visible, studio setting, artistic concentration. Photorealistic rendering with painting scene."
+    },
+    {
+        "category": "Art / Création",
+        "objective": "Sculpture",
+        "prompt": "Place person sculpting: clay or stone work, creative process, artist studio, tactile creation. Photorealistic rendering with sculpture scene."
+    },
+    {
+        "category": "Art / Création",
+        "objective": "Photographie",
+        "prompt": "Show person photographing: camera in hand, photographer stance, creative eye, shooting scene. Photorealistic rendering with photo session."
+    },
+    {
+        "category": "Art / Création",
+        "objective": "Dessin",
+        "prompt": "Depict person drawing: sketchbook or tablet, pencil or stylus, focused concentration, artistic process. Photorealistic rendering with drawing scene."
+    },
+    {
+        "category": "Mode de vie",
+        "objective": "Méditation",
+        "prompt": "Show person meditating: peaceful posture, serene expression, calm environment, mindful atmosphere. Photorealistic rendering with meditation scene."
+    },
+    {
+        "category": "Mode de vie",
+        "objective": "Jardinage",
+        "prompt": "Place person gardening: plants around, nurturing activity, outdoor setting, nature connection. Photorealistic rendering with garden scene."
+    },
+    {
+        "category": "Mode de vie",
+        "objective": "Shopping",
+        "prompt": "Show person shopping: bags in hand, retail environment, urban setting, consumer lifestyle. Photorealistic rendering with shopping scene."
+    },
+    {
+        "category": "Mode de vie",
+        "objective": "Travail bureau",
+        "prompt": "Depict person working at desk: professional setting, focused expression, office environment, work concentration. Photorealistic rendering with office scene."
+    },
+    {
+        "category": "Événements",
+        "objective": "Mariage",
+        "prompt": "Show person at wedding: formal attire, celebratory atmosphere, elegant setting, joyful mood. Photorealistic rendering with wedding scene."
+    },
+    {
+        "category": "Événements",
+        "objective": "Remise diplôme",
+        "prompt": "Place person at graduation: cap and gown, proud expression, academic setting, achievement moment. Photorealistic rendering with graduation scene."
+    },
+    {
+        "category": "Événements",
+        "objective": "Concert",
+        "prompt": "Show person at concert: crowd atmosphere, stage lights, musical energy, live performance vibe. Photorealistic rendering with concert scene."
+    },
+    {
+        "category": "Événements",
+        "objective": "Anniversaire",
+        "prompt": "Depict person at birthday: festive atmosphere, celebration mood, cake or decorations, happy occasion. Photorealistic rendering with birthday scene."
+    },
+    {
+        "category": "Santé / Bien-être",
+        "objective": "Massage",
+        "prompt": "Show person receiving massage: relaxed expression, spa setting, wellness atmosphere, peaceful mood. Photorealistic rendering with spa scene."
+    },
+    {
+        "category": "Santé / Bien-être",
+        "objective": "Soin visage",
+        "prompt": "Place person receiving facial: beauty treatment, spa environment, self-care moment, relaxing atmosphere. Photorealistic rendering with skincare scene."
+    },
+    {
+        "category": "Santé / Bien-être",
+        "objective": "Sauna",
+        "prompt": "Show person in sauna: steam atmosphere, relaxed posture, wellness setting, heat therapy mood. Photorealistic rendering with sauna scene."
+    },
+    {
+        "category": "Santé / Bien-être",
+        "objective": "Piscine détente",
+        "prompt": "Depict person relaxing at pool: water environment, leisure mood, sunny atmosphere, vacation vibe. Photorealistic rendering with pool scene."
+    },
+    {
+        "category": "Styles de photographie",
+        "objective": "Portrait studio pro",
+        "prompt": "Professional studio portrait: perfect lighting setup, seamless backdrop, commercial quality, polished appearance. Photorealistic rendering with studio excellence."
+    },
+    {
+        "category": "Styles de photographie",
+        "objective": "Street photography",
+        "prompt": "Candid street photography: natural moment, urban environment, documentary style, authentic capture. Photorealistic rendering with street photo aesthetics."
+    },
+    {
+        "category": "Styles de photographie",
+        "objective": "Magazine cover",
+        "prompt": "Magazine cover style: high fashion, dramatic lighting, editorial quality, striking composition. Photorealistic rendering with cover shot excellence."
+    },
+    {
+        "category": "Styles de photographie",
+        "objective": "Film analogique",
+        "prompt": "Analog film photography: grain texture, vintage colors, film camera aesthetics, nostalgic quality. Photorealistic rendering with film look."
+    },
+    {
+        "category": "Effets spéciaux",
+        "objective": "Double exposition",
+        "prompt": "Double exposure effect: blended images, artistic overlay, creative composition, surreal aesthetics. Photorealistic rendering with double exposure."
+    },
+    {
+        "category": "Effets spéciaux",
+        "objective": "Effet miroir",
+        "prompt": "Mirror effect: symmetrical composition, reflective surface, kaleidoscope aesthetics, creative symmetry. Photorealistic rendering with mirror effect."
+    },
+    {
+        "category": "Effets spéciaux",
+        "objective": "Particules lumineuses",
+        "prompt": "Light particles effect: bokeh lights, floating sparkles, magical atmosphere, dreamy ambiance. Photorealistic rendering with light particles."
+    },
+    {
+        "category": "Effets spéciaux",
+        "objective": "Rayons de lumière",
+        "prompt": "Light rays effect: god rays, dramatic beams, atmospheric lighting, cinematic shafts. Photorealistic rendering with light rays."
+    }
+]

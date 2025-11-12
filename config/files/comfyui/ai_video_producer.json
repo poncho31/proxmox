@@ -1,0 +1,2968 @@
+{
+    "id": "b8c9d1e2-f3a4-5678-9012-3456789abcde",
+    "revision": 5,
+    "last_node_id": 40,
+    "last_link_id": 40,
+    "nodes": [
+        {
+            "id": 25,
+            "type": "ADE_ApplyAnimateDiffModel",
+            "pos": [
+                461.4223482635615,
+                1582.0158006898046
+            ],
+            "size": [
+                380,
+                202
+            ],
+            "flags": {},
+            "order": 20,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "motion_model",
+                    "name": "motion_model",
+                    "type": "MOTION_MODEL_ADE",
+                    "link": 22
+                },
+                {
+                    "localized_name": "motion_lora",
+                    "name": "motion_lora",
+                    "shape": 7,
+                    "type": "MOTION_LORA",
+                    "link": null
+                },
+                {
+                    "localized_name": "scale_multival",
+                    "name": "scale_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "effect_multival",
+                    "name": "effect_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "ad_keyframes",
+                    "name": "ad_keyframes",
+                    "shape": 7,
+                    "type": "AD_KEYFRAMES",
+                    "link": null
+                },
+                {
+                    "localized_name": "prev_m_models",
+                    "name": "prev_m_models",
+                    "shape": 7,
+                    "type": "M_MODELS",
+                    "link": null
+                },
+                {
+                    "localized_name": "per_block",
+                    "name": "per_block",
+                    "shape": 7,
+                    "type": "PER_BLOCK",
+                    "link": null
+                },
+                {
+                    "localized_name": "start_percent",
+                    "name": "start_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "start_percent"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "end_percent",
+                    "name": "end_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "end_percent"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "M_MODELS",
+                    "name": "M_MODELS",
+                    "type": "M_MODELS",
+                    "slot_index": 0,
+                    "links": [
+                        23
+                    ]
+                }
+            ],
+            "title": "🎬 APPLICATION MOTION - Paramètres animation",
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_ApplyAnimateDiffModel"
+            },
+            "widgets_values": [
+                0,
+                1
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 31,
+            "type": "Note",
+            "pos": [
+                86.08463257101687,
+                1836.5951659219363
+            ],
+            "size": [
+                900,
+                220
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "📋 ITÉRATION 3 - Génération Vidéo AnimateDiff",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════════════════════════╗\n║  ✅ PHASE 3 : Génération de la vidéo animée (40 frames)                           ║\n╚════════════════════════════════════════════════════════════════════════════════════╝\n\n🎯 OBJECTIF DE CETTE PHASE :\n   Transformer l'image HD optimisée en vidéo animée réaliste :\n   1. 🎬 Chargement AnimateDiff v2 (motion model)\n   2. ⚙️ Application evolved sampling (sqrt_linear)\n   3. 🎨 Encodage Image → Latent space\n   4. 🎬 Génération 40 frames (5 secondes @ 8fps)\n   5. 🖼️ Décodage Latent → Images\n   6. 💾 Combinaison frames → MP4 H264\n\n📊 PARAMÈTRES VIDÉO OPTIMISÉS :\n   • Frames : 40 (5 secondes à 8fps)\n   • Résolution : 512x512 (optimal AnimateDiff SD1.5)\n   • Sampler : Euler + Normal (stable pour animation)\n   • Steps : 20 (bon compromis qualité/vitesse)\n   • CFG : 7.0 (mouvements naturels)\n   • CRF : 19 (haute qualité vidéo)\n   • Format : H264 MP4 (compatible universel)\n\n⏱️ TEMPS ESTIMÉ :\n   ~90 secondes pour 40 frames (RTX 3080)\n\n💡 ASTUCE :\n   La vidéo utilisera l'image HD (node 21) comme base,\n   garantissant une cohérence visuelle parfaite entre\n   le premier frame et l'ensemble de l'animation.\n\n➡️ PROCHAINE ÉTAPE (Itération 4) :\n   Ajout de l'audio (synthèse vocale) et combinaison finale\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 32,
+            "type": "EdgeTTS_Speak_Text",
+            "pos": [
+                -60.4326666666652,
+                2598.522584521653
+            ],
+            "size": [
+                850,
+                380
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "video_trigger",
+                    "name": "video_trigger",
+                    "shape": 7,
+                    "type": "VHS_FILENAMES",
+                    "link": null
+                },
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "voice",
+                    "name": "voice",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "voice"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "rate",
+                    "name": "rate",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "rate"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "output_mode",
+                    "name": "output_mode",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "output_mode"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "output_folder",
+                    "name": "output_folder",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "output_folder"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "filename_prefix",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "passthrough",
+                    "name": "passthrough",
+                    "shape": 7,
+                    "type": "*",
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "file_path",
+                    "name": "file_path",
+                    "type": "STRING",
+                    "slot_index": 0,
+                    "links": null
+                },
+                {
+                    "localized_name": "passthrough",
+                    "name": "passthrough",
+                    "type": "*",
+                    "links": null
+                }
+            ],
+            "title": "🔊 SYNTHÈSE VOCALE - Audio pour la vidéo (5 secondes)",
+            "properties": {
+                "cnr_id": "ComfyUI-TTS",
+                "ver": "5b3afd7067ee0126ac1ba4d412b12426a8ff525d",
+                "Node name for S&R": "EdgeTTS_Speak_Text"
+            },
+            "widgets_values": [
+                "Bonjour, ceci est une démonstration de production vidéo complète avec intelligence artificielle. Cette vidéo a été générée automatiquement.",
+                "fr-FR-HenriNeural",
+                "medium",
+                "file",
+                "H:\\IA\\ComfyUI_windows_portable_nvidia\\ComfyUI_windows_portable\\ComfyUI\\output",
+                "video_producer_audio"
+            ],
+            "color": "#223",
+            "bgcolor": "#335"
+        },
+        {
+            "id": 33,
+            "type": "Note",
+            "pos": [
+                835.534000000001,
+                2608.199857248925
+            ],
+            "size": [
+                800,
+                380
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "📋 ITÉRATION 4 - Audio + Production Finale",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════════════════════════╗\n║  ✅ PHASE 4 : Synthèse vocale et finalisation (EXÉCUTION EN DERNIER)              ║\n╚════════════════════════════════════════════════════════════════════════════════════╝\n\n🎯 OBJECTIF DE CETTE PHASE :\n   Ajouter l'audio synchronisé APRÈS la génération de la vidéo :\n   •  Génère l'audio de manière indépendante\n   • ⏱️ Durée adaptée à la vidéo (5 secondes)\n   • 💾 Export audio MP3 séparé\n\n� ORDRE D'EXÉCUTION :\n   L'ordre d'exécution est garanti par le paramètre \"order\" :\n   • Nodes 1-29 : Image + Vidéo (order 0-28)\n   • Node 30 : Export vidéo (order 29)\n   • Node 32 : Audio TTS (order 31) ✓ S'exécute en dernier\n   \n   ComfyUI respecte automatiquement l'ordre séquentiel :\n   Phase 1 → Phase 2 → Phase 3 → Phase 4\n\n🎙️ VOIX FRANÇAISES DISPONIBLES :\n   • fr-FR-HenriNeural (Homme - voix grave et posée) ✅ ACTUEL\n   • fr-FR-DeniseNeural (Femme - voix claire)\n   • fr-FR-EloiseNeural (Femme - voix douce)\n   • fr-FR-AlainNeural (Homme - voix professionnelle)\n\n📝 TEXTE AUDIO (Node 32) :\n   Adaptez le texte pour qu'il dure environ 5 secondes.\n   Astuce : ~15-20 mots en français = 5 secondes\n\n⚙️ VITESSES DISPONIBLES :\n   • slow : Lent et articulé (~12 mots/5s)\n   • medium : Naturel (~15-18 mots/5s) ✅ RECOMMANDÉ\n   • fast : Rapide (~20-25 mots/5s)\n\n🔗 COMBINAISON VIDÉO + AUDIO :\n   Après génération complète, combinez avec :\n   ```\n   ffmpeg -i video_producer_phase3_final_00001.mp4 \\\n          -i video_producer_audio00001.mp3 \\\n          -c:v copy -c:a aac -shortest output_final.mp4\n   ```\n\n💡 WORKFLOW COMPLET TERMINÉ !\n   Exécution séquentielle garantie par ordre des nodes :\n   Phase 1 (Image HD) → Phase 2 (Post-process) → \n   Phase 3 (Vidéo 40 frames) → Phase 4 (Audio)\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 35,
+            "type": "Note",
+            "pos": [
+                2719.696333333332,
+                2635.104917854987
+            ],
+            "size": [
+                700,
+                380
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "⚙️ CONFIGURATION SYSTÈME REQUISE",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════════════════════════╗\n║  💻 CONFIGURATION & MODÈLES REQUIS                                                ║\n╚════════════════════════════════════════════════════════════════════════════════════╝\n\n📁 MODÈLES NÉCESSAIRES :\n   \n   models/checkpoints/ :\n   ▸ realvisxlV50_v50LightningBakedvae.safetensors (6.46 GB)\n   ▸ Alternative : Tout checkpoint SDXL réaliste\n   \n   models/ipadapter/ :\n   ▸ ip-adapter-faceid-plusv2_sdxl.bin (206 MB)\n   \n   models/clip_vision/ :\n   ▸ clip_vision_vit_h.safetensors (3.69 GB)\n   \n   models/insightface/ :\n   ▸ antelopev2/ (dossier complet, ~400 MB)\n   \n   models/upscale_models/ :\n   ▸ RealESRGAN_x2plus.pth (67.1 MB)\n   \n   models/facerestore_models/ :\n   ▸ GFPGANv1.4.pth (348 MB)\n   \n   models/animatediff_models/ :\n   ▸ mm_sd_v15_v2.ckpt (1.83 GB)\n\n📁 CUSTOM NODES REQUIS :\n   ▸ ComfyUI-IPAdapter-plus\n   ▸ ComfyUI-AnimateDiff-Evolved\n   ▸ ComfyUI-VideoHelperSuite\n   ▸ facerestore_cf\n   ▸ ComfyUI-TTS (EdgeTTS)\n\n💾 ESPACE DISQUE :\n   • Modèles : ~13 GB\n   • Espace de travail : ~5 GB (temporaire)\n   • Total recommandé : 20 GB libres\n\n🎮 VRAM GPU RECOMMANDÉE :\n   • Minimum : 10 GB (RTX 3080, 3080 Ti)\n   • Recommandé : 12 GB (RTX 3090, 4070 Ti)\n   • Optimal : 16+ GB (RTX 4080, 4090)\n   \n   Options si VRAM insuffisant :\n   • --lowvram dans args de lancement\n   • Réduire résolution base (768x768)\n   • Désactiver Upscale (skip node 17-20)\n\n⏱️ TEMPS DE PRODUCTION (RTX 3080 12GB) :\n   • Phase 1 (Image HD) : ~25s\n   • Phase 2 (Post-traitement) : ~12s\n   • Phase 3 (Vidéo 40 frames) : ~90s\n   • Phase 4 (Audio) : ~2s\n   📊 TOTAL : ~2min 10s\n\n🚀 OPTIMISATIONS PERFORMANCE :\n   ✓ Première génération : Lente (chargement modèles)\n   ✓ Générations suivantes : Rapides (cache GPU)\n   ✓ Batch processing : Non recommandé (VRAM)\n   ✓ xFormers : Activer si disponible\n"
+            ],
+            "color": "#322",
+            "bgcolor": "#533"
+        },
+        {
+            "id": 16,
+            "type": "UpscaleModelLoader",
+            "pos": [
+                41.73553719008268,
+                883.3608815427001
+            ],
+            "size": [
+                350,
+                80
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "nom_du_modèle",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE_DE_MISE_À_L'ÉCHELLE",
+                    "name": "UPSCALE_MODEL",
+                    "type": "UPSCALE_MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        15
+                    ]
+                }
+            ],
+            "title": "🔍 MODÈLE UPSCALE - RealESRGAN x2",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "UpscaleModelLoader"
+            },
+            "widgets_values": [
+                "RealESRGAN_x2plus.pth"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 17,
+            "type": "ImageUpscaleWithModel",
+            "pos": [
+                448.62258953168043,
+                877.8512396694215
+            ],
+            "size": [
+                380,
+                130
+            ],
+            "flags": {},
+            "order": 29,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "modèle_d'agrandissement",
+                    "name": "upscale_model",
+                    "type": "UPSCALE_MODEL",
+                    "link": 15
+                },
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 14
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        16
+                    ]
+                }
+            ],
+            "title": "🔍 AGRANDISSEMENT 2x - 2048x2048 HD",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "ImageUpscaleWithModel"
+            },
+            "widgets_values": [],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 10,
+            "type": "EmptyLatentImage",
+            "pos": [
+                1315.031471816665,
+                159.2009051500022
+            ],
+            "size": [
+                380,
+                110
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "largeur",
+                    "name": "width",
+                    "type": "INT",
+                    "widget": {
+                        "name": "width"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "hauteur",
+                    "name": "height",
+                    "type": "INT",
+                    "widget": {
+                        "name": "height"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "taille_du_lot",
+                    "name": "batch_size",
+                    "type": "INT",
+                    "widget": {
+                        "name": "batch_size"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": [
+                        12
+                    ]
+                }
+            ],
+            "title": "🎨 CANEVAS - Résolution 1024x1024 (Base HD)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "EmptyLatentImage"
+            },
+            "widgets_values": [
+                512,
+                512,
+                16
+            ],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 4,
+            "type": "IPAdapterModelLoader",
+            "pos": [
+                1317.5934579191082,
+                -453.6279180461817
+            ],
+            "size": [
+                442.2865013774101,
+                85.50964187327821
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "ipadapter_file",
+                    "name": "ipadapter_file",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "ipadapter_file"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IPADAPTER",
+                    "name": "IPADAPTER",
+                    "type": "IPADAPTER",
+                    "slot_index": 0,
+                    "links": [
+                        6
+                    ]
+                }
+            ],
+            "title": "🎭 CHARGEUR IPAdapter FaceID Plus V2",
+            "properties": {
+                "cnr_id": "comfyui_ipadapter_plus",
+                "ver": "a0f451a5113cf9becb0847b92884cb10cbdec0ef",
+                "Node name for S&R": "IPAdapterModelLoader"
+            },
+            "widgets_values": [
+                "ip-adapter-faceid-plusv2_sdxl.bin"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 12,
+            "type": "VAEDecode",
+            "pos": [
+                2048.355746019501,
+                -392.31232091036304
+            ],
+            "size": [
+                318.6999877929687,
+                80
+            ],
+            "flags": {},
+            "order": 27,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "échantillons",
+                    "name": "samples",
+                    "type": "LATENT",
+                    "link": 13
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "type": "VAE",
+                    "link": 4
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        14
+                    ]
+                }
+            ],
+            "title": "🖼️ DÉCODEUR VAE - Conversion en image",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "VAEDecode"
+            },
+            "widgets_values": [],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 34,
+            "type": "Note",
+            "pos": [
+                1674.9279393939455,
+                2620.321069370137
+            ],
+            "size": [
+                950,
+                380
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "🎯 GUIDE D'UTILISATION COMPLET",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════════════════════════╗\n║  🎬 AI VIDEO PRODUCER - Guide de production vidéo complète                        ║\n╚════════════════════════════════════════════════════════════════════════════════════╝\n\n📥 ÉTAPE 1 : PRÉPARATION DES ENTRÉES\n   1. Photo visage (Node 3) :\n      • Format : PNG/JPG, minimum 512x512\n      • Qualité : Nette, bien éclairée\n      • Visage : De face ou 3/4, expression neutre\n   \n   2. Prompt vidéo (Node 5) :\n      • Décrivez l'action : \"speaking\", \"smiling\", \"nodding\"\n      • Contexte : \"studio setup\", \"outdoor\", \"professional\"\n      • Style : \"cinematic\", \"photorealistic\"\n      • Exemple : \"Professional person speaking to camera, slight smile,\n        natural head movements, studio lighting, bokeh background\"\n   \n   3. Texte audio (Node 32) :\n      • 15-20 mots pour 5 secondes\n      • Cohérent avec l'action de la vidéo\n      • Exemple : \"Bonjour, je vous présente cette démonstration\n        de génération vidéo avec intelligence artificielle.\"\n\n▶️ ÉTAPE 2 : LANCEMENT DE LA PRODUCTION\n   1. Chargez vos fichiers/textes\n   2. Vérifiez que tous les modèles sont bien chargés\n   3. Cliquez \"Queue Prompt\" dans ComfyUI\n   4. ⏱️ Attendez ~2 minutes (RTX 3080)\n\n📊 ÉTAPE 3 : RÉSULTATS GÉNÉRÉS\n   • Node 13 : Image brute 1024x1024\n   • Node 22 : Image HD finale 2048x2048\n   • Node 30 : Vidéo MP4 (5 secondes, sans audio)\n   • Node 32 : Audio MP3 + WAV (5 secondes)\n\n🔧 ÉTAPE 4 : COMBINAISON VIDÉO + AUDIO (Optionnel)\n   Méthode 1 - FFmpeg (Ligne de commande) :\n   ```\n   ffmpeg -i video_producer_phase3_final.mp4 -i video_producer_audio.mp3 \\\n          -c:v copy -c:a aac -shortest output_final.mp4\n   ```\n   \n   Méthode 2 - Logiciel de montage :\n   • Importez vidéo + audio\n   • Synchronisez sur timeline\n   • Exportez en MP4\n\n⚙️ PARAMÈTRES AVANCÉS À AJUSTER :\n   • Node 9 - IPAdapter weight (0.9) : Influence du visage source\n   • Node 11 - KSampler steps (25) : Qualité image de base\n   • Node 19 - Face Restore (0.85) : Intensité restauration\n   • Node 28 - KSampler steps (20) : Qualité animation\n   • Node 28 - CFG (7.0) : Créativité vs fidélité\n   • Node 30 - Frame rate (8) : Fluidité animation\n\n💡 ASTUCES OPTIMISATION :\n   ✓ Seed fixe (nodes 11, 28) : Reproductibilité\n   ✓ CFG plus bas (6.0-6.5) : Mouvements plus naturels\n   ✓ Steps réduits (15-18) : Production plus rapide\n   ✓ Résolution 768x768 : Meilleure qualité (si VRAM suffisant)\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 30,
+            "type": "VHS_VideoCombine",
+            "pos": [
+                2139.591106400219,
+                1638.9572871340567
+            ],
+            "size": [
+                445.8677685950415,
+                773.8677685950415
+            ],
+            "flags": {},
+            "order": 37,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "images",
+                    "name": "images",
+                    "type": "IMAGE",
+                    "link": 40
+                },
+                {
+                    "localized_name": "audio",
+                    "name": "audio",
+                    "shape": 7,
+                    "type": "AUDIO",
+                    "link": null
+                },
+                {
+                    "localized_name": "meta_batch",
+                    "name": "meta_batch",
+                    "shape": 7,
+                    "type": "VHS_BatchManager",
+                    "link": null
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "shape": 7,
+                    "type": "VAE",
+                    "link": null
+                },
+                {
+                    "localized_name": "frame_rate",
+                    "name": "frame_rate",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "frame_rate"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "loop_count",
+                    "name": "loop_count",
+                    "type": "INT",
+                    "widget": {
+                        "name": "loop_count"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "filename_prefix",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "format",
+                    "name": "format",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "format"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "pingpong",
+                    "name": "pingpong",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "pingpong"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "save_output",
+                    "name": "save_output",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "save_output"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "pix_fmt",
+                    "type": [
+                        "yuv420p",
+                        "yuv420p10le"
+                    ],
+                    "widget": {
+                        "name": "pix_fmt"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "crf",
+                    "type": "INT",
+                    "widget": {
+                        "name": "crf"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "save_metadata",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "save_metadata"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "trim_to_audio",
+                    "type": "BOOLEAN",
+                    "widget": {
+                        "name": "trim_to_audio"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "Filenames",
+                    "name": "Filenames",
+                    "type": "VHS_FILENAMES",
+                    "slot_index": 0,
+                    "links": [
+                        33
+                    ]
+                }
+            ],
+            "title": "💾 EXPORT VIDÉO - MP4 H264 (5 secondes @ 8fps)",
+            "properties": {
+                "cnr_id": "comfyui-videohelpersuite",
+                "ver": "8923bd836bdab8b7bbdf4ed104b7d045e70c66e2",
+                "Node name for S&R": "VHS_VideoCombine"
+            },
+            "widgets_values": {
+                "frame_rate": 8,
+                "loop_count": 0,
+                "filename_prefix": "video_producer_phase3_final",
+                "format": "video/h264-mp4",
+                "pix_fmt": "yuv420p",
+                "crf": 19,
+                "save_metadata": true,
+                "trim_to_audio": false,
+                "pingpong": false,
+                "save_output": true,
+                "videopreview": {
+                    "hidden": false,
+                    "paused": false,
+                    "params": {
+                        "filename": "video_producer_phase3_final_00003.mp4",
+                        "subfolder": "",
+                        "type": "output",
+                        "format": "video/h264-mp4",
+                        "frame_rate": 8,
+                        "workflow": "video_producer_phase3_final_00003.png",
+                        "fullpath": "H:\\IA\\ComfyUI_windows_portable_nvidia\\ComfyUI_windows_portable\\ComfyUI\\output\\video_producer_phase3_final_00003.mp4"
+                    }
+                }
+            },
+            "color": "#232",
+            "bgcolor": "#353"
+        },
+        {
+            "id": 9,
+            "type": "IPAdapterFaceID",
+            "pos": [
+                1302.9088551499985,
+                -243.8516448499977
+            ],
+            "size": [
+                402.4333251953125,
+                322
+            ],
+            "flags": {},
+            "order": 21,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 1
+                },
+                {
+                    "localized_name": "ipadapter",
+                    "name": "ipadapter",
+                    "type": "IPADAPTER",
+                    "link": 6
+                },
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 5
+                },
+                {
+                    "localized_name": "image_negative",
+                    "name": "image_negative",
+                    "shape": 7,
+                    "type": "IMAGE",
+                    "link": null
+                },
+                {
+                    "localized_name": "attn_mask",
+                    "name": "attn_mask",
+                    "shape": 7,
+                    "type": "MASK",
+                    "link": null
+                },
+                {
+                    "localized_name": "clip_vision",
+                    "name": "clip_vision",
+                    "shape": 7,
+                    "type": "CLIP_VISION",
+                    "link": 9
+                },
+                {
+                    "localized_name": "insightface",
+                    "name": "insightface",
+                    "shape": 7,
+                    "type": "INSIGHTFACE",
+                    "link": 10
+                },
+                {
+                    "localized_name": "weight",
+                    "name": "weight",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "weight"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "weight_faceidv2",
+                    "name": "weight_faceidv2",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "weight_faceidv2"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "weight_type",
+                    "name": "weight_type",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "weight_type"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "combine_embeds",
+                    "name": "combine_embeds",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "combine_embeds"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "start_at",
+                    "name": "start_at",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "start_at"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "end_at",
+                    "name": "end_at",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "end_at"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "embeds_scaling",
+                    "name": "embeds_scaling",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "embeds_scaling"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE",
+                    "name": "MODEL",
+                    "type": "MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        11
+                    ]
+                },
+                {
+                    "localized_name": "face_image",
+                    "name": "face_image",
+                    "type": "IMAGE",
+                    "links": null
+                }
+            ],
+            "title": "🎭 ADAPTATION FACIALE - Application du visage source",
+            "properties": {
+                "cnr_id": "comfyui_ipadapter_plus",
+                "ver": "a0f451a5113cf9becb0847b92884cb10cbdec0ef",
+                "Node name for S&R": "IPAdapterFaceID"
+            },
+            "widgets_values": [
+                0.6,
+                1.5,
+                "ease in-out",
+                "concat",
+                1,
+                0,
+                "V only"
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 36,
+            "type": "ADE_LoadAnimateDiffModel",
+            "pos": [
+                1047.6196187969063,
+                1958.3116948475476
+            ],
+            "size": [
+                415.4666809082031,
+                80
+            ],
+            "flags": {},
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "ad_settings",
+                    "name": "ad_settings",
+                    "shape": 7,
+                    "type": "AD_SETTINGS",
+                    "link": null
+                },
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MOTION_MODEL",
+                    "name": "MOTION_MODEL",
+                    "type": "MOTION_MODEL_ADE",
+                    "slot_index": 0,
+                    "links": [
+                        34
+                    ]
+                }
+            ],
+            "title": "🎬 CHARGEUR ANIMATEDIFF - Modèle d'animation SD1.5",
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_LoadAnimateDiffModel"
+            },
+            "widgets_values": [
+                "mm_sd_v15_v2.ckpt"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 26,
+            "type": "ADE_UseEvolvedSampling",
+            "pos": [
+                902.8059058529797,
+                1612.0269979709976
+            ],
+            "size": [
+                380,
+                120
+            ],
+            "flags": {},
+            "order": 25,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 24
+                },
+                {
+                    "localized_name": "m_models",
+                    "name": "m_models",
+                    "shape": 7,
+                    "type": "M_MODELS",
+                    "link": 23
+                },
+                {
+                    "localized_name": "context_options",
+                    "name": "context_options",
+                    "shape": 7,
+                    "type": "CONTEXT_OPTIONS",
+                    "link": null
+                },
+                {
+                    "localized_name": "sample_settings",
+                    "name": "sample_settings",
+                    "shape": 7,
+                    "type": "SAMPLE_SETTINGS",
+                    "link": null
+                },
+                {
+                    "localized_name": "beta_schedule",
+                    "name": "beta_schedule",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "beta_schedule"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE",
+                    "name": "MODEL",
+                    "type": "MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        25
+                    ]
+                }
+            ],
+            "title": "⚙️ SAMPLING ÉVOLUÉ - Beta schedule optimal",
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_UseEvolvedSampling"
+            },
+            "widgets_values": [
+                "sqrt_linear (AnimateDiff)"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 24,
+            "type": "ADE_LoadAnimateDiffModel",
+            "pos": [
+                44.87564359650989,
+                1590.2947516639258
+            ],
+            "size": [
+                380,
+                80
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "ad_settings",
+                    "name": "ad_settings",
+                    "shape": 7,
+                    "type": "AD_SETTINGS",
+                    "link": null
+                },
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MOTION_MODEL",
+                    "name": "MOTION_MODEL",
+                    "type": "MOTION_MODEL_ADE",
+                    "slot_index": 0,
+                    "links": [
+                        22
+                    ]
+                }
+            ],
+            "title": "🎬 MODÈLE ANIMATION - AnimateDiff v2",
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_LoadAnimateDiffModel"
+            },
+            "widgets_values": [
+                "mm_sd_v15_v2.ckpt"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 39,
+            "type": "EmptyLatentImage",
+            "pos": [
+                1094.9225279458817,
+                1784.5079359857186
+            ],
+            "size": [
+                393.8666748046875,
+                110
+            ],
+            "flags": {},
+            "order": 10,
+            "mode": 4,
+            "inputs": [
+                {
+                    "localized_name": "largeur",
+                    "name": "width",
+                    "type": "INT",
+                    "widget": {
+                        "name": "width"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "hauteur",
+                    "name": "height",
+                    "type": "INT",
+                    "widget": {
+                        "name": "height"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "taille_du_lot",
+                    "name": "batch_size",
+                    "type": "INT",
+                    "widget": {
+                        "name": "batch_size"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": []
+                }
+            ],
+            "title": "🎬 CANEVAS VIDÉO - 16 frames 512x512 (AnimateDiff)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "EmptyLatentImage"
+            },
+            "widgets_values": [
+                512,
+                512,
+                16
+            ],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 28,
+            "type": "KSampler",
+            "pos": [
+                1635.365877929995,
+                1725.1900438519376
+            ],
+            "size": [
+                366.1000122070312,
+                262
+            ],
+            "flags": {},
+            "order": 35,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 25
+                },
+                {
+                    "localized_name": "positive",
+                    "name": "positive",
+                    "type": "CONDITIONING",
+                    "link": 28
+                },
+                {
+                    "localized_name": "negative",
+                    "name": "negative",
+                    "type": "CONDITIONING",
+                    "link": 29
+                },
+                {
+                    "localized_name": "latent_image",
+                    "name": "latent_image",
+                    "type": "LATENT",
+                    "link": 37
+                },
+                {
+                    "localized_name": "seed",
+                    "name": "seed",
+                    "type": "INT",
+                    "widget": {
+                        "name": "seed"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "steps",
+                    "name": "steps",
+                    "type": "INT",
+                    "widget": {
+                        "name": "steps"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "cfg",
+                    "name": "cfg",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "cfg"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "sampler_name",
+                    "name": "sampler_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "sampler_name"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "scheduler",
+                    "name": "scheduler",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "scheduler"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "denoise",
+                    "name": "denoise",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "denoise"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": [
+                        30
+                    ]
+                }
+            ],
+            "title": "🎬 GÉNÉRATEUR VIDÉO - 16 frames AnimateDiff",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "KSampler"
+            },
+            "widgets_values": [
+                806423228397597,
+                "randomize",
+                20,
+                7,
+                "euler",
+                "normal",
+                0.85
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 37,
+            "type": "ADE_ApplyAnimateDiffModel",
+            "pos": [
+                1058.1645607085204,
+                2175.0751997814023
+            ],
+            "size": [
+                388.3833374023437,
+                262
+            ],
+            "flags": {},
+            "order": 22,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "motion_model",
+                    "name": "motion_model",
+                    "type": "MOTION_MODEL_ADE",
+                    "link": 34
+                },
+                {
+                    "localized_name": "motion_lora",
+                    "name": "motion_lora",
+                    "shape": 7,
+                    "type": "MOTION_LORA",
+                    "link": null
+                },
+                {
+                    "localized_name": "scale_multival",
+                    "name": "scale_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "effect_multival",
+                    "name": "effect_multival",
+                    "shape": 7,
+                    "type": "MULTIVAL",
+                    "link": null
+                },
+                {
+                    "localized_name": "ad_keyframes",
+                    "name": "ad_keyframes",
+                    "shape": 7,
+                    "type": "AD_KEYFRAMES",
+                    "link": null
+                },
+                {
+                    "localized_name": "prev_m_models",
+                    "name": "prev_m_models",
+                    "shape": 7,
+                    "type": "M_MODELS",
+                    "link": null
+                },
+                {
+                    "localized_name": "per_block",
+                    "name": "per_block",
+                    "shape": 7,
+                    "type": "PER_BLOCK",
+                    "link": null
+                },
+                {
+                    "localized_name": "start_percent",
+                    "name": "start_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "start_percent"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "end_percent",
+                    "name": "end_percent",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "end_percent"
+                    },
+                    "link": null
+                },
+                {
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 35
+                },
+                {
+                    "name": "context_options",
+                    "shape": 7,
+                    "type": "CONTEXT_OPTIONS",
+                    "link": null
+                },
+                {
+                    "name": "sample_settings",
+                    "shape": 7,
+                    "type": "SAMPLE_SETTINGS",
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "M_MODELS",
+                    "name": "M_MODELS",
+                    "type": "M_MODELS",
+                    "slot_index": 0,
+                    "links": [
+                        36
+                    ]
+                }
+            ],
+            "title": "🎞️ APPLICATION ANIMATEDIFF - Activation animation",
+            "properties": {
+                "cnr_id": "comfyui-animatediff-evolved",
+                "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9",
+                "Node name for S&R": "ADE_ApplyAnimateDiffModel"
+            },
+            "widgets_values": [
+                0,
+                1
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 8,
+            "type": "IPAdapterInsightFaceLoader",
+            "pos": [
+                949.2947384833337,
+                -14.51882818333381
+            ],
+            "size": [
+                320,
+                82
+            ],
+            "flags": {},
+            "order": 12,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "provider",
+                    "name": "provider",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "provider"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "INSIGHTFACE",
+                    "name": "INSIGHTFACE",
+                    "type": "INSIGHTFACE",
+                    "slot_index": 0,
+                    "links": [
+                        10
+                    ]
+                }
+            ],
+            "title": "🔍 InsightFace - Détection faciale",
+            "properties": {
+                "cnr_id": "comfyui_ipadapter_plus",
+                "ver": "a0f451a5113cf9becb0847b92884cb10cbdec0ef",
+                "Node name for S&R": "IPAdapterInsightFaceLoader"
+            },
+            "widgets_values": [
+                "CUDA",
+                "antelopev2"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 7,
+            "type": "CLIPVisionLoader",
+            "pos": [
+                947.003010465146,
+                -185.9569591159491
+            ],
+            "size": [
+                320,
+                80
+            ],
+            "flags": {},
+            "order": 13,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "nom_clip",
+                    "name": "clip_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "clip_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "CLIP_VISION",
+                    "name": "CLIP_VISION",
+                    "type": "CLIP_VISION",
+                    "slot_index": 0,
+                    "links": [
+                        9
+                    ]
+                }
+            ],
+            "title": "👁️ CLIP Vision - Analyse visuelle",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CLIPVisionLoader"
+            },
+            "widgets_values": [
+                "clip_vision_vit_h.safetensors"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 1,
+            "type": "Note",
+            "pos": [
+                60.067538483334516,
+                -494.50079484999844
+            ],
+            "size": [
+                1200,
+                250
+            ],
+            "flags": {},
+            "order": 14,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "🎬 AI VIDEO PRODUCER - Pipeline Complet de Production Vidéo",
+            "properties": {},
+            "widgets_values": [
+                "╔══════════════════════════════════════════════════════════════════════════════════════════╗\n║  🎯 OBJECTIF : Créer une vidéo réaliste de 5 secondes avec audio à partir d'un visage  ║\n╚══════════════════════════════════════════════════════════════════════════════════════════╝\n\n📥 ENTRÉES REQUISES :\n   • Visage de base (photo nette, bien éclairée) → Node 3\n   • Prompt de description (scène, action, émotion) → Node 5\n   • Texte audio (dialogue ou narration) → Node [À venir Itération 4]\n\n🎬 PIPELINE DE PRODUCTION :\n   ┌─────────────────────────────────────────────────────────────────────────┐\n   │ PHASE 1 : Génération Image HD (Nodes 2-10)                             │\n   │  └─ Checkpoint → IPAdapter + FaceID → KSampler → VAE Decode            │\n   ├─────────────────────────────────────────────────────────────────────────┤\n   │ PHASE 2 : Post-Traitement Qualité (Nodes 11-15)                        │\n   │  └─ Upscale 2x → Face Restore → Sharpen → Resize pour vidéo            │\n   ├─────────────────────────────────────────────────────────────────────────┤\n   │ PHASE 3 : Génération Vidéo [Itération 2]                               │\n   │  └─ Image HD → AnimateDiff (40 frames) → Video Export                  │\n   ├─────────────────────────────────────────────────────────────────────────┤\n   │ PHASE 4 : Audio + Combinaison [Itération 3]                            │\n   │  └─ Text → EdgeTTS → Merge Video+Audio → Export Final                  │\n   └─────────────────────────────────────────────────────────────────────────┘\n\n⏱️ TEMPS DE PRODUCTION ESTIMÉ :\n   • Phase 1 (Image HD) : ~25 secondes\n   • Phase 2 (Post-traitement) : ~12 secondes\n   • Phase 3 (Vidéo 40 frames) : ~90 secondes\n   • Phase 4 (Audio + Merge) : ~5 secondes\n   📊 TOTAL : ~2 minutes 12 secondes (RTX 3080)\n\n💡 ITÉRATION ACTUELLE : 4/4 (Audio + Production Finale) ✅ COMPLET\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 2,
+            "type": "CheckpointLoaderSimple",
+            "pos": [
+                68.40087181666755,
+                -192.83412818333272
+            ],
+            "size": [
+                350,
+                100
+            ],
+            "flags": {},
+            "order": 15,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "nom_ckpt",
+                    "name": "ckpt_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "ckpt_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "MODÈLE",
+                    "name": "MODEL",
+                    "type": "MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        1,
+                        24,
+                        35
+                    ]
+                },
+                {
+                    "localized_name": "CLIP",
+                    "name": "CLIP",
+                    "type": "CLIP",
+                    "slot_index": 1,
+                    "links": [
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "localized_name": "VAE",
+                    "name": "VAE",
+                    "type": "VAE",
+                    "slot_index": 2,
+                    "links": [
+                        4,
+                        26,
+                        31,
+                        42
+                    ]
+                }
+            ],
+            "title": "🧠 MODÈLE IA - Checkpoint SD1.5 Réaliste",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CheckpointLoaderSimple"
+            },
+            "widgets_values": [
+                "dreamshaper_8.safetensors"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 23,
+            "type": "Note",
+            "pos": [
+                50.5096418732784,
+                1066.1019283746548
+            ],
+            "size": [
+                555.6473829201234,
+                363.09917355371135
+            ],
+            "flags": {},
+            "order": 16,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "📋 ITÉRATION 2 - Post-Traitement HD",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════════════════════════╗\n║  ✅ PHASE 2 : Post-traitement et préparation pour l'animation                     ║\n╚════════════════════════════════════════════════════════════════════════════════════╝\n\n🎯 OBJECTIF DE CETTE PHASE :\n   Pipeline complet de post-traitement pour obtenir une image parfaite :\n   1. 🔍 Upscale 2x (1024 → 2048) - Augmentation résolution\n   2. ✨ Face Restore (GFPGAN) - Amélioration qualité du visage\n   3. 🔪 Sharpen - Accentuation des détails fins\n   4. 📐 Resize 512x512 - Format optimal pour AnimateDiff\n\n📊 QUALITÉ OPTIMISÉE :\n   • Face Restore strength : 0.85 (très élevé pour animation)\n   • Sharpen sigma : 1.2 (détails prononcés)\n   • Resize : Lanczos (meilleur algorithme qualité)\n   • Output : Image 512x512 parfaite pour vidéo\n\n💾 CHECKPOINTS :\n   • Node 22 : Image HD finale (2048x2048) - Archive qualité\n   • Image 512x512 → Ready pour AnimateDiff (Itération 3)\n\n➡️ PROCHAINE ÉTAPE (Itération 3) :\n   Génération vidéo avec AnimateDiff (40 frames @ 8fps = 5 secondes)\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 15,
+            "type": "Note",
+            "pos": [
+                2049.282538483287,
+                265.53390211970753
+            ],
+            "size": [
+                644.9999999999986,
+                388.3333333333251
+            ],
+            "flags": {},
+            "order": 17,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "💡 CONSEILS D'UTILISATION",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════╗\n║  💡 CONSEILS POUR UNE ANIMATION RÉUSSIE                        ║\n╚════════════════════════════════════════════════════════════════╝\n\n📸 PHOTO SOURCE (Node 3) :\n   ✓ Utilisez une photo nette et bien éclairée\n   ✓ Visage de face ou légèrement de 3/4\n   ✓ Expression neutre ou légèrement souriante\n   ✓ Fond neutre de préférence\n   ✓ Résolution minimum : 512x512\n\n📝 PROMPT VIDÉO (Node 5) :\n   ✓ Décrivez l'action : \"speaking to camera\", \"nodding\"\n   ✓ Spécifiez l'émotion : \"confident\", \"friendly\", \"serious\"\n   ✓ Ajoutez le contexte : \"studio setup\", \"outdoor park\"\n   ✓ Mentionnez le style : \"cinematic\", \"documentary\"\n   ✓ Incluez les mouvements souhaités : \"slight head tilt\"\n\n🎬 EXEMPLES DE PROMPTS VIDÉO :\n   • \"Professional presenter speaking to camera, confident smile,\n     slight hand gestures, studio lighting, corporate background\"\n   • \"Person laughing naturally, head tilted back, outdoor setting,\n     golden hour lighting, bokeh background\"\n   • \"Close-up portrait, person nodding in agreement, soft smile,\n     natural movements, warm lighting, cinematic look\"\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 14,
+            "type": "Note",
+            "pos": [
+                67.7937566378331,
+                405.2657444346624
+            ],
+            "size": [
+                602.2767115178835,
+                289.2821528584068
+            ],
+            "flags": {},
+            "order": 18,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "📋 ITÉRATION 1 - Génération Image HD",
+            "properties": {},
+            "widgets_values": [
+                "╔════════════════════════════════════════════════════════════════╗\n║  ✅ PHASE 1 : Génération de l'image de base HD                ║\n╚════════════════════════════════════════════════════════════════╝\n\n🎯 OBJECTIF DE CETTE PHASE :\n   Créer une image HD de haute qualité qui servira de base\n   pour l'animation vidéo. Cette image doit :\n   • Contenir le visage source appliqué via IPAdapter\n   • Correspondre au prompt de description\n   • Être de qualité professionnelle (1024x1024)\n\n📊 PARAMÈTRES OPTIMISÉS :\n   • IPAdapter weight : 0.9 (forte influence du visage)\n   • KSampler steps : 25 (qualité élevée)\n   • CFG : 7.5 (bon équilibre créativité/fidélité)\n   • Scheduler : karras (meilleure cohérence)\n\n➡️ PROCHAINE ÉTAPE (Itération 2) :\n   Post-traitement de l'image (Upscale, Restore, Sharpen)\n   et préparation pour l'animation vidéo\n"
+            ],
+            "color": "#233",
+            "bgcolor": "#355"
+        },
+        {
+            "id": 6,
+            "type": "CLIPTextEncode",
+            "pos": [
+                762.7005553537545,
+                249.46375675166757
+            ],
+            "size": [
+                450,
+                200
+            ],
+            "flags": {},
+            "order": 24,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "clip",
+                    "name": "clip",
+                    "type": "CLIP",
+                    "link": 3
+                },
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "CONDITIONNEMENT",
+                    "name": "CONDITIONING",
+                    "type": "CONDITIONING",
+                    "slot_index": 0,
+                    "links": [
+                        8,
+                        29
+                    ]
+                }
+            ],
+            "title": "🚫 PROMPT NÉGATIF - Défauts à éviter",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+                "cartoon, anime, 3d render, cgi, painting, sketch, unrealistic, low quality, blurry, distorted, deformed, disfigured, bad anatomy, static, frozen, stiff, unnatural movements, watermark, text, logo"
+            ],
+            "color": "#322",
+            "bgcolor": "#533"
+        },
+        {
+            "id": 18,
+            "type": "FaceRestoreModelLoader",
+            "pos": [
+                893.2363585937295,
+                905.1412868839029
+            ],
+            "size": [
+                350,
+                80
+            ],
+            "flags": {},
+            "order": 19,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model_name",
+                    "name": "model_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "model_name"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "FACERESTORE_MODEL",
+                    "name": "FACERESTORE_MODEL",
+                    "type": "FACERESTORE_MODEL",
+                    "slot_index": 0,
+                    "links": [
+                        17
+                    ]
+                }
+            ],
+            "title": "✨ MODÈLE RESTAURATION - GFPGAN",
+            "properties": {
+                "cnr_id": "facerestore_cf",
+                "ver": "ff4d7a5c102441d8f058dd6135797ffb57b6c6ad",
+                "Node name for S&R": "FaceRestoreModelLoader"
+            },
+            "widgets_values": [
+                "GFPGANv1.4.pth"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+        },
+        {
+            "id": 20,
+            "type": "ImageSharpen",
+            "pos": [
+                645.5371900826883,
+                1292.4517906335943
+            ],
+            "size": [
+                380,
+                130
+            ],
+            "flags": {},
+            "order": 31,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 18
+                },
+                {
+                    "localized_name": "rayon_d'affûtage",
+                    "name": "sharpen_radius",
+                    "type": "INT",
+                    "widget": {
+                        "name": "sharpen_radius"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "sigma",
+                    "name": "sigma",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "sigma"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "alpha",
+                    "name": "alpha",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "alpha"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        19
+                    ]
+                }
+            ],
+            "title": "🔪 ACCENTUATION DÉTAILS - Sharpen",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "ImageSharpen"
+            },
+            "widgets_values": [
+                1,
+                1.2,
+                0.4
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 40,
+            "type": "VAEEncode",
+            "pos": [
+                1065.6613037958552,
+                1138.0568447422181
+            ],
+            "size": [
+                359.1000122070312,
+                50
+            ],
+            "flags": {},
+            "order": 39,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "pixels",
+                    "name": "pixels",
+                    "type": "IMAGE",
+                    "link": 41
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "type": "VAE",
+                    "link": 42
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": [
+                        37
+                    ]
+                }
+            ],
+            "title": "🔄 ENCODE IMAGE → LATENT (base pour vidéo)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "VAEEncode"
+            },
+            "widgets_values": [],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 29,
+            "type": "VAEDecode",
+            "pos": [
+                1717.8093560715886,
+                1600.9309765594398
+            ],
+            "size": [
+                324.3500122070312,
+                80
+            ],
+            "flags": {},
+            "order": 36,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "échantillons",
+                    "name": "samples",
+                    "type": "LATENT",
+                    "link": 30
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "type": "VAE",
+                    "link": 31
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        32
+                    ]
+                }
+            ],
+            "title": "🎬 DÉCODEUR FRAMES - Latent → Images",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "VAEDecode"
+            },
+            "widgets_values": [],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 11,
+            "type": "KSampler",
+            "pos": [
+                1773.171605149998,
+                -206.27307818333102
+            ],
+            "size": [
+                391.76666870117185,
+                262
+            ],
+            "flags": {},
+            "order": 26,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "model",
+                    "name": "model",
+                    "type": "MODEL",
+                    "link": 11
+                },
+                {
+                    "localized_name": "positive",
+                    "name": "positive",
+                    "type": "CONDITIONING",
+                    "link": 7
+                },
+                {
+                    "localized_name": "negative",
+                    "name": "negative",
+                    "type": "CONDITIONING",
+                    "link": 8
+                },
+                {
+                    "localized_name": "latent_image",
+                    "name": "latent_image",
+                    "type": "LATENT",
+                    "link": 12
+                },
+                {
+                    "localized_name": "seed",
+                    "name": "seed",
+                    "type": "INT",
+                    "widget": {
+                        "name": "seed"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "steps",
+                    "name": "steps",
+                    "type": "INT",
+                    "widget": {
+                        "name": "steps"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "cfg",
+                    "name": "cfg",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "cfg"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "sampler_name",
+                    "name": "sampler_name",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "sampler_name"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "scheduler",
+                    "name": "scheduler",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "scheduler"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "denoise",
+                    "name": "denoise",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "denoise"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": [
+                        13
+                    ]
+                }
+            ],
+            "title": "🎨 GÉNÉRATEUR IMAGE - Premier frame de référence",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "KSampler"
+            },
+            "widgets_values": [
+                118968088738391,
+                "fixed",
+                25,
+                7.5,
+                "dpmpp_3m_sde_gpu",
+                "karras",
+                0.65
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 19,
+            "type": "FaceRestoreCFWithModel",
+            "pos": [
+                642.3966942149033,
+                1071.5151515151451
+            ],
+            "size": [
+                380,
+                130
+            ],
+            "flags": {},
+            "order": 30,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "facerestore_model",
+                    "name": "facerestore_model",
+                    "type": "FACERESTORE_MODEL",
+                    "link": 17
+                },
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 16
+                },
+                {
+                    "localized_name": "facedetection",
+                    "name": "facedetection",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "facedetection"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "codeformer_fidelity",
+                    "name": "codeformer_fidelity",
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "codeformer_fidelity"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        18
+                    ]
+                }
+            ],
+            "title": "✨ RESTAURATION VISAGE - Qualité maximale",
+            "properties": {
+                "cnr_id": "facerestore_cf",
+                "ver": "ff4d7a5c102441d8f058dd6135797ffb57b6c6ad",
+                "Node name for S&R": "FaceRestoreCFWithModel"
+            },
+            "widgets_values": [
+                "retinaface_resnet50",
+                0.85
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 21,
+            "type": "ImageScale",
+            "pos": [
+                1081.735537190124,
+                1293.1279739544032
+            ],
+            "size": [
+                394.9166625976562,
+                130
+            ],
+            "flags": {},
+            "order": 32,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 19
+                },
+                {
+                    "localized_name": "méthode_d'agrandissement",
+                    "name": "upscale_method",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "upscale_method"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "largeur",
+                    "name": "width",
+                    "type": "INT",
+                    "widget": {
+                        "name": "width"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "hauteur",
+                    "name": "height",
+                    "type": "INT",
+                    "widget": {
+                        "name": "height"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "crop",
+                    "name": "crop",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "crop"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        20,
+                        21,
+                        41
+                    ]
+                }
+            ],
+            "title": "📐 REDIMENSIONNEMENT - 512x512 pour AnimateDiff",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "ImageScale"
+            },
+            "widgets_values": [
+                "lanczos",
+                512,
+                512,
+                "center"
+            ],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 27,
+            "type": "VAEEncode",
+            "pos": [
+                1332.9999463322258,
+                1602.7212689181072
+            ],
+            "size": [
+                324.3833374023437,
+                80
+            ],
+            "flags": {},
+            "order": 34,
+            "mode": 4,
+            "inputs": [
+                {
+                    "localized_name": "pixels",
+                    "name": "pixels",
+                    "type": "IMAGE",
+                    "link": 21
+                },
+                {
+                    "localized_name": "vae",
+                    "name": "vae",
+                    "type": "VAE",
+                    "link": 26
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "LATENT",
+                    "name": "LATENT",
+                    "type": "LATENT",
+                    "slot_index": 0,
+                    "links": [
+                        27
+                    ]
+                }
+            ],
+            "title": "🎨 ENCODEUR - Image → Latent pour vidéo",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "VAEEncode"
+            },
+            "widgets_values": [],
+            "color": "#432",
+            "bgcolor": "#653"
+        },
+        {
+            "id": 13,
+            "type": "SaveImage",
+            "pos": [
+                2263.5268642129677,
+                -220.40435130307645
+            ],
+            "size": [
+                458.98334350585935,
+                400
+            ],
+            "flags": {},
+            "order": 28,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "images",
+                    "name": "images",
+                    "type": "IMAGE",
+                    "link": 14
+                },
+                {
+                    "localized_name": "préfixe_du_nom_de_fichier",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [],
+            "title": "💾 SAUVEGARDE - Image de base générée (Checkpoint Phase 1)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "SaveImage"
+            },
+            "widgets_values": [
+                "video_producer_phase1_base"
+            ],
+            "color": "#232",
+            "bgcolor": "#353"
+        },
+        {
+            "id": 22,
+            "type": "SaveImage",
+            "pos": [
+                1565.179063360923,
+                874.9586776859513
+            ],
+            "size": [
+                421.0969696969686,
+                541.2121212121097
+            ],
+            "flags": {},
+            "order": 33,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "images",
+                    "name": "images",
+                    "type": "IMAGE",
+                    "link": 20
+                },
+                {
+                    "localized_name": "préfixe_du_nom_de_fichier",
+                    "name": "filename_prefix",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "filename_prefix"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [],
+            "title": "💾 SAUVEGARDE - Image HD finale optimisée (Phase 2)",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "SaveImage"
+            },
+            "widgets_values": [
+                "video_producer_phase2_hd"
+            ],
+            "color": "#232",
+            "bgcolor": "#353"
+        },
+        {
+            "id": 38,
+            "type": "roop",
+            "pos": [
+                1667.337015747451,
+                2046.1066034714565
+            ],
+            "size": [
+                379.8833374023437,
+                280
+            ],
+            "flags": {},
+            "order": 38,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "IMAGE",
+                    "link": 32
+                },
+                {
+                    "localized_name": "reference_image",
+                    "name": "reference_image",
+                    "type": "IMAGE",
+                    "link": 39
+                },
+                {
+                    "localized_name": "swap_model",
+                    "name": "swap_model",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "swap_model"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "faces_index",
+                    "name": "faces_index",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "faces_index"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "reference_faces_index",
+                    "name": "reference_faces_index",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "reference_faces_index"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "console_logging_level",
+                    "name": "console_logging_level",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "console_logging_level"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        40
+                    ]
+                }
+            ],
+            "title": "👤 FACE SWAP - Application exacte du visage source",
+            "properties": {
+                "cnr_id": "ComfyUI_roop",
+                "ver": "d35f4aaed6568ed95691b7258fac7814d6544a02",
+                "Node name for S&R": "roop"
+            },
+            "widgets_values": [
+                "inswapper_128.onnx",
+                "0",
+                "0",
+                0
+            ],
+            "color": "#323",
+            "bgcolor": "#535"
+        },
+        {
+            "id": 3,
+            "type": "LoadImage",
+            "pos": [
+                64.73920563638815,
+                -36.07905266895135
+            ],
+            "size": [
+                383.83331909179685,
+                400
+            ],
+            "flags": {},
+            "order": 11,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "image",
+                    "name": "image",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "image"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "choisissez le fichier à télécharger",
+                    "name": "upload",
+                    "type": "IMAGEUPLOAD",
+                    "widget": {
+                        "name": "upload"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "IMAGE",
+                    "name": "IMAGE",
+                    "type": "IMAGE",
+                    "slot_index": 0,
+                    "links": [
+                        5,
+                        39
+                    ]
+                },
+                {
+                    "localized_name": "MASQUE",
+                    "name": "MASK",
+                    "type": "MASK",
+                    "links": null
+                }
+            ],
+            "title": "👤 VISAGE SOURCE - Photo de base pour l'animation",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "LoadImage"
+            },
+            "widgets_values": [
+                "roop_faceswap_00009_.png",
+                "image"
+            ],
+            "color": "#223",
+            "bgcolor": "#335"
+        },
+        {
+            "id": 5,
+            "type": "CLIPTextEncode",
+            "pos": [
+                482.8223594199728,
+                -82.59996840371673
+            ],
+            "size": [
+                443.1129476584024,
+                250
+            ],
+            "flags": {},
+            "order": 23,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "clip",
+                    "name": "clip",
+                    "type": "CLIP",
+                    "link": 2
+                },
+                {
+                    "localized_name": "text",
+                    "name": "text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "text"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [
+                {
+                    "localized_name": "CONDITIONNEMENT",
+                    "name": "CONDITIONING",
+                    "type": "CONDITIONING",
+                    "slot_index": 0,
+                    "links": [
+                        7,
+                        28
+                    ]
+                }
+            ],
+            "title": "📝 PROMPT POSITIF - Description de la scène vidéo",
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+                "Cinematic full-body portrait of a person speaking directly to camera, professional lighting, soft smile, slight head movements, natural expression, photorealistic, 8K quality, studio setup, bokeh background, warm color grading, film grain"
+            ],
+            "color": "#232",
+            "bgcolor": "#353"
+        }
+    ],
+    "links": [
+        [
+            1,
+            2,
+            0,
+            9,
+            0,
+            "MODEL"
+        ],
+        [
+            2,
+            2,
+            1,
+            5,
+            0,
+            "CLIP"
+        ],
+        [
+            3,
+            2,
+            1,
+            6,
+            0,
+            "CLIP"
+        ],
+        [
+            4,
+            2,
+            2,
+            12,
+            1,
+            "VAE"
+        ],
+        [
+            5,
+            3,
+            0,
+            9,
+            2,
+            "IMAGE"
+        ],
+        [
+            6,
+            4,
+            0,
+            9,
+            1,
+            "IPADAPTER"
+        ],
+        [
+            7,
+            5,
+            0,
+            11,
+            1,
+            "CONDITIONING"
+        ],
+        [
+            8,
+            6,
+            0,
+            11,
+            2,
+            "CONDITIONING"
+        ],
+        [
+            9,
+            7,
+            0,
+            9,
+            5,
+            "CLIP_VISION"
+        ],
+        [
+            10,
+            8,
+            0,
+            9,
+            6,
+            "INSIGHTFACE"
+        ],
+        [
+            11,
+            9,
+            0,
+            11,
+            0,
+            "MODEL"
+        ],
+        [
+            12,
+            10,
+            0,
+            11,
+            3,
+            "LATENT"
+        ],
+        [
+            13,
+            11,
+            0,
+            12,
+            0,
+            "LATENT"
+        ],
+        [
+            14,
+            12,
+            0,
+            13,
+            0,
+            "IMAGE"
+        ],
+        [
+            15,
+            16,
+            0,
+            17,
+            0,
+            "UPSCALE_MODEL"
+        ],
+        [
+            16,
+            17,
+            0,
+            19,
+            1,
+            "IMAGE"
+        ],
+        [
+            17,
+            18,
+            0,
+            19,
+            0,
+            "FACERESTORE_MODEL"
+        ],
+        [
+            18,
+            19,
+            0,
+            20,
+            0,
+            "IMAGE"
+        ],
+        [
+            19,
+            20,
+            0,
+            21,
+            0,
+            "IMAGE"
+        ],
+        [
+            20,
+            21,
+            0,
+            22,
+            0,
+            "IMAGE"
+        ],
+        [
+            21,
+            21,
+            0,
+            27,
+            0,
+            "IMAGE"
+        ],
+        [
+            22,
+            24,
+            0,
+            25,
+            0,
+            "MOTION_MODEL"
+        ],
+        [
+            23,
+            25,
+            0,
+            26,
+            1,
+            "M_MODELS"
+        ],
+        [
+            24,
+            2,
+            0,
+            26,
+            0,
+            "MODEL"
+        ],
+        [
+            25,
+            26,
+            0,
+            28,
+            0,
+            "MODEL"
+        ],
+        [
+            26,
+            2,
+            2,
+            27,
+            1,
+            "VAE"
+        ],
+        [
+            28,
+            5,
+            0,
+            28,
+            1,
+            "CONDITIONING"
+        ],
+        [
+            29,
+            6,
+            0,
+            28,
+            2,
+            "CONDITIONING"
+        ],
+        [
+            30,
+            28,
+            0,
+            29,
+            0,
+            "LATENT"
+        ],
+        [
+            31,
+            2,
+            2,
+            29,
+            1,
+            "VAE"
+        ],
+        [
+            32,
+            29,
+            0,
+            38,
+            0,
+            "IMAGE"
+        ],
+        [
+            34,
+            36,
+            0,
+            37,
+            0,
+            "MOTION_MODEL_ADE"
+        ],
+        [
+            35,
+            2,
+            0,
+            37,
+            9,
+            "MODEL"
+        ],
+        [
+            37,
+            40,
+            0,
+            28,
+            3,
+            "LATENT"
+        ],
+        [
+            39,
+            3,
+            0,
+            38,
+            1,
+            "IMAGE"
+        ],
+        [
+            40,
+            38,
+            0,
+            30,
+            0,
+            "IMAGE"
+        ],
+        [
+            41,
+            21,
+            0,
+            40,
+            0,
+            "IMAGE"
+        ],
+        [
+            42,
+            2,
+            2,
+            40,
+            1,
+            "VAE"
+        ]
+    ],
+    "groups": [
+        {
+            "id": 1,
+            "title": "🎨 PHASE 1 : GÉNÉRATION IMAGE HD",
+            "bounding": [
+                35.067538483334765,
+                -571.1674615166644,
+                2791.9383333333326,
+                1282.7499999999986
+            ],
+            "color": "#3f789e",
+            "font_size": 24,
+            "flags": {}
+        },
+        {
+            "id": 2,
+            "title": "💎 PHASE 2 : POST-TRAITEMENT HD + PRÉPARATION VIDÉO",
+            "bounding": [
+                30,
+                790,
+                2858.7103140632653,
+                672.2619428696448
+            ],
+            "color": "#88A",
+            "font_size": 24,
+            "flags": {}
+        },
+        {
+            "id": 3,
+            "title": "🎬 PHASE 3 : GÉNÉRATION VIDÉO ANIMATEDIFF (40 FRAMES)",
+            "bounding": [
+                19.701299237683614,
+                1504.4118325886031,
+                2878.334937380083,
+                949.7968759378446
+            ],
+            "color": "#a1309b",
+            "font_size": 24,
+            "flags": {}
+        },
+        {
+            "id": 4,
+            "title": "🔊 PHASE 4 : AUDIO + DOCUMENTATION FINALE",
+            "bounding": [
+                -84.46599999999857,
+                2522.139251188319,
+                3593.9393939393935,
+                654.545454545454
+            ],
+            "color": "#653",
+            "font_size": 24,
+            "flags": {}
+        }
+    ],
+    "config": {},
+    "extra": {
+        "ds": {
+            "scale": 1.4147686146000875,
+            "offset": [
+                90.03417109215343,
+                97.87998304976972
+            ]
+        }
+    },
+    "version": 0.4
+}
