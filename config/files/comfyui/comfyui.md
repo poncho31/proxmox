@@ -1,0 +1,2 @@
+# Combine four input videos into a 2x2 grid layout using ffmpeg
+ffmpeg -i 1.mp4 -i 2.mp4 -i 3.mp4 -i 4.mp4 -filter_complex "[0:v]setpts=PTS-STARTPTS,scale=512x512[v0];[1:v]setpts=PTS-STARTPTS,scale=512x512[v1];[2:v]setpts=PTS-STARTPTS,scale=512x512[v2];[3:v]setpts=PTS-STARTPTS,scale=512x512[v3];[v0][v1]hstack=inputs=2[top];[v2][v3]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2[out]" -map "[out]" -c:v libx264 -crf 23 -preset veryfast output_grid.mp4
