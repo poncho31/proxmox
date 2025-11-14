@@ -1,111 +1,198 @@
-{
+﻿{
     "id": "888f11e8-3a4a-400a-92f8-1da230784a95",
     "revision": 0,
-    "last_node_id": 1,
-    "last_link_id": 0,
+    "last_node_id": 3,
+    "last_link_id": 2,
     "nodes": [
         {
-            "id": 1,
-            "type": "EdgeTTS_Speak_Text",
+            "id": 3,
+            "type": "SaveAudio",
             "pos": [
-                -116.5657787063022,
-                85.2298796195007
+                500,
+                200
             ],
             "size": [
-                809.1843043995243,
-                314.5255648038049
+                315,
+                122
             ],
             "flags": {},
-            "order": 0,
+            "order": 1,
             "mode": 0,
             "inputs": [
                 {
-                    "localized_name": "text",
-                    "name": "text",
-                    "type": "STRING",
-                    "widget": {
-                        "name": "text"
-                    },
-                    "link": null
+                    "localized_name": "audio",
+                    "name": "audio",
+                    "type": "AUDIO",
+                    "link": 2
                 },
                 {
-                    "localized_name": "voice",
-                    "name": "voice",
-                    "type": "COMBO",
-                    "widget": {
-                        "name": "voice"
-                    },
-                    "link": null
-                },
-                {
-                    "localized_name": "rate",
-                    "name": "rate",
-                    "type": "COMBO",
-                    "widget": {
-                        "name": "rate"
-                    },
-                    "link": null
-                },
-                {
-                    "localized_name": "output_mode",
-                    "name": "output_mode",
-                    "type": "COMBO",
-                    "widget": {
-                        "name": "output_mode"
-                    },
-                    "link": null
-                },
-                {
-                    "localized_name": "output_folder",
-                    "name": "output_folder",
-                    "type": "STRING",
-                    "widget": {
-                        "name": "output_folder"
-                    },
-                    "link": null
-                },
-                {
-                    "localized_name": "filename_prefix",
+                    "localized_name": "préfixe_du_nom_de_fichier",
                     "name": "filename_prefix",
                     "type": "STRING",
                     "widget": {
                         "name": "filename_prefix"
                     },
                     "link": null
+                },
+                {
+                    "localized_name": "audioUI",
+                    "name": "audioUI",
+                    "type": "AUDIO_UI",
+                    "widget": {
+                        "name": "audioUI"
+                    },
+                    "link": null
+                }
+            ],
+            "outputs": [],
+            "properties": {
+                "cnr_id": "comfy-core",
+                "ver": "0.3.68",
+                "Node name for S&R": "SaveAudio"
+            },
+            "widgets_values": [
+                "voice_character_"
+            ]
+        },
+        {
+            "id": 1,
+            "type": "VoiceCharacter",
+            "pos": [
+                50.74577405755718,
+                30.64264157100515
+            ],
+            "size": [
+                400,
+                400
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+                {
+                    "localized_name": "input_text",
+                    "name": "input_text",
+                    "type": "STRING",
+                    "widget": {
+                        "name": "input_text"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "character",
+                    "name": "character",
+                    "type": "COMBO",
+                    "widget": {
+                        "name": "character"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "text_temperature",
+                    "name": "text_temperature",
+                    "shape": 7,
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "text_temperature"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "waveform_temperature",
+                    "name": "waveform_temperature",
+                    "shape": 7,
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "waveform_temperature"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "semantic_temperature",
+                    "name": "semantic_temperature",
+                    "shape": 7,
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "semantic_temperature"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "fine_temperature",
+                    "name": "fine_temperature",
+                    "shape": 7,
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "fine_temperature"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "min_eos_p",
+                    "name": "min_eos_p",
+                    "shape": 7,
+                    "type": "FLOAT",
+                    "widget": {
+                        "name": "min_eos_p"
+                    },
+                    "link": null
+                },
+                {
+                    "localized_name": "max_coarse_history",
+                    "name": "max_coarse_history",
+                    "shape": 7,
+                    "type": "INT",
+                    "widget": {
+                        "name": "max_coarse_history"
+                    },
+                    "link": null
                 }
             ],
             "outputs": [
                 {
-                    "localized_name": "file_path",
-                    "name": "file_path",
-                    "type": "STRING",
-                    "links": null
+                    "localized_name": "AUDIO",
+                    "name": "AUDIO",
+                    "type": "AUDIO",
+                    "links": [
+                        2
+                    ]
                 }
             ],
             "properties": {
                 "cnr_id": "ComfyUI-TTS",
                 "ver": "5b3afd7067ee0126ac1ba4d412b12426a8ff525d",
-                "Node name for S&R": "EdgeTTS_Speak_Text"
+                "Node name for S&R": "VoiceCharacter"
             },
             "widgets_values": [
-                "Bonjour !dzd z z zd zdzdz dz  dzzdz ",
-                "fr-FR-HenriNeural",
-                "medium",
-                "both",
-                "ComfyUI\\output",
-                "voix_"
+                "Que dit un escargot quand il croise une limace ? « Oh la belle décapotable ! »",
+                "👨 Homme Adulte Naturel",
+                0.7,
+                0.7,
+                0.7,
+                0.5,
+                0.2,
+                300
             ]
         }
     ],
-    "links": [],
+    "links": [
+        [
+            2,
+            1,
+            0,
+            3,
+            0,
+            "AUDIO"
+        ]
+    ],
     "groups": [],
     "config": {},
     "extra": {
         "ds": {
-            "scale": 1.0789149435800613,
+            "scale": 1.0280092071953946,
             "offset": [
-                217.29786172372462,
-                129.4055209421935
+                238.26055695296816,
+                109.43535358800365
             ]
         }
     },
