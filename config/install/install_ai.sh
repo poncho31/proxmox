@@ -3,9 +3,6 @@
 # -------------------------------------------------------
 # Variables globales pour le serveur (surchargées par .env)
 # -------------------------------------------------------
-source load_env.sh
-source init_server.sh
-
 CONTAINER_ID="${AI_CONTAINER_ID:-102}"
 HOSTNAME="${AI_HOSTNAME:-ai-model}"
 CORES="${AI_CORES:-4}"
@@ -26,7 +23,7 @@ http://$AI_IP:81 {
     reverse_proxy localhost:11434
 }
 http://$AI_IP:82 {
-    reverse_proxy localhost:11434
+    reverse_proxy localhost:7860
 }
 EOF"
 
@@ -80,41 +77,79 @@ install_ollama() {
 # Installation locale de Stable Diffusion WebUI
 # -------------------------------------------------------
 install_stable_diffusion() {
-    echo "==> Initialisation du conteneur..."
-    init_ai
+    echo "==> Initialisation du conteneur $SERVER_CONTAINER_ID..."
 
-    echo "==> Installation de Stable Diffusion WebUI dans le conteneur $CONTAINER_ID..."
-
-    # Dépendances minimales dans le conteneur
-    pct exec "$CONTAINER_ID" -- bash -c "apt update && apt install -y git wget python3 python3-venv"
-
-    # Clonage du dépôt dans le conteneur
-    if ! pct exec "$CONTAINER_ID" -- test -d /root/stable-diffusion-webui; then
-        pct exec "$CONTAINER_ID" -- git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui /root/stable-diffusion-webui
-    else
-        echo "✅ Dépôt déjà présent dans le conteneur."
+    if declare -f init_ai >/dev/null 2>&1; then
+        init_ai
     fi
 
-    # Téléchargement du modèle SD v1.5 dans le conteneur
+    echo "==> Vérification ressources LXC..."
+    pct config "$SERVER_CONTAINER_ID" || { echo "Container $SERVER_CONTAINER_ID introuvable"; return 1; }
+
+    echo "==> Mise en place du swap (si nécessaire)..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "set -euo pipefail
+if ! swapon --show | grep -q '^/swapfile'; then
+  fallocate -l 4G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=4096
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  if ! grep -q '/swapfile' /etc/fstab; then
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  fi
+fi
+"
+
+    echo "==> Installation des dépendances système dans le conteneur..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git wget ca-certificates python3 python3-venv python3-full build-essential pkg-config libglib2.0-0"
+
+    echo "==> Clonage/MISE A JOUR du dépôt Stable Diffusion WebUI..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "set -euo pipefail
+REPO=/root/stable-diffusion-webui
+if [ -d \"\$REPO/.git\" ]; then
+  cd \"\$REPO\"
+  git fetch --all --prune || true
+  git reset --hard origin/master || true
+  git pull --rebase || true
+else
+  git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui \"\$REPO\"
+fi
+"
+
+    echo "==> Création de l'environnement virtuel Python..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "python3 -m venv /root/stable-diffusion-webui/venv"
+
+    echo "==> Installation ordonnée des paquets Python dans le venv (numpy<2 en priorité)..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "set -euo pipefail
+VENV=/root/stable-diffusion-webui/venv
+source \"\$VENV/bin/activate\"
+
+python -m pip install --upgrade pip setuptools wheel --no-cache-dir
+
+# Downgrade numpy first to avoid ABI clash with torch build
+pip install --no-cache-dir 'numpy<2'
+
+# Install critical python deps required by the webui
+pip install --no-cache-dir packaging pytorch_lightning gradio
+
+# Install torch and torchvision (ajuste si tu veux CPU-only)
+pip install --no-cache-dir torch==2.1.2 torchvision==0.16.2 --extra-index-url https://download.pytorch.org/whl/cu121
+"
+
+    echo "==> Téléchargement du modèle SD v1.5 (si absent)..."
     MODEL_DIR="/root/stable-diffusion-webui/models/Stable-diffusion"
     MODEL_FILE="v1-5-pruned-emaonly.safetensors"
     MODEL_URL="https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/$MODEL_FILE"
 
-    pct exec "$CONTAINER_ID" -- mkdir -p "$MODEL_DIR"
-    if ! pct exec "$CONTAINER_ID" -- test -f "$MODEL_DIR/$MODEL_FILE"; then
-        echo "⬇️ Téléchargement du modèle SD v1.5 dans le conteneur..."
-        pct exec "$CONTAINER_ID" -- wget -O "$MODEL_DIR/$MODEL_FILE" "$MODEL_URL"
-    else
-        echo "✅ Modèle déjà présent dans le conteneur."
-    fi
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "mkdir -p '$MODEL_DIR'"
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "if [ ! -f '$MODEL_DIR/$MODEL_FILE' ]; then wget -O '$MODEL_DIR/$MODEL_FILE' '$MODEL_URL'; else echo 'Modèle déjà présent'; fi"
 
-    echo "==> Lancement du serveur WebUI dans le conteneur..."
-    echo "🖼️ Accès via http://$AI_IP:7860 une fois démarré."
+    echo "==> Vérifications post-installation (versions)..."
+    pct exec "$SERVER_CONTAINER_ID" -- bash -lc "set -euo pipefail
+VENV=/root/stable-diffusion-webui/venv
+source \"\$VENV/bin/activate\"
+python -c \"import sys, numpy, torch, packaging, pytorch_lightning, gradio; print('python:', sys.version.split()[0]); print('numpy:', numpy.__version__); print('torch:', torch.__version__); print('pytorch_lightning:', getattr(__import__('pytorch_lightning'), '__version__', 'unknown')); print('gradio:', getattr(__import__('gradio'), '__version__', 'unknown'))\"
+"
 
-    COMMAND="cd /root/stable-diffusion-webui && python3 launch.py --precision full --no-half --skip-torch-cuda-test"
-    echo "📦 Commande : pct exec $CONTAINER_ID -- bash -c '$COMMAND'"
-    echo "💡 Tu peux l’exécuter manuellement ou en arrière-plan avec : pct exec $CONTAINER_ID -- nohup bash -c '$COMMAND' &"
-
-    # Optionnel : lancer automatiquement
-    pct exec "$CONTAINER_ID" -- bash -c "$COMMAND"
+    echo "==> Installation terminée. Démarrage possible via start_sd_webui"
+    echo "🖼️ Accès prévu: http://$SERVER_IP:7860"
 }

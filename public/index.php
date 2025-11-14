@@ -416,7 +416,7 @@ $mysql = getMySQLInfo();
                 </a>
 
                 <!-- Surveillance Caméras -->
-                <a href="domotique.php" class="site-card domotique">
+                <a href="domotique.php" class="site-card domotique" target="_blank">
                     <span class="site-icon">📹</span>
                     <div class="site-title">Caméras</div>
                     <div class="site-port">Surveillance</div>
@@ -435,6 +435,14 @@ $mysql = getMySQLInfo();
                     <div class="site-title">Proxmox VE</div>
                     <div class="site-port">Port 8006</div>
                 </a>
+
+                <!-- Comfyui -->
+                <a href="<?php echo Env::get('URL_COMFYUI', ''); ?>" target="_blank" class="site-card vscode">
+                    <span class="site-icon">💻</span>
+                    <div class="site-title">ComfyUI</div>
+                    <div class="site-port">Port 86</div>
+                </a>
+
             </div>
         </div>
 
