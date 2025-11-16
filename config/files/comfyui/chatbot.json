@@ -1,0 +1,119 @@
+﻿{
+    "last_node_id": 2,
+    "last_link_id": 1,
+    "nodes": [
+        {
+            "id": 1,
+            "type": "OllamaChat",
+            "pos": [
+                50,
+                50
+            ],
+            "size": {
+                "0": 500,
+                "1": 350
+            },
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "reponse",
+                    "type": "STRING",
+                    "links": [
+                        1
+                    ],
+                    "shape": 3,
+                    "slot_index": 0
+                }
+            ],
+            "properties": {
+                "Node name for S&R": "OllamaChat"
+            },
+            "widgets_values": [
+                "gemma2:2b",
+                "Tu es un assistant virtuel serviable et précis.",
+                "Bonjour! Comment puis-je vous aider?",
+                0.7
+            ]
+        },
+        {
+            "id": 2,
+            "type": "ShowText|pysssss",
+            "pos": [
+                600,
+                50
+            ],
+            "size": {
+                "0": 400,
+                "1": 350
+            },
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+                {
+                    "name": "text",
+                    "type": "STRING",
+                    "link": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "STRING",
+                    "type": "STRING",
+                    "links": null,
+                    "shape": 6
+                }
+            ],
+            "properties": {
+                "Node name for S&R": "ShowText|pysssss"
+            },
+            "widgets_values": [
+                ""
+            ]
+        }
+    ],
+    "links": [
+        [
+            1,
+            1,
+            0,
+            2,
+            0,
+            "STRING"
+        ]
+    ],
+    "groups": [],
+    "config": {},
+    "extra": {
+        "ds": {
+            "scale": 1,
+            "offset": [
+                0,
+                0
+            ]
+        },
+        "info": {
+            "name": "Chatbot LLM Ollama - 100% LOCAL",
+            "description": "Chatbot utilisant Ollama (gemma2:2b par défaut - 1.6GB)",
+            "installation": "Installation 100% automatique par comfyui_auto_install_llm.py",
+            "model": "gemma2:2b (1.6GB) - Téléchargé automatiquement",
+            "steps": {
+                "1": "✅ Package ollama installé automatiquement",
+                "2": "✅ Modèle gemma2:2b téléchargé automatiquement (1.6GB)",
+                "3": "✅ Node OllamaChat créé automatiquement",
+                "4": "✅ Tout fonctionne 100% HORS LIGNE après téléchargement"
+            },
+            "advantages": [
+                "100% LOCAL - ZERO appel internet après téléchargement",
+                "Modèle ultra-léger (1.6GB vs 14GB)",
+                "Optimisé pour GPU (4GB VRAM suffit)",
+                "Pas de service externe requis",
+                "Ollama gère automatiquement GPU/CPU"
+            ]
+        }
+    },
+    "version": 0.4
+}
