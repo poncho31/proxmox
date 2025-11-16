@@ -71,6 +71,9 @@ load_environment_variables() {
         export SERVER_INIT=$(grep '^SERVER_INIT=' .env | cut -d'=' -f2-)
         export SERVER_FORCE_INIT=$(grep '^SERVER_FORCE_INIT=' .env | cut -d'=' -f2-)
 
+        # COMFYUI Configuration
+        export COMFYUI_IP=$(grep '^COMFYUI_IP=' .env | cut -d'=' -f2-)
+        export COMFYUI_PORT=$(grep '^COMFYUI_PORT=' .env | cut -d'=' -f2-)
 
         echo "Environment variables loaded from .env"
     else

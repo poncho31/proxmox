@@ -1,0 +1,14 @@
+﻿{
+  "prompt": {
+    "1": {
+      "class_type": "OllamaChat",
+      "inputs": {
+        "model": "gemma2:2b",
+        "system_prompt": "Tu es un assistant virtuel.",
+        "user_message": "Bonjour",
+        "temperature": 0.7
+      }
+    }
+  },
+  "client_id": "test123"
+}

@@ -251,7 +251,7 @@
                 "Node name for S&R": "IPAdapterInsightFaceLoader"
             },
             "widgets_values": [
-                "CUDA",
+                "CPU",
                 "antelopev2"
             ]
         },
