@@ -390,7 +390,7 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
         // Auto-refresh des frames toutes les 30 secondes pour maintenir la connexion
         setInterval(() => {
             const iframes = document.querySelectorAll('.stream-iframe');
-            const targetOrigin = "https://100.104.128.114:82/stream.html?src=tapo_camera2&mode=mse";
+            const targetOrigin = "https://<?php echo Env::get('URL_GO2RTC', ''); ?>:82/stream.html?src=tapo_camera2&mode=mse";
             iframes.forEach(iframe => {
                 try {
                     iframe.contentWindow.postMessage('ping', '*');

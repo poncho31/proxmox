@@ -115,7 +115,7 @@ else
 fi
 
 echo "==> Setup complete."
-echo "Open VS Code Web on https://100.104.128.114:81/"
+echo "Open VS Code Web on https://$TAILSCALE_IP:81/"
 echo "In the Continue extension, 'Local StarCoder' should now appear automatically."
 
 }
