@@ -108,6 +108,13 @@ class ComfyUIClient
      */
     public function queuePrompt(array $workflow): array
     {
+        // Si le workflow contient déjà 'prompt' et 'client_id' (format API),
+        // l'envoyer directement
+        if (isset($workflow['prompt']) && isset($workflow['client_id'])) {
+            return $this->request('/prompt', 'POST', $workflow);
+        }
+
+        // Sinon, wrapper dans 'prompt' (ancien format)
         return $this->request('/prompt', 'POST', ['prompt' => $workflow]);
     }
 
