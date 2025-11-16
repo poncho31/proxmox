@@ -3,6 +3,17 @@
 require_once __DIR__ . '/../src/env.php';
 Env::load();
 
+// Charger le fichier personnalisé s'il existe
+if (file_exists(__DIR__ . '/custom/domotique.php')) {
+    require_once __DIR__ . '/custom/domotique.php';
+    die();
+}
+
+// Protection par mot de passe via URL
+$correct_password = Env::get('CAMERA1_PASS', 'camera123');
+$password = $_GET['pass'] ?? '';
+$is_unlocked = ($password === $correct_password);
+
 // Récupérer les paramètres des caméras depuis .env
 $go2rtc_ip = Env::get('GO2RTC_IP', '192.168.0.51');
 $go2rtc_port = Env::get('GO2RTC_PORT', '1984');
@@ -274,32 +285,43 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
     <div class="container">
         <div class="domotique-grid">
             <!-- Caméra 1 -->
-            <div class="camera-card">
+            <div class="camera-card password">
                 <h2 class="camera-title">
                     <span class="status-indicator status-online"></span>
                     <?php echo htmlspecialchars($camera1_label); ?>
                 </h2>
 
-                <div class="stream-container">
-                    <iframe
-                        class="stream-iframe"
-                        src="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse"
-                        allow="camera; microphone; autoplay"
-                        loading="lazy">
-                    </iframe>
-                </div>
+                <?php if ($is_unlocked): ?>
+                    <div class="stream-container">
+                        <iframe
+                            class="stream-iframe"
+                            src="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse"
+                            allow="camera; microphone; autoplay"
+                            loading="lazy">
+                        </iframe>
+                    </div>
 
-                <div class="stream-options">
-                    <a href="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse"
-                        target="_blank" class="stream-btn webrtc">
-                        🎥 Flux Vidéo MSE
-                    </a>
-                    <a href="<?php echo Env::get('URL_GO2RTC', ''); ?>/api/frame.jpeg?src=<?php echo $camera1_name; ?>"
-                        target="_blank" class="stream-btn api">
-                        📸 Photo Instantanée
-                    </a>
-                </div>
+                    <div class="stream-options">
+                        <a href="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera1_name; ?>&mode=mse"
+                            target="_blank" class="stream-btn webrtc">
+                            🎥 Flux Vidéo MSE
+                        </a>
+                        <a href="<?php echo Env::get('URL_GO2RTC', ''); ?>/api/frame.jpeg?src=<?php echo $camera1_name; ?>"
+                            target="_blank" class="stream-btn api">
+                            📸 Photo Instantanée
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <div class="stream-container" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Accès Protégé</h3>
+                        <p style="opacity: 0.9; margin-bottom: 10px;">Cette caméra nécessite un mot de passe</p>
+                        <p style="font-size: 0.9rem; opacity: 0.8;">Ajoutez <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">?pass=VOTRE_MOT_DE_PASSE</code> à l'URL</p>
+                    </div>
+                <?php endif; ?>
             </div>
+
+
             <!-- Caméra 2 -->
             <div class="camera-card">
                 <h2 class="camera-title">
@@ -310,7 +332,7 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
                 <div class="stream-container">
                     <iframe
                         class="stream-iframe"
-                        src="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera2_name; ?>&mode=mse"
+                        src="<?php echo Env::get('URL_GO2RTC', ''); ?>/stream.html?src=<?php echo $camera2_name; ?>&mode=mse&muted=1"
                         allow="camera; microphone; autoplay"
                         loading="lazy">
                     </iframe>
@@ -368,15 +390,18 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
         // Auto-refresh des frames toutes les 30 secondes pour maintenir la connexion
         setInterval(() => {
             const iframes = document.querySelectorAll('.stream-iframe');
+            const targetOrigin = "https://100.104.128.114:82/stream.html?src=tapo_camera2&mode=mse";
             iframes.forEach(iframe => {
-                // Vérifier si le stream est encore actif
                 try {
                     iframe.contentWindow.postMessage('ping', '*');
+                    iframe.addEventListener('load', () => {
+                        iframe.contentWindow.postMessage({ action: "mute" }, targetOrigin);
+                    });
                 } catch (e) {
                     console.log('Stream refresh needed');
                 }
             });
-        }, 30000);
+        }, 1000);
 
         // Animation au chargement
         document.addEventListener('DOMContentLoaded', function() {
@@ -394,6 +419,8 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
             console.log('📹 Interface caméras chargée');
             console.log('🔧 go2rtc: <?php echo Env::get('URL_GO2RTC', ''); ?>');
         });
+
+
     </script>
 </body>
 
