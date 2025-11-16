@@ -1,1 +1,1 @@
-{"message": "Explique-moi en 2 phrases ce qu est l intelligence artificielle", "model": "gemma2:2b"}
+{"message": "Explique-moi en 2 phrases ce qu est l intelligence artificielle", "model": "gemma2:2b", "system_prompt": "Tu es un assistant virtuel serviable.", "temperature": 0.7}

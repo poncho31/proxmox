@@ -136,6 +136,6 @@ abstract class BaseWorkflow implements WorkflowInterface
      */
     public function validate(): bool
     {
-        return !empty($this->nodes);
+        return !empty($this->apiFormat);
     }
 }
