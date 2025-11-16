@@ -3,110 +3,40 @@
 namespace ComfyUI\Workflows;
 
 /**
- * Classe de base pour tous les workflows ComfyUI
+ * Classe de base simplifiée pour tous les workflows ComfyUI
  */
 abstract class BaseWorkflow implements WorkflowInterface
 {
-    protected array $nodes = [];
-    protected array $links = [];
-    protected int $lastNodeId = 0;
-    protected int $lastLinkId = 0;
-    protected array $apiFormat = []; // Format pour l'API ComfyUI
+    protected array $apiFormat = [];
 
     /**
-     * Crée un noeud
+     * Crée un noeud pour l'API ComfyUI
      */
-    protected function createNode(
-        int $id,
-        string $type,
-        array $pos,
-        array $size,
-        array $inputs = [],
-        array $outputs = [],
-        array $properties = [],
-        array $widgetsValues = []
-    ): array {
+    protected function createNode(string $classType, array $inputs): array
+    {
         return [
-            'id' => $id,
-            'type' => $type,
-            'pos' => $pos,
-            'size' => $size,
-            'flags' => [],
-            'order' => $id,
-            'mode' => 0,
-            'inputs' => $inputs,
-            'outputs' => $outputs,
-            'properties' => $properties,
-            'widgets_values' => $widgetsValues
+            'class_type' => $classType,
+            'inputs' => $inputs
         ];
     }
 
     /**
-     * Crée un lien entre deux noeuds
+     * Crée une référence vers la sortie d'un autre noeud
      */
-    protected function createLink(
-        int $id,
-        int $sourceNodeId,
-        int $sourceSlot,
-        int $targetNodeId,
-        int $targetSlot,
-        string $type
-    ): array {
-        return [
-            $id,
-            $sourceNodeId,
-            $sourceSlot,
-            $targetNodeId,
-            $targetSlot,
-            $type
-        ];
+    protected function nodeOutput(string $nodeId, int $outputIndex = 0): array
+    {
+        return [$nodeId, $outputIndex];
     }
 
     /**
-     * Crée un input pour un noeud
+     * Construit le workflow au format API ComfyUI
      */
-    protected function createInput(
-        string $name,
-        string $type,
-        ?int $link = null,
-        ?array $widget = null
-    ): array {
-        $input = [
-            'name' => $name,
-            'type' => $type
+    protected function buildApiFormat(array $nodes): void
+    {
+        $this->apiFormat = [
+            'prompt' => $nodes,
+            'client_id' => 'php-' . uniqid()
         ];
-
-        if ($link !== null) {
-            $input['link'] = $link;
-        }
-
-        if ($widget !== null) {
-            $input['widget'] = $widget;
-        }
-
-        return $input;
-    }
-
-    /**
-     * Crée un output pour un noeud
-     */
-    protected function createOutput(
-        string $name,
-        string $type,
-        array $links = [],
-        ?int $slotIndex = null
-    ): array {
-        $output = [
-            'name' => $name,
-            'type' => $type,
-            'links' => $links
-        ];
-
-        if ($slotIndex !== null) {
-            $output['slot_index'] = $slotIndex;
-        }
-
-        return $output;
     }
 
     /**
@@ -114,21 +44,7 @@ abstract class BaseWorkflow implements WorkflowInterface
      */
     public function build(): array
     {
-        // Si le format API est défini, l'utiliser directement
-        if (!empty($this->apiFormat)) {
-            return $this->apiFormat;
-        }
-
-        // Sinon, utiliser le format UI classique
-        return [
-            'last_node_id' => $this->lastNodeId,
-            'last_link_id' => $this->lastLinkId,
-            'nodes' => $this->nodes,
-            'links' => $this->links,
-            'groups' => [],
-            'config' => [],
-            'extra' => []
-        ];
+        return $this->apiFormat;
     }
 
     /**
