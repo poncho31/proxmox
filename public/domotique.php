@@ -9,9 +9,9 @@ if (file_exists(__DIR__ . '/custom/domotique.php')) {
     die();
 }
 
-// Protection par mot de passe via URL
+// Protection par mot de passe via POST
 $correct_password = Env::get('CAMERA1_PASS', 'camera123');
-$password = $_GET['pass'] ?? '';
+$password = $_POST['pass'] ?? '';
 $is_unlocked = ($password === $correct_password);
 
 // Récupérer les paramètres des caméras depuis .env
@@ -315,8 +315,22 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
                     <div class="stream-container" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px; text-align: center;">
                         <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
                         <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Accès Protégé</h3>
-                        <p style="opacity: 0.9; margin-bottom: 10px;">Cette caméra nécessite un mot de passe</p>
-                        <p style="font-size: 0.9rem; opacity: 0.8;">Ajoutez <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">?pass=VOTRE_MOT_DE_PASSE</code> à l'URL</p>
+                        <form method="POST" action="" style="width: 100%; max-width: 300px;">
+                            <input
+                                type="password"
+                                name="pass"
+                                id="passwordInput"
+                                placeholder="Entrez le mot de passe"
+                                style="width: 100%; padding: 12px 16px; border: none; border-radius: 6px; font-size: 1rem; margin-bottom: 15px; background: rgba(255,255,255,0.9); color: #2c3e50;"
+                                autocomplete="off"
+                                required />
+                            <button
+                                type="submit"
+                                class="stream-btn"
+                                style="width: 100%; background: linear-gradient(135deg, #27ae60, #229954); border: none; cursor: pointer;">
+                                🔓 Déverrouiller
+                            </button>
+                        </form>
                     </div>
                 <?php endif; ?>
             </div>
@@ -387,6 +401,12 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
     </div>
 
     <script>
+        // Focus automatique sur le champ de saisie au chargement
+        const passwordInput = document.getElementById('passwordInput');
+        if (passwordInput) {
+            passwordInput.focus();
+        }
+
         // Auto-refresh des frames toutes les 30 secondes pour maintenir la connexion
         setInterval(() => {
             const iframes = document.querySelectorAll('.stream-iframe');
@@ -395,7 +415,9 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
                 try {
                     iframe.contentWindow.postMessage('ping', '*');
                     iframe.addEventListener('load', () => {
-                        iframe.contentWindow.postMessage({ action: "mute" }, targetOrigin);
+                        iframe.contentWindow.postMessage({
+                            action: "mute"
+                        }, targetOrigin);
                     });
                 } catch (e) {
                     console.log('Stream refresh needed');
@@ -419,8 +441,6 @@ $camera2_label = Env::get('CAMERA2_LABEL', 'Caméra Tapo 2');
             console.log('📹 Interface caméras chargée');
             console.log('🔧 go2rtc: <?php echo Env::get('URL_GO2RTC', ''); ?>');
         });
-
-
     </script>
 </body>
 
