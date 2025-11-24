@@ -21,7 +21,7 @@ install_and_configure_caddy() {
 https://$CADDY_MAIN_IP {
     tls internal
     basicauth * {
-        $CADDY_USER __HASH__
+        $CADDY_USER $HASH
     }
     reverse_proxy localhost:8080
 }
@@ -30,7 +30,7 @@ https://$CADDY_MAIN_IP {
 https://$CADDY_MAIN_IP:81 {
     tls internal
     basicauth * {
-        $CADDY_USER __HASH__
+        $CADDY_USER $HASH
     }
     reverse_proxy $VSCODE_IP:$VSCODE_PORT
 }
@@ -41,7 +41,7 @@ https://$CADDY_MAIN_IP:82 {
     tls internal
 
     basicauth * {
-        $CADDY_USER __HASH__
+        $CADDY_USER $HASH
     }
 
     # Headers pour iframe
@@ -114,7 +114,7 @@ https://$CADDY_MAIN_IP:86 {
     tls internal
 
     basicauth * {
-        $CADDY_USER __HASH__
+        $CADDY_USER $HASH
     }
 
     reverse_proxy https://$COMFYUI_IP:$COMFYUI_PORT {
@@ -131,8 +131,8 @@ https://$CADDY_MAIN_IP:86 {
 
 EOFCADDY
 
-    # Replace __HASH__ placeholder with actual hash using sed (avoids line wrapping issues)
-    sed "s|__HASH__|$HASH|g" /etc/caddy/Caddyfile.tmp > /etc/caddy/Caddyfile
+    # Replace $HASH placeholder with actual hash using sed (avoids line wrapping issues)
+    sed "s|$HASH|$HASH|g" /etc/caddy/Caddyfile.tmp > /etc/caddy/Caddyfile
     rm -f /etc/caddy/Caddyfile.tmp    # Restart Caddy to apply configuration
     systemctl restart caddy
 
