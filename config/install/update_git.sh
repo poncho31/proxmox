@@ -7,7 +7,7 @@ update_from_git() {
     
     cd /var/www/proxmox
     git reset --hard
-    git pull origin main
+    git pull origin switch_to_rust
     
     echo "==> Git update completed"
 }
