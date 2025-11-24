@@ -25,6 +25,7 @@ source config/install/install_tailscale.sh
 source config/install/install_caddy.sh
 source config/install/install_vscode.sh
 source config/install/install_ai.sh
+source config/install/install_systemd_service.sh
 
 # Execute installation steps in order
 print_step "1" "Updating from Git repository"
@@ -62,6 +63,9 @@ if [ "$INSTALL_GO2RTC" = "true" ]; then
 else
     print_step "10" "Skipping go2rtc installation"
 fi
+
+print_step "11" "Installing Rust Web Server as systemd service"
+install_rust_web_service
 
 # Installation summary
 print_installation_summary "https://$CADDY_MAIN_IP" "$CADDY_USER"

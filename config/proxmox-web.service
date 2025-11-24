@@ -1,0 +1,27 @@
+[Unit]
+Description=Proxmox Rust Web Server
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/proxmox
+Environment="PATH=/root/.cargo/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/var/www/proxmox/.env
+ExecStart=/var/www/proxmox/target/release/Proxmox
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=proxmox-web
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Performance settings
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

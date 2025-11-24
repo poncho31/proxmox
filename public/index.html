@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Proxmox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .site-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .site-card.domotique {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .site-card.vscode {
+            background: linear-gradient(135deg, #007ACC, #0066A8);
+        }
+
+        .site-card.proxmox {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+        }
+
+        .site-card.comfyui {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+        }
+
+        .site-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .site-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .site-port {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .sites-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .site-card {
+                padding: 25px;
+            }
+
+            .site-icon {
+                font-size: 2.5rem;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sites-grid">
+            <!-- Surveillance Caméras -->
+            <a href="/domotique.html" class="site-card domotique" target="_blank">
+                <span class="site-icon">📹</span>
+                <div class="site-title">Caméras</div>
+                <div class="site-port">Surveillance</div>
+            </a>
+
+            <!-- VS Code Server -->
+            <a href="#" id="vscodeLink" class="site-card vscode" target="_blank">
+                <span class="site-icon">💻</span>
+                <div class="site-title">VS Code</div>
+                <div class="site-port">Port 81</div>
+            </a>
+
+            <!-- Interface Proxmox -->
+            <a href="#" id="proxmoxLink" class="site-card proxmox" target="_blank">
+                <span class="site-icon">⚙️</span>
+                <div class="site-title">Proxmox VE</div>
+                <div class="site-port">Port 8006</div>
+            </a>
+
+            <!-- ComfyUI -->
+            <a href="#" id="comfyuiLink" class="site-card comfyui" target="_blank">
+                <span class="site-icon">🎨</span>
+                <div class="site-title">ComfyUI</div>
+                <div class="site-port">Port 86</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour charger les informations du serveur depuis l'API
+        async function loadServerInfo() {
+            try {
+                const infoResponse = await fetch('/api/server-info');
+                if (infoResponse.ok) {
+                    const serverData = await infoResponse.json();
+
+                    // Mettre à jour les liens avec les données du serveur
+                    document.getElementById('vscodeLink').href = serverData.url_vscode;
+                    document.getElementById('comfyuiLink').href = serverData.url_comfyui;
+                    document.getElementById('proxmoxLink').href = serverData.ip_proxmox_public;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des informations:', error);
+            }
+        }
+
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServerInfo();
+
+            const cards = document.querySelectorAll('.site-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+{
+    "1": {
+        "inputs": {
+            "text": "Bonjour à tous, ceci est un test de voix réaliste avec Piper.",
+            "voice": "fr_FR-siwis-medium",
+            "sample_rate": 22050
+        },
+        "class_type": "PiperTTS",
+        "_meta": {
+            "title": "Piper TTS"
+        }
+    },
+    "2": {
+        "inputs": {
+            "audio": [
+                "1",
+                0
+            ]
+        },
+        "class_type": "PreviewAudio",
+        "_meta": {
+            "title": "Preview Audio"
+        }
+    },
+    "3": {
+        "inputs": {
+            "audio": [
+                "1",
+                0
+            ],
+            "format": "pcm16",
+            "protocol": "rtsp",
+            "url": "rtsp://0.0.0.0:8554/tts"
+        },
+        "class_type": "AudioStreamOutput",
+        "_meta": {
+            "title": "Audio Stream Output"
+        }
+    }
+}

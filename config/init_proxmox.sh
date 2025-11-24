@@ -247,20 +247,20 @@ cat > /opt/novnc/vnc_auto.html <<'EOF'
             </canvas>
         </div>
     </div>
-    
+
     <script type="module" crossorigin="anonymous">
         import RFB from './core/rfb.js';
-        
+
         let rfb;
-        
+
         function connect() {
             const host = window.location.hostname;
             const port = window.location.port || (window.location.protocol === 'https:' ? 443 : 80);
             const path = window.location.pathname.replace(/\/[^\/]*$/, '/websockify');
-            
-            const url = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + 
+
+            const url = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
                        host + ':' + port + path;
-            
+
             rfb = new RFB(document.getElementById('noVNC_canvas'), url, {
                 credentials: { password: 'proxmvnc' },
                 repeaterID: '',
@@ -273,26 +273,26 @@ cat > /opt/novnc/vnc_auto.html <<'EOF'
                 qualityLevel: 6,
                 compressionLevel: 2
             });
-            
+
             rfb.addEventListener('connect', () => {
                 document.getElementById('noVNC_status').textContent = 'Connected';
                 // Auto-fit to browser window
                 rfb.scaleViewport = true;
                 rfb.resizeSession = true;
             });
-            
+
             rfb.addEventListener('disconnect', () => {
                 document.getElementById('noVNC_status').textContent = 'Disconnected';
             });
-            
+
             rfb.addEventListener('credentialsrequired', () => {
                 rfb.sendCredentials({ password: 'proxmvnc' });
             });
         }
-        
+
         // Auto-connect on page load
         window.addEventListener('load', connect);
-        
+
         // Handle window resize
         window.addEventListener('resize', () => {
             if (rfb) {
@@ -370,5 +370,5 @@ echo "VNC accessible sur :5901, noVNC accessible via le port 6080."
 echo "Code-server (VS Code) accessible sur le port 8081 (mot de passe: proxmvnc)"
 echo ""
 echo "Accès via Caddy:"
-echo "- Interface XFCE: https://100.121.178.77:82"
+echo "- Interface XFCE: *:82"
 echo "- Pour code-server, ajouter un bloc Caddy pour le port 8081"
