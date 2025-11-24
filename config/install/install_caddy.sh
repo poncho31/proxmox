@@ -11,8 +11,8 @@ install_and_configure_caddy() {
     # Generate password hash
     HASH=$(caddy hash-password --plaintext "$CADDY_PASSWORD")
 
-    # Create Caddyfile configuration
-    cat > /etc/caddy/Caddyfile << EOF
+    # Write Caddyfile template first, then use sed to replace HASH to avoid line wrapping
+    cat > /etc/caddy/Caddyfile.tmp << EOFCADDY
 {
 	admin off
 }
@@ -21,7 +21,7 @@ install_and_configure_caddy() {
 https://$CADDY_MAIN_IP {
     tls internal
     basicauth * {
-        $CADDY_USER $HASH
+        $CADDY_USER __HASH__
     }
     reverse_proxy localhost:8080
 }
@@ -30,7 +30,7 @@ https://$CADDY_MAIN_IP {
 https://$CADDY_MAIN_IP:81 {
     tls internal
     basicauth * {
-        $CADDY_USER $HASH
+        $CADDY_USER __HASH__
     }
     reverse_proxy $VSCODE_IP:$VSCODE_PORT
 }
@@ -41,7 +41,7 @@ https://$CADDY_MAIN_IP:82 {
     tls internal
 
     basicauth * {
-        $CADDY_USER $HASH
+        $CADDY_USER __HASH__
     }
 
     # Headers pour iframe
@@ -114,7 +114,7 @@ https://$CADDY_MAIN_IP:86 {
     tls internal
 
     basicauth * {
-        $CADDY_USER $HASH
+        $CADDY_USER __HASH__
     }
 
     reverse_proxy https://$COMFYUI_IP:$COMFYUI_PORT {
@@ -129,9 +129,11 @@ https://$CADDY_MAIN_IP:86 {
     }
 }
 
-EOF
+EOFCADDY
 
-    # Restart Caddy to apply configuration
+    # Replace __HASH__ placeholder with actual hash using sed (avoids line wrapping issues)
+    sed "s|__HASH__|$HASH|g" /etc/caddy/Caddyfile.tmp > /etc/caddy/Caddyfile
+    rm -f /etc/caddy/Caddyfile.tmp    # Restart Caddy to apply configuration
     systemctl restart caddy
 
     echo "==> Caddy installation and configuration completed"
