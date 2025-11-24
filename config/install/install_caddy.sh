@@ -23,10 +23,7 @@ https://$CADDY_MAIN_IP {
     basicauth * {
         $CADDY_USER $HASH
     }
-    root * /var/www/proxmox/public
-    php_fastcgi unix//run/php/php8.4-fpm.sock
-    file_server
-    try_files {path} index.php
+    reverse_proxy localhost:8080
 }
 
 # VS Code Web
